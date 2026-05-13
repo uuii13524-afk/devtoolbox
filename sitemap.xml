@@ -27,7 +27,13 @@
       https://YOURSITE.pages.dev/tools/regex-tester.html
     </loc>
   </url>
-
+  
+  <url>
+    <loc>
+      https://YOURSITE.pages.dev/tools/url-encoder.html
+    </loc>
+  </url>
+  
   <url>
     <loc>
       https://YOURDOMAIN/pages/tools/jwt-decoder.html
@@ -36,7 +42,7 @@
   
   <url>
     <loc>
-      https://YOURSITE.pages.dev/tools/url-encoder.html
+      https://YOURDOMAIN/pages/tools/timestamp-converter.html
     </loc>
   </url>
   
