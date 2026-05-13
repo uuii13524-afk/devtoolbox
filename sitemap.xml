@@ -21,7 +21,13 @@
   <url>
     <loc>https://YOURSITE.pages.dev/tools/base64.html</loc>
   </url>
-
+  
+  <url>
+    <loc>
+      https://YOURSITE.pages.dev/tools/regex-tester.html
+    </loc>
+  </url>
+  
   <url>
     <loc>https://YOURSITE.pages.dev/snippets/docker-compose-nginx.html</loc>
   </url>
