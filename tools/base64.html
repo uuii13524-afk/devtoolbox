@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Base64 Encode Decode</title>
+</head>
+<body>
+
+  <h1>Base64 Encode Decode</h1>
+
+  <textarea id="input" rows="10" cols="80"></textarea>
+
+  <br><br>
+
+  <button onclick="encodeText()">Encode</button>
+  <button onclick="decodeText()">Decode</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    function encodeText() {
+      const input =
+        document.getElementById('input').value;
+
+      document.getElementById('output').textContent =
+        btoa(input);
+    }
+
+    function decodeText() {
+      try {
+        const input =
+          document.getElementById('input').value;
+
+        document.getElementById('output').textContent =
+          atob(input);
+
+      } catch (e) {
+        document.getElementById('output').textContent =
+          'Invalid Base64';
+      }
+    }
+  </script>
+
+</body>
+</html>
