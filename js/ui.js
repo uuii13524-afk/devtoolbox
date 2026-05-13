@@ -1,7 +1,6 @@
 const UI = {
   init() {
-    Registry.load();
-
+    
     this.loadTheme();
 
     document.addEventListener("input", (e) => {
