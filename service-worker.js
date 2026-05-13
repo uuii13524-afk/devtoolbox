@@ -1,4 +1,4 @@
-const CACHE_NAME = "dev-toolbox-v1";
+const CACHE_NAME = "dev-toolbox-v2";  // v1→v2に変更
 
 const FILES = [
   "./",
