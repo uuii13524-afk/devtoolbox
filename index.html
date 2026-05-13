@@ -1,68 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>tinydevtools</title>
+  <meta charset="UTF-8">
+  <title>Dev Tools</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #search {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: black;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
+
 <body>
 
-  <h1>tinydevtools</h1>
-  
-  <p>
-    Small developer tools and useful code snippets.
-  </p>
-  
-  <p>
-    <a href="/about.html">About</a>
-  </p>
-  
-  <p>
-    <a href="/privacy.html">Privacy Policy</a>
-  </p>
-  
-  <h2>Tools</h2>
-  
-  <ul>
-    <li>
-      <a href="/tools/json-formatter.html">
-        JSON Formatter
-      </a>
-    </li>
-    <li>
-      <a href="/tools/base64.html">
-        Base64 Encode Decode
-      </a>
-    </li>
-    <li>
-      <a href="/tools/uuid-generator.html">
-        UUID Generator
-      </a>
-    </li>
-    <li>
-      <a href="/tools/regex-tester.html">
-        Regex Tester
-      </a>
-    </li>
-    <li>
-      <a href="/tools/url-encoder.html">
-        URL Encoder / Decoder
-      </a>
-    </li>
-  </ul>
-  
-  <h2>Snippets</h2>
+<h1>Dev ToolBox</h1>
 
-  <ul>
-    <li>
-      <a href="/snippets/docker-compose-nginx.html">
-        Docker Compose Nginx Example
-      </a>
-    </li>
-    <li>
-      <a href="/snippets/curl-post-json.html">
-        cURL POST JSON Example
-      </a>
-    </li>
-  </ul>
+<input
+  id="search"
+  placeholder="Search tools... (e.g. json, uuid, regex)"
+  oninput="filterTools()"
+/>
+
+<div class="grid" id="toolGrid">
+
+  <a class="card" href="/tools/json-formatter.html">
+    JSON Formatter
+  </a>
+
+  <a class="card" href="/tools/base64.html">
+    Base64 Encode / Decode
+  </a>
+
+  <a class="card" href="/tools/uuid-generator.html">
+    UUID Generator
+  </a>
+
+  <a class="card" href="/tools/regex-tester.html">
+    Regex Tester
+  </a>
+
+  <a class="card" href="/tools/url-encoder.html">
+    URL Encoder / Decoder
+  </a>
+
+</div>
+
+<script>
+function filterTools() {
+
+  const input = document.getElementById('search').value.toLowerCase();
+  const cards = document.querySelectorAll('.card');
+
+  cards.forEach(card => {
+
+    const text = card.textContent.toLowerCase();
+
+    if (text.includes(input)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+
+  });
+}
+</script>
 
 </body>
 </html>
