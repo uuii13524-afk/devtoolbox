@@ -7,24 +7,27 @@
 
 <h1>UUID Generator</h1>
 
-<p>
-Generate random UUID v4 values.
-</p>
+<p>Generate random UUID v4 values.</p>
 
-<button onclick="generateUUID()">
-  Generate
-</button>
+<button onclick="generateUUID()">Generate</button>
+<button onclick="copyText('output')">Copy</button>
 
 <pre id="output"></pre>
 
 <script>
 function generateUUID() {
+  const uuid = crypto.randomUUID();
+  document.getElementById('output').textContent = uuid;
+}
 
-  const uuid =
-    crypto.randomUUID();
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
 
-  document.getElementById('output').textContent =
-    uuid;
+  if (!text) return alert("Nothing to copy");
+
+  navigator.clipboard.writeText(text)
+    .then(() => alert("Copied!"))
+    .catch(() => alert("Copy failed"));
 }
 </script>
 
