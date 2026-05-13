@@ -25,47 +25,42 @@ const UI = {
     }
   },
 
- renderNav(keyword = "") {
-  const nav = document.getElementById("nav");
-  const fav = Registry.tools.filter(t =>
-    State.favorites.includes(t.id)
-  );
-  const hist = State.history
-    .map(id => Registry.tools.find(t => t.id === id))
-    .filter(Boolean);
-
-  // 検索中はRecentとFavを非表示にする
-  const isSearching = keyword.length > 0;
-
-  let html = `
-    <button onclick="UI.toggleTheme()">🌓 Theme</button>
-    <hr/>
-  `;
-
-  if (!isSearching) {
-    if (fav.length) {
-      html += "<div><b>★ Favorites</b></div>";
-      html += fav.map(t => this.toolButton(t)).join("");
-      html += "<hr/>";
+  renderNav(keyword = "") {
+    const nav = document.getElementById("nav");
+    const fav = Registry.tools.filter(t => State.favorites.includes(t.id));
+    const hist = State.history
+      .map(id => Registry.tools.find(t => t.id === id))
+      .filter(Boolean)
+      .slice(0, 5); // 最大5件に制限
+  
+    const isSearching = keyword.length > 0;
+    const usedIds = new Set([
+      ...fav.map(t => t.id),
+      ...hist.map(t => t.id)
+    ]);
+  
+    let html = `<button onclick="UI.toggleTheme()">🌓 Theme</button><hr/>`;
+  
+    if (!isSearching) {
+      if (fav.length) {
+        html += "<div><b>★ Favorites</b></div>";
+        html += fav.map(t => this.toolButton(t)).join("");
+        html += "<hr/>";
+      }
+      if (hist.length) {
+        html += "<div><b>🕒 Recent</b></div>";
+        html += hist.map(t => this.toolButton(t)).join("");
+        html += "<hr/>";
+      }
     }
-    if (hist.length) {
-      html += "<div style='margin-top:10px'><b>🕒 Recent</b></div>";
-      html += hist.map(t => this.toolButton(t)).join("");
-      html += "<hr/>";
-    }
-  }
-
-  // 全ツール（Recentに含まれるものは非表示）
-  const histIds = hist.map(t => t.id);
-  const favIds = fav.map(t => t.id);
-  const tools = Registry.tools.filter(t =>
-    t.name.toLowerCase().includes(keyword.toLowerCase()) &&
-    !histIds.includes(t.id) &&
-    !favIds.includes(t.id)
-  );
-
-  html += tools.map(t => this.toolButton(t)).join("");
-  nav.innerHTML = html;
+  
+    const tools = Registry.tools.filter(t =>
+      t.name.toLowerCase().includes(keyword.toLowerCase()) &&
+      (isSearching || !usedIds.has(t.id))
+    );
+  
+    html += tools.map(t => this.toolButton(t)).join("");
+    nav.innerHTML = html;
   },
   
   toolButton(t) {
