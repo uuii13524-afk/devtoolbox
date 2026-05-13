@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="/assets/style.css">
   <script src="/assets/common.js"></script>
 </head>
-
 <body>
 
 <h1>Base64 Encode / Decode</h1>
@@ -23,16 +22,16 @@
 
 <script>
 function encodeText() {
-  const input = document.getElementById('input').value;
-  document.getElementById('output').textContent = btoa(input);
+  document.getElementById('output').textContent =
+    btoa(document.getElementById('input').value);
 }
 
 function decodeText() {
   try {
-    const input = document.getElementById('input').value;
-    document.getElementById('output').textContent = atob(input);
-  } catch (e) {
-    document.getElementById('output').textContent = 'Invalid Base64';
+    document.getElementById('output').textContent =
+      atob(document.getElementById('input').value);
+  } catch {
+    document.getElementById('output').textContent = "Invalid Base64";
   }
 }
 </script>
