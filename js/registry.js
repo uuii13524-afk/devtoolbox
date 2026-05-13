@@ -6,7 +6,6 @@ const Registry = {
     this.tools = await res.json();
 
     this.loadPersisted();
-    UI.renderNav();
   },
 
   loadPersisted() {
