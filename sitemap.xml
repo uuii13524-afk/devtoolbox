@@ -29,6 +29,12 @@
   </url>
   
   <url>
+    <loc>
+      https://YOURSITE.pages.dev/tools/url-encoder.html
+    </loc>
+  </url>
+  
+  <url>
     <loc>https://YOURSITE.pages.dev/snippets/docker-compose-nginx.html</loc>
   </url>
 
