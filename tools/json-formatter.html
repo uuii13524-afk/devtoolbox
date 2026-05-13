@@ -1,36 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>JSON Formatter</title>
+
   <link rel="stylesheet" href="/assets/style.css">
-  <script src="/assets/common.js"></script>
+  <script src="/assets/common.js" defer></script>
+  <script src="/assets/json.js" defer></script>
 </head>
+
 <body>
-  <h1>JSON Formatter</h1>
 
-  <textarea id="input" rows="15" cols="80"></textarea>
-  <br><br>
+<h1>JSON Formatter</h1>
 
-  <button onclick="formatJson()">Format</button>
+<textarea id="input" rows="15" placeholder="Enter JSON here"></textarea>
 
-  <pre id="output"></pre>
+<br><br>
 
-  <script>
-    function formatJson() {
-      try {
-        const input =
-          document.getElementById('input').value;
+<button onclick="jsonFormatter.format()">Format</button>
+<button onclick="jsonFormatter.copy()">Copy</button>
+<button onclick="jsonFormatter.clear()">Clear</button>
 
-        const parsed = JSON.parse(input);
+<h3>Output</h3>
+<pre id="output"></pre>
 
-        document.getElementById('output').textContent =
-          JSON.stringify(parsed, null, 2);
+<p id="status"></p>
 
-      } catch (e) {
-        document.getElementById('output').textContent =
-          'Invalid JSON';
-      }
-    }
-  </script>
 </body>
 </html>
