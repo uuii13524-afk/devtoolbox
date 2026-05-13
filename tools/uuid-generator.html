@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UUID Generator</title>
+</head>
+<body>
+
+<h1>UUID Generator</h1>
+
+<p>
+Generate random UUID v4 values.
+</p>
+
+<button onclick="generateUUID()">
+  Generate
+</button>
+
+<pre id="output"></pre>
+
+<script>
+function generateUUID() {
+
+  const uuid =
+    crypto.randomUUID();
+
+  document.getElementById('output').textContent =
+    uuid;
+}
+</script>
+
+</body>
+</html>
