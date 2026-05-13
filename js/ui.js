@@ -25,42 +25,49 @@ const UI = {
     }
   },
 
-  renderNav(keyword = "") {
-    const nav = document.getElementById("nav");
+ renderNav(keyword = "") {
+  const nav = document.getElementById("nav");
+  const fav = Registry.tools.filter(t =>
+    State.favorites.includes(t.id)
+  );
+  const hist = State.history
+    .map(id => Registry.tools.find(t => t.id === id))
+    .filter(Boolean);
 
-    const tools = Registry.tools.filter(t =>
-      t.name.toLowerCase().includes(keyword.toLowerCase())
-    );
+  // 検索中はRecentとFavを非表示にする
+  const isSearching = keyword.length > 0;
 
-    const fav = Registry.tools.filter(t =>
-      State.favorites.includes(t.id)
-    );
+  let html = `
+    <button onclick="UI.toggleTheme()">🌓 Theme</button>
+    <hr/>
+  `;
 
-    const hist = State.history
-      .map(id => Registry.tools.find(t => t.id === id))
-      .filter(Boolean);
-
-    let html = `
-      <button onclick="UI.toggleTheme()">🌓 Theme</button>
-      <hr/>
-    `;
-
+  if (!isSearching) {
     if (fav.length) {
       html += "<div><b>★ Favorites</b></div>";
       html += fav.map(t => this.toolButton(t)).join("");
+      html += "<hr/>";
     }
-
     if (hist.length) {
       html += "<div style='margin-top:10px'><b>🕒 Recent</b></div>";
       html += hist.map(t => this.toolButton(t)).join("");
+      html += "<hr/>";
     }
+  }
 
-    html += "<hr/>";
-    html += tools.map(t => this.toolButton(t)).join("");
+  // 全ツール（Recentに含まれるものは非表示）
+  const histIds = hist.map(t => t.id);
+  const favIds = fav.map(t => t.id);
+  const tools = Registry.tools.filter(t =>
+    t.name.toLowerCase().includes(keyword.toLowerCase()) &&
+    !histIds.includes(t.id) &&
+    !favIds.includes(t.id)
+  );
 
-    nav.innerHTML = html;
+  html += tools.map(t => this.toolButton(t)).join("");
+  nav.innerHTML = html;
   },
-
+  
   toolButton(t) {
     const isFav = State.favorites.includes(t.id);
 
