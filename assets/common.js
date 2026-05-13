@@ -1,11 +1,19 @@
-function copyText(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
+const Common = {
+  setStatus(msg, isError = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = isError ? 'error' : '';
+  },
 
-  const text = el.textContent;
-  if (!text) return;
+  setError(msg) {
+    this.setStatus(msg, true);
+  },
 
-  navigator.clipboard.writeText(text)
-    .then(() => console.log("Copied"))
-    .catch(() => alert("Copy failed"));
-}
+  setSuccess(msg) {
+    this.setStatus(msg, false);
+  },
+
+  clearStatus() {
+    this.setStatus('');
+  }
+};
