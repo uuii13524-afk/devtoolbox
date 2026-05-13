@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Encoder / Decoder</title>
+</head>
+<body>
+
+<h1>URL Encoder / Decoder</h1>
+
+<p>Encode or decode URLs.</p>
+
+<textarea id="input" rows="5" cols="50" placeholder="Enter text or URL"></textarea>
+
+<br><br>
+
+<button onclick="encodeURL()">Encode</button>
+<button onclick="decodeURL()">Decode</button>
+
+<h3>Result</h3>
+<pre id="output"></pre>
+
+<script>
+function encodeURL() {
+  const input = document.getElementById('input').value;
+  const result = encodeURIComponent(input);
+
+  document.getElementById('output').textContent = result;
+}
+
+function decodeURL() {
+  const input = document.getElementById('input').value;
+
+  try {
+    const result = decodeURIComponent(input);
+    document.getElementById('output').textContent = result;
+  } catch (e) {
+    document.getElementById('output').textContent =
+      "Invalid encoded string";
+  }
+}
+</script>
+
+</body>
+</html>
