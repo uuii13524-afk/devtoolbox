@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Hash Generator</title>
   <link rel="stylesheet" href="/assets/style.css">
   <script src="/assets/common.js"></script>
@@ -16,30 +17,26 @@
 <br><br>
 
 <button onclick="generateHash()">Generate</button>
-<button onclick="copyText('output')">Copy</button>
 
-<h3>Result</h3>
+<p>Result:</p>
 <pre id="output"></pre>
 
 <script>
 async function generateHash() {
-
-  const text = document.getElementById('input').value;
+  const text = document.getElementById("input").value;
 
   const encoder = new TextEncoder();
   const data = encoder.encode(text);
 
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
 
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-
   const hashHex = hashArray
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 
-  document.getElementById('output').textContent = hashHex;
+  document.getElementById("output").textContent = hashHex;
 }
-
 </script>
 
 </body>
