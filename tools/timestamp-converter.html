@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timestamp Converter</title>
+</head>
+<body>
+
+<h1>Timestamp Converter</h1>
+
+<p>Convert between UNIX timestamp and date.</p>
+
+<input id="input" placeholder="Timestamp or Date string" style="width:300px;">
+
+<br><br>
+
+<button onclick="toDate()">To Date</button>
+<button onclick="toTimestamp()">To Timestamp</button>
+<button onclick="copyText('output')">Copy</button>
+
+<h3>Result</h3>
+<pre id="output"></pre>
+
+<script>
+function toDate() {
+  const input = document.getElementById('input').value;
+
+  const ts = Number(input);
+
+  if (isNaN(ts)) {
+    document.getElementById('output').textContent = "Invalid timestamp";
+    return;
+  }
+
+  const date = new Date(ts * 1000);
+
+  document.getElementById('output').textContent =
+    date.toISOString();
+}
+
+function toTimestamp() {
+  const input = document.getElementById('input').value;
+
+  const ts = Date.parse(input);
+
+  if (isNaN(ts)) {
+    document.getElementById('output').textContent = "Invalid date";
+    return;
+  }
+
+  document.getElementById('output').textContent =
+    Math.floor(ts / 1000);
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+
+  if (!text) return alert("Nothing to copy");
+
+  navigator.clipboard.writeText(text)
+    .then(() => alert("Copied!"))
+    .catch(() => alert("Copy failed"));
+}
+</script>
+
+</body>
+</html>
