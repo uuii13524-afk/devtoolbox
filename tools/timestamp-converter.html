@@ -53,15 +53,6 @@ function toTimestamp() {
     Math.floor(ts / 1000);
 }
 
-function copyText(id) {
-  const text = document.getElementById(id).textContent;
-
-  if (!text) return alert("Nothing to copy");
-
-  navigator.clipboard.writeText(text)
-    .then(() => alert("Copied!"))
-    .catch(() => alert("Copy failed"));
-}
 </script>
 
 </body>
