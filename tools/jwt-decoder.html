@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JWT Decoder</title>
+</head>
+<body>
+
+<h1>JWT Decoder</h1>
+
+<p>Paste JWT token and decode header + payload.</p>
+
+<textarea id="token" rows="6" cols="60" placeholder="Paste JWT here"></textarea>
+
+<br><br>
+
+<button onclick="decodeJWT()">Decode</button>
+<button onclick="copyText('output')">Copy</button>
+
+<h3>Result</h3>
+<pre id="output"></pre>
+
+<script>
+function decodeBase64Url(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(atob(str));
+}
+
+function decodeJWT() {
+  const token = document.getElementById('token').value.trim();
+
+  try {
+    const parts = token.split('.');
+
+    if (parts.length !== 3) {
+      throw new Error("Invalid JWT format");
+    }
+
+    const header = decodeBase64Url(parts[0]);
+    const payload = decodeBase64Url(parts[1]);
+
+    const result = {
+      header,
+      payload
+    };
+
+    document.getElementById('output').textContent =
+      JSON.stringify(result, null, 2);
+
+  } catch (e) {
+    document.getElementById('output').textContent =
+      "Error: " + e.message;
+  }
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+
+  if (!text) return alert("Nothing to copy");
+
+  navigator.clipboard.writeText(text)
+    .then(() => alert("Copied!"))
+    .catch(() => alert("Copy failed"));
+}
+</script>
+
+</body>
+</html>
