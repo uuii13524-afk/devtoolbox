@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Docker Compose Nginx Example</title>
+</head>
+<body>
+
+<h1>Docker Compose Nginx Example</h1>
+
+<p>
+Simple nginx container example using docker compose.
+</p>
+
+<pre>
+version: '3'
+
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+</pre>
+
+</body>
+</html>
