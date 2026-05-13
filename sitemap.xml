@@ -11,6 +11,10 @@
   </url>
 
   <url>
+    <loc>https://YOURSITE.pages.dev/privacy.html</loc>
+  </url>
+
+  <url>
     <loc>https://YOURSITE.pages.dev/tools/json-formatter.html</loc>
   </url>
 
@@ -20,6 +24,10 @@
 
   <url>
     <loc>https://YOURSITE.pages.dev/snippets/docker-compose-nginx.html</loc>
+  </url>
+
+  <url>
+    <loc>https://YOURSITE.pages.dev/snippets/curl-post-json.html</loc>
   </url>
 
 </urlset>
