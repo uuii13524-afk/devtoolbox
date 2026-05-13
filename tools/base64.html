@@ -1,46 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Base64 Encode Decode</title>
+  <title>Base64 Tool</title>
+
   <link rel="stylesheet" href="/assets/style.css">
   <script src="/assets/common.js"></script>
 </head>
+
 <body>
 
-  <h1>Base64 Encode Decode</h1>
+<h1>Base64 Encode / Decode</h1>
 
-  <textarea id="input" rows="10" cols="80"></textarea>
+<textarea id="input"></textarea>
 
-  <br><br>
+<br>
 
-  <button onclick="encodeText()">Encode</button>
-  <button onclick="decodeText()">Decode</button>
+<button onclick="encodeText()">Encode</button>
+<button onclick="decodeText()">Decode</button>
+<button onclick="copyText('output')">Copy</button>
 
-  <pre id="output"></pre>
+<pre id="output"></pre>
 
-  <script>
-    function encodeText() {
-      const input =
-        document.getElementById('input').value;
+<script>
+function encodeText() {
+  const input = document.getElementById('input').value;
+  document.getElementById('output').textContent = btoa(input);
+}
 
-      document.getElementById('output').textContent =
-        btoa(input);
-    }
-
-    function decodeText() {
-      try {
-        const input =
-          document.getElementById('input').value;
-
-        document.getElementById('output').textContent =
-          atob(input);
-
-      } catch (e) {
-        document.getElementById('output').textContent =
-          'Invalid Base64';
-      }
-    }
-  </script>
+function decodeText() {
+  try {
+    const input = document.getElementById('input').value;
+    document.getElementById('output').textContent = atob(input);
+  } catch (e) {
+    document.getElementById('output').textContent = 'Invalid Base64';
+  }
+}
+</script>
 
 </body>
 </html>
