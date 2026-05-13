@@ -16,9 +16,8 @@
 
 <br><br>
 
-<button onclick="testRegex()">
-  Test
-</button>
+<button onclick="testRegex()">Test</button>
+<button onclick="copyText('output')">Copy</button>
 
 <h3>Result</h3>
 <pre id="output"></pre>
@@ -43,6 +42,16 @@ function testRegex() {
 
   document.getElementById('output').textContent =
     matches ? matches.join("\n") : "No match";
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+
+  if (!text) return alert("Nothing to copy");
+
+  navigator.clipboard.writeText(text)
+    .then(() => alert("Copied!"))
+    .catch(() => alert("Copy failed"));
 }
 </script>
 
