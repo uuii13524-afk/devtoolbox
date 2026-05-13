@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>JWT Decoder</title>
+
   <link rel="stylesheet" href="/assets/style.css">
   <script src="/assets/common.js"></script>
 </head>
@@ -9,51 +10,39 @@
 
 <h1>JWT Decoder</h1>
 
-<p>Paste JWT token and decode header + payload.</p>
-
-<textarea id="token" rows="6" cols="60" placeholder="Paste JWT here"></textarea>
+<textarea id="token" rows="6"></textarea>
 
 <br><br>
 
 <button onclick="decodeJWT()">Decode</button>
 <button onclick="copyText('output')">Copy</button>
 
-<h3>Result</h3>
 <pre id="output"></pre>
 
 <script>
-function decodeBase64Url(str) {
+function decodeBase64(str) {
   str = str.replace(/-/g, '+').replace(/_/g, '/');
   return JSON.parse(atob(str));
 }
 
 function decodeJWT() {
-  const token = document.getElementById('token').value.trim();
+
+  const token = document.getElementById('token').value;
 
   try {
     const parts = token.split('.');
 
-    if (parts.length !== 3) {
-      throw new Error("Invalid JWT format");
-    }
-
-    const header = decodeBase64Url(parts[0]);
-    const payload = decodeBase64Url(parts[1]);
-
-    const result = {
-      header,
-      payload
-    };
+    const header = decodeBase64(parts[0]);
+    const payload = decodeBase64(parts[1]);
 
     document.getElementById('output').textContent =
-      JSON.stringify(result, null, 2);
+      JSON.stringify({ header, payload }, null, 2);
 
   } catch (e) {
     document.getElementById('output').textContent =
-      "Error: " + e.message;
+      "Invalid JWT";
   }
 }
-
 </script>
 
 </body>
