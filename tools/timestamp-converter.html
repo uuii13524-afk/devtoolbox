@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Timestamp Converter</title>
+
   <link rel="stylesheet" href="/assets/style.css">
   <script src="/assets/common.js"></script>
 </head>
@@ -9,9 +10,7 @@
 
 <h1>Timestamp Converter</h1>
 
-<p>Convert between UNIX timestamp and date.</p>
-
-<input id="input" placeholder="Timestamp or Date string" style="width:300px;">
+<input id="input" placeholder="timestamp or date">
 
 <br><br>
 
@@ -19,40 +18,22 @@
 <button onclick="toTimestamp()">To Timestamp</button>
 <button onclick="copyText('output')">Copy</button>
 
-<h3>Result</h3>
 <pre id="output"></pre>
 
 <script>
 function toDate() {
-  const input = document.getElementById('input').value;
-
-  const ts = Number(input);
-
-  if (isNaN(ts)) {
-    document.getElementById('output').textContent = "Invalid timestamp";
-    return;
-  }
-
-  const date = new Date(ts * 1000);
+  const ts = Number(document.getElementById('input').value);
 
   document.getElementById('output').textContent =
-    date.toISOString();
+    isNaN(ts) ? "Invalid" : new Date(ts * 1000).toISOString();
 }
 
 function toTimestamp() {
-  const input = document.getElementById('input').value;
-
-  const ts = Date.parse(input);
-
-  if (isNaN(ts)) {
-    document.getElementById('output').textContent = "Invalid date";
-    return;
-  }
+  const date = Date.parse(document.getElementById('input').value);
 
   document.getElementById('output').textContent =
-    Math.floor(ts / 1000);
+    isNaN(date) ? "Invalid" : Math.floor(date / 1000);
 }
-
 </script>
 
 </body>
