@@ -1,0 +1,12 @@
+[
+  { "id": "json", "name": "JSON Formatter", "category": "dev" },
+  { "id": "base64", "name": "Base64 Encode/Decode", "category": "encoding" },
+  { "id": "hash", "name": "Hash Generator", "category": "security" },
+  { "id": "uuid", "name": "UUID Generator", "category": "dev" },
+  { "id": "regex", "name": "Regex Tester", "category": "dev" },
+  { "id": "urlEncode", "name": "URL Encode/Decode", "category": "encoding" },
+  { "id": "jwt", "name": "JWT Decoder", "category": "security" },
+  { "id": "csv", "name": "CSV Tool", "category": "data" },
+  { "id": "timestamp", "name": "Timestamp Converter", "category": "utility" },
+  { "id": "color", "name": "Color Picker", "category": "design" }
+]
