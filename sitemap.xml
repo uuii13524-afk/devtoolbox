@@ -47,6 +47,12 @@
   </url>
   
   <url>
+    <loc>
+      https://YOURDOMAIN/pages/tools/hash-generator.html
+    </loc>
+  </url>
+  
+  <url>
     <loc>https://YOURSITE.pages.dev/snippets/docker-compose-nginx.html</loc>
   </url>
 
