@@ -4,27 +4,12 @@
   <meta charset="UTF-8">
   <title>Dev ToolBox</title>
 
+  <link rel="stylesheet" href="/assets/style.css">
+
   <style>
-    :root {
-      --bg: #f7f7f7;
-      --text: #111;
-      --card: #fff;
-      --shadow: rgba(0,0,0,0.1);
-    }
-
-    body.dark {
-      --bg: #121212;
-      --text: #f1f1f1;
-      --card: #1e1e1e;
-      --shadow: rgba(0,0,0,0.4);
-    }
-
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       margin: 40px;
-      background: var(--bg);
-      color: var(--text);
-      transition: 0.3s;
     }
 
     h2 {
@@ -35,38 +20,28 @@
       width: 100%;
       max-width: 400px;
       padding: 10px;
-      margin-bottom: 15px;
-    }
-
-    button {
-      padding: 8px 12px;
-      margin-bottom: 15px;
-      cursor: pointer;
+      margin-bottom: 20px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     .card {
-      background: var(--card);
+      background: #fff;
       padding: 15px;
       border-radius: 10px;
       text-decoration: none;
-      color: var(--text);
-      box-shadow: 0 2px 6px var(--shadow);
+      color: black;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       transition: 0.2s;
     }
 
     .card:hover {
       transform: translateY(-2px);
-    }
-
-    .hidden {
-      display: none;
     }
   </style>
 </head>
@@ -75,57 +50,38 @@
 
 <h1>Dev ToolBox</h1>
 
-<button onclick="toggleTheme()">Toggle Dark Mode</button>
-
-<br>
-
 <input
   id="search"
   placeholder="Search tools..."
   oninput="filterTools()"
 />
 
-<!-- TEXT -->
+<!-- 🔤 TEXT -->
 <h2>Text Tools</h2>
-<div class="grid">
+<div class="grid category">
 
-  <a class="card" href="/tools/json-formatter.html">
-    JSON Formatter
-  </a>
+  <a class="card" href="/tools/json-formatter.html">JSON Formatter</a>
+  <a class="card" href="/tools/base64.html">Base64 Encode / Decode</a>
+  <a class="card" href="/tools/url-encoder.html">URL Encoder</a>
 
-  <a class="card" href="/tools/base64.html">
-    Base64 Encode / Decode
-  </a>
-
-  <a class="card" href="/tools/url-encoder.html">
-    URL Encoder / Decoder
-  </a>
-  
-  <a class="card" href="/tools/jwt-decoder.html">
-    JWT Decoder
-  </a>
-  
-  <a class="card" href="/tools/timestamp-converter.html">
-    Timestamp Converter
-  </a>
-
-  <a class="card" href="/tools/hash-generator.html">
-    Hash Generator (SHA-256)
-  </a>
-  
 </div>
 
-<!-- DEV -->
+<!-- 🔧 DEV -->
 <h2>Dev Tools</h2>
-<div class="grid">
+<div class="grid category">
 
-  <a class="card" href="/tools/uuid-generator.html">
-    UUID Generator
-  </a>
+  <a class="card" href="/tools/uuid-generator.html">UUID Generator</a>
+  <a class="card" href="/tools/regex-tester.html">Regex Tester</a>
+  <a class="card" href="/tools/jwt-decoder.html">JWT Decoder</a>
+  <a class="card" href="/tools/timestamp-converter.html">Timestamp Converter</a>
 
-  <a class="card" href="/tools/regex-tester.html">
-    Regex Tester
-  </a>
+</div>
+
+<!-- 🔐 SECURITY -->
+<h2>Security Tools</h2>
+<div class="grid category">
+
+  <a class="card" href="/tools/hash-generator.html">Hash Generator</a>
 
 </div>
 
@@ -141,25 +97,8 @@ function filterTools() {
 
     card.style.display =
       text.includes(input) ? "block" : "none";
-
   });
 }
-
-function toggleTheme() {
-
-  document.body.classList.toggle("dark");
-
-  localStorage.setItem(
-    "theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
-}
-
-(function initTheme() {
-  if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-  }
-})();
 </script>
 
 </body>
