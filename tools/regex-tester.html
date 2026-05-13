@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Regex Tester</title>
+</head>
+<body>
+
+<h1>Regex Tester</h1>
+
+<p>Test your regular expressions.</p>
+
+<input id="pattern" placeholder="Regex pattern" style="width:300px;">
+<br><br>
+
+<textarea id="text" rows="6" cols="40" placeholder="Test text"></textarea>
+
+<br><br>
+
+<button onclick="testRegex()">
+  Test
+</button>
+
+<h3>Result</h3>
+<pre id="output"></pre>
+
+<script>
+function testRegex() {
+
+  const pattern = document.getElementById('pattern').value;
+  const text = document.getElementById('text').value;
+
+  let regex;
+
+  try {
+    regex = new RegExp(pattern, 'g');
+  } catch (e) {
+    document.getElementById('output').textContent =
+      "Invalid regex: " + e.message;
+    return;
+  }
+
+  const matches = text.match(regex);
+
+  document.getElementById('output').textContent =
+    matches ? matches.join("\n") : "No match";
+}
+</script>
+
+</body>
+</html>
