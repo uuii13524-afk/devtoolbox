@@ -3,6 +3,7 @@
 <head>
   <title>Hash Generator</title>
   <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/common.js"></script>
 </head>
 <body>
 
@@ -39,15 +40,6 @@ async function generateHash() {
   document.getElementById('output').textContent = hashHex;
 }
 
-function copyText(id) {
-  const text = document.getElementById(id).textContent;
-
-  if (!text) return alert("Nothing to copy");
-
-  navigator.clipboard.writeText(text)
-    .then(() => alert("Copied!"))
-    .catch(() => alert("Copy failed"));
-}
 </script>
 
 </body>
