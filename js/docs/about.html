@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>About - Dev Toolbox</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<h1>About</h1>
+
+<p>
+Dev Toolbox is a collection of developer utilities.
+It runs entirely in the browser and requires no backend.
+</p>
+
+<ul>
+  <li>JSON Formatter</li>
+  <li>Base64 Encode/Decode</li>
+  <li>Hash Generator</li>
+  <li>UUID Generator</li>
+  <li>Regex Tester</li>
+  <li>URL Encoder/Decoder</li>
+  <li>JWT Decoder</li>
+  <li>CSV Viewer</li>
+  <li>Timestamp Converter</li>
+  <li>Color Picker</li>
+</ul>
+
+<a href="./index.html">Back</a>
+
+</body>
+</html>
