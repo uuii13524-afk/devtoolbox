@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Regex Tester</title>
+
   <link rel="stylesheet" href="/assets/style.css">
   <script src="/assets/common.js"></script>
 </head>
@@ -9,12 +10,10 @@
 
 <h1>Regex Tester</h1>
 
-<p>Test your regular expressions.</p>
-
-<input id="pattern" placeholder="Regex pattern" style="width:300px;">
+<input id="pattern" placeholder="Regex pattern">
 <br><br>
 
-<textarea id="text" rows="6" cols="40" placeholder="Test text"></textarea>
+<textarea id="text" rows="6" cols="60"></textarea>
 
 <br><br>
 
@@ -30,22 +29,18 @@ function testRegex() {
   const pattern = document.getElementById('pattern').value;
   const text = document.getElementById('text').value;
 
-  let regex;
-
   try {
-    regex = new RegExp(pattern, 'g');
+    const regex = new RegExp(pattern, 'g');
+    const matches = text.match(regex);
+
+    document.getElementById('output').textContent =
+      matches ? matches.join("\n") : "No match";
+
   } catch (e) {
     document.getElementById('output').textContent =
-      "Invalid regex: " + e.message;
-    return;
+      "Invalid regex";
   }
-
-  const matches = text.match(regex);
-
-  document.getElementById('output').textContent =
-    matches ? matches.join("\n") : "No match";
 }
-
 </script>
 
 </body>
