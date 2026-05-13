@@ -29,5 +29,10 @@
   <url>
     <loc>https://YOURSITE.pages.dev/snippets/curl-post-json.html</loc>
   </url>
-
+  
+  <url>
+    <loc>
+      https://YOURSITE.pages.dev/tools/uuid-generator.html
+    </loc>
+  </url>
 </urlset>
