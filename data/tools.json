@@ -1,12 +1,14 @@
 [
-  { "id": "json", "name": "JSON Formatter", "category": "dev" },
-  { "id": "base64", "name": "Base64 Encode/Decode", "category": "encoding" },
-  { "id": "hash", "name": "Hash Generator", "category": "security" },
-  { "id": "uuid", "name": "UUID Generator", "category": "dev" },
-  { "id": "regex", "name": "Regex Tester", "category": "dev" },
-  { "id": "urlEncode", "name": "URL Encode/Decode", "category": "encoding" },
-  { "id": "jwt", "name": "JWT Decoder", "category": "security" },
-  { "id": "csv", "name": "CSV Tool", "category": "data" },
-  { "id": "timestamp", "name": "Timestamp Converter", "category": "utility" },
-  { "id": "color", "name": "Color Picker", "category": "design" }
+  { "id": "json",             "name": "JSON Formatter",       "category": "Formatter", "desc": "Format, validate and minify JSON data",                          "icon": "{ }" },
+  { "id": "base64",           "name": "Base64 Encode/Decode", "category": "Encoder",   "desc": "Encode text to Base64 or decode Base64 strings",                 "icon": "64" },
+  { "id": "urlEncode",        "name": "URL Encode/Decode",    "category": "Encoder",   "desc": "Encode or decode URL-safe strings",                              "icon": "%" },
+  { "id": "hash",             "name": "Hash Generator",       "category": "Security",  "desc": "Generate MD5, SHA-1 and SHA-256 cryptographic hashes",           "icon": "#" },
+  { "id": "jwt",              "name": "JWT Decoder",          "category": "Security",  "desc": "Decode and inspect JSON Web Tokens",                             "icon": "🔑" },
+  { "id": "uuid",             "name": "UUID Generator",       "category": "Generator", "desc": "Generate random UUID v4 identifiers",                            "icon": "⊕" },
+  { "id": "regex",            "name": "Regex Tester",         "category": "Dev",       "desc": "Test and debug regular expressions in real time",                 "icon": ".*" },
+  { "id": "cron-editor",      "name": "Cron Expression Editor","category": "Dev",      "desc": "Visualize cron expressions with human-readable descriptions",    "icon": "⏱", "url": "cron-editor.html" },
+  { "id": "markdown-preview", "name": "Markdown Preview",     "category": "Formatter", "desc": "Write Markdown and see a live formatted preview side by side",   "icon": "✍", "url": "markdown-preview.html" },
+  { "id": "csv",              "name": "CSV Tool",             "category": "Data",      "desc": "Parse CSV files and view data as a sortable table",              "icon": "⊞" },
+  { "id": "timestamp",        "name": "Timestamp Converter",  "category": "Utility",   "desc": "Convert Unix timestamps to human-readable dates and vice versa", "icon": "🕒" },
+  { "id": "color",            "name": "Color Picker",         "category": "Design",    "desc": "Pick colors and convert between HEX, RGB and HSL formats",       "icon": "🎨" }
 ]

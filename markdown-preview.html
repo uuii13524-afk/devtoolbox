@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Preview - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online Markdown editor with real-time live preview. Supports GitHub Flavored Markdown including tables, code blocks, and strikethrough. No signup required.">
+  <meta name="keywords" content="markdown preview, markdown editor, live markdown, markdown to html, GFM, markdown viewer">
+  <link rel="canonical" href="https://devkitbox.xyz/markdown-preview.html">
+  <meta property="og:title" content="Markdown Preview - Dev Toolbox">
+  <meta property="og:description" content="Free online Markdown editor with real-time live preview. Supports GitHub Flavored Markdown including tables, code blocks, and strikethrough.">
+  <meta property="og:url" content="https://devkitbox.xyz/markdown-preview.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 1160px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 16px; font-size: 1.8em; color: #f0f0f0; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .toolbar button {
+      background: #2e2e2e;
+      color: #bbb;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-size: 0.83em;
+    }
+    .toolbar button:hover { background: #3a3a3a; color: #eee; }
+    .toolbar .sep { width: 1px; height: 20px; background: #3a3a3a; margin: 0 2px; }
+    .word-count { margin-left: auto; font-size: 0.78em; color: #666; }
+
+    /* Editor pane */
+    .editor-pane {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      height: 480px;
+      margin-bottom: 28px;
+    }
+    .pane { display: flex; flex-direction: column; }
+    .pane-label { font-size: 0.72em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    #mdInput {
+      flex: 1;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88em;
+      line-height: 1.65;
+      resize: none;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #mdInput:focus { border-color: #444; }
+    .preview-panel {
+      flex: 1;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 14px 18px;
+      overflow-y: auto;
+      font-size: 0.92em;
+      line-height: 1.7;
+    }
+
+    /* Preview rendered styles */
+    .preview-panel h1, .preview-panel h2, .preview-panel h3,
+    .preview-panel h4, .preview-panel h5, .preview-panel h6 {
+      color: #e8e8e8;
+      border-bottom: 1px solid #2e2e2e;
+      padding-bottom: 4px;
+      margin: 1em 0 0.4em;
+    }
+    .preview-panel h1 { font-size: 1.6em; }
+    .preview-panel h2 { font-size: 1.3em; }
+    .preview-panel h3 { font-size: 1.1em; }
+    .preview-panel p { margin: 0 0 0.8em; }
+    .preview-panel code {
+      background: #2a2a2a;
+      color: #f08080;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.87em;
+    }
+    .preview-panel pre {
+      background: #222;
+      border-left: 3px solid #5b8dee;
+      border-radius: 0 5px 5px 0;
+      padding: 12px 14px;
+      overflow-x: auto;
+      margin: 0 0 0.8em;
+    }
+    .preview-panel pre code {
+      background: none;
+      color: #d4d4d4;
+      padding: 0;
+      font-size: 0.9em;
+    }
+    .preview-panel blockquote {
+      margin: 0 0 0.8em;
+      padding: 6px 14px;
+      border-left: 3px solid #5b8dee;
+      background: #222;
+      color: #aaa;
+      border-radius: 0 4px 4px 0;
+    }
+    .preview-panel table { border-collapse: collapse; width: 100%; margin-bottom: 0.8em; }
+    .preview-panel th, .preview-panel td { border: 1px solid #3a3a3a; padding: 6px 12px; text-align: left; }
+    .preview-panel th { background: #2a2a2a; color: #e0e0e0; }
+    .preview-panel td { color: #ccc; }
+    .preview-panel a { color: #5b8dee; }
+    .preview-panel img { max-width: 100%; border-radius: 4px; }
+    .preview-panel hr { border: none; border-top: 1px solid #3a3a3a; margin: 1em 0; }
+    .preview-panel ul, .preview-panel ol { padding-left: 1.5em; margin: 0 0 0.8em; }
+    .preview-panel li { margin-bottom: 2px; color: #ccc; }
+    .preview-panel s { color: #888; }
+
+    /* How-to steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    /* FAQ */
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    /* Related tools */
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424; border: 1px solid #3a3a3a;
+      border-radius: 6px; padding: 11px 16px;
+      color: #ccc; text-decoration: none; font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px; padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em; color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 700px) {
+      .editor-pane { grid-template-columns: 1fr; height: auto; }
+      .pane { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>Markdown Preview</h1>
+
+  <div class="toolbar">
+    <button onclick="wrap('**','**')" title="Bold"><b>B</b></button>
+    <button onclick="wrap('*','*')" title="Italic"><i>I</i></button>
+    <button onclick="wrap('~~','~~')" title="Strikethrough"><s>S</s></button>
+    <button onclick="wrap('`','`')" title="Inline code">Code</button>
+    <div class="sep"></div>
+    <button onclick="prefix('# ')">H1</button>
+    <button onclick="prefix('## ')">H2</button>
+    <button onclick="prefix('### ')">H3</button>
+    <div class="sep"></div>
+    <button onclick="prefix('- ')">List</button>
+    <button onclick="prefix('1. ')">OL</button>
+    <button onclick="prefix('> ')">Quote</button>
+    <button onclick="insertBlock('```\n','\n```')">Block</button>
+    <div class="sep"></div>
+    <button onclick="copyHtml()">Copy HTML</button>
+    <button onclick="clearAll()">Clear</button>
+    <span class="word-count" id="wordCount">0 words · 0 chars</span>
+  </div>
+
+  <div class="editor-pane">
+    <div class="pane">
+      <div class="pane-label">Markdown Input</div>
+      <textarea id="mdInput" placeholder="Type Markdown here..." oninput="update()"></textarea>
+    </div>
+    <div class="pane">
+      <div class="pane-label">Formatted Preview</div>
+      <div class="preview-panel" id="preview"></div>
+    </div>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Type or paste your Markdown text in the left panel — the right panel updates live.</li>
+    <li>Use the toolbar buttons to quickly insert formatting around selected text.</li>
+    <li>Use H1, H2, H3, List, OL, Quote to insert block-level syntax at the cursor line.</li>
+    <li>Click <strong>Copy HTML</strong> to copy the rendered HTML output to your clipboard.</li>
+    <li>Paste the HTML into your blog, documentation site, or CMS.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>Markdown is a lightweight markup language that converts plain text into formatted HTML. It is the standard format for README files, documentation, GitHub comments, Notion pages, and countless other platforms. This editor implements the core Markdown specification plus GitHub Flavored Markdown (GFM) extensions: fenced code blocks, tables, and strikethrough. All text is processed locally in your browser using a pure-JavaScript parser — nothing is sent to any server.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Does this support GitHub Flavored Markdown (GFM)?</h3>
+    <p>Yes. This tool supports GFM extensions including pipe-syntax tables, fenced code blocks with triple backticks, and <code>~~strikethrough~~</code> text. Standard Markdown features like headings, lists, links, images, and blockquotes are all supported.</p>
+  </div>
+  <div class="faq">
+    <h3>How do I export the result as HTML?</h3>
+    <p>Click the <strong>Copy HTML</strong> button in the toolbar to copy the rendered HTML to your clipboard. You can then paste it directly into any HTML file, email, or CMS rich-text editor.</p>
+  </div>
+  <div class="faq">
+    <h3>Is my content saved automatically?</h3>
+    <p>Your text exists only in the current browser tab and is not saved automatically. If you close or refresh the page, your content will be lost. Copy your text or HTML before leaving.</p>
+  </div>
+
+  <!-- Related tools -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#json">{ } JSON Formatter</a>
+    <a href="cron-editor.html">⏱ Cron Expression Editor</a>
+    <a href="index.html#regex">Regex Tester</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+/* ── Markdown parser ── */
+const ESC  = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const ATTR = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function safeHref(url) {
+  return /^(javascript|data|vbscript):/i.test(url.trim()) ? '#' : url;
+}
+
+function inline(text) {
+  return text
+    .replace(/`([^`]+)`/g, (_, c) => `<code>${ESC(c)}</code>`)
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g,     '<strong>$1</strong>')
+    .replace(/__(.+?)__/g,         '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,   '<em>$1</em>')
+    .replace(/_([^_]+)_/g,   '<em>$1</em>')
+    .replace(/~~(.+?)~~/g,   '<s>$1</s>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => `<img src="${safeHref(src)}" alt="${ATTR(alt)}">`)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,  (_, txt, href) => `<a href="${safeHref(href)}" target="_blank" rel="noopener">${txt}</a>`);
+}
+
+function parseCells(line) {
+  return line.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+}
+
+function md2html(raw) {
+  const lines = raw.split('\n');
+  let html = '', i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Fenced code block
+    if (line.match(/^```/)) {
+      const lang = ESC(line.slice(3).trim());
+      let code = '';
+      i++;
+      while (i < lines.length && !lines[i].startsWith('```')) { code += ESC(lines[i]) + '\n'; i++; }
+      html += `<pre><code${lang ? ` class="language-${lang}"` : ''}>${code}</code></pre>`;
+      i++; continue;
+    }
+
+    // ATX headings
+    const hm = line.match(/^(#{1,6})\s+(.+)$/);
+    if (hm) { html += `<h${hm[1].length}>${inline(ESC(hm[2]))}</h${hm[1].length}>`; i++; continue; }
+
+    // Horizontal rule
+    if (line.match(/^([-*_])\s*\1\s*\1[\s\1]*$/)) { html += '<hr>'; i++; continue; }
+
+    // Blockquote
+    if (line.startsWith('> ')) {
+      let bq = '';
+      while (i < lines.length && lines[i].startsWith('> ')) { bq += lines[i].slice(2) + '\n'; i++; }
+      html += `<blockquote>${md2html(bq.trim())}</blockquote>`;
+      continue;
+    }
+
+    // Unordered list
+    if (line.match(/^[-*+] /)) {
+      html += '<ul>';
+      while (i < lines.length && lines[i].match(/^[-*+] /)) {
+        html += `<li>${inline(ESC(lines[i].slice(2)))}</li>`; i++;
+      }
+      html += '</ul>'; continue;
+    }
+
+    // Ordered list
+    if (line.match(/^\d+\. /)) {
+      html += '<ol>';
+      while (i < lines.length && lines[i].match(/^\d+\. /)) {
+        html += `<li>${inline(ESC(lines[i].replace(/^\d+\. /, '')))}</li>`; i++;
+      }
+      html += '</ol>'; continue;
+    }
+
+    // GFM table (header | separator | rows)
+    if (i + 1 < lines.length && lines[i + 1].match(/^\|?[\s|:\-]+\|?$/)) {
+      const headers = parseCells(line);
+      i += 2;
+      let tbl = '<table><thead><tr>' + headers.map(h => `<th>${inline(ESC(h))}</th>`).join('') + '</tr></thead><tbody>';
+      while (i < lines.length && lines[i].includes('|')) {
+        tbl += '<tr>' + parseCells(lines[i]).map(c => `<td>${inline(ESC(c))}</td>`).join('') + '</tr>'; i++;
+      }
+      html += tbl + '</tbody></table>'; continue;
+    }
+
+    // Empty line
+    if (line.trim() === '') { i++; continue; }
+
+    // Paragraph
+    let para = '';
+    while (i < lines.length && lines[i].trim() !== '' &&
+           !lines[i].match(/^(#{1,6} |```|[-*+] |\d+\. |> |([-*_]\s*){3,}$)/)) {
+      para += (para ? ' ' : '') + lines[i]; i++;
+    }
+    if (para) html += `<p>${inline(ESC(para))}</p>`;
+  }
+  return html;
+}
+
+/* ── UI ── */
+function update() {
+  const val = document.getElementById('mdInput').value;
+  document.getElementById('preview').innerHTML = md2html(val);
+  const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+  document.getElementById('wordCount').textContent = `${words} words · ${val.length} chars`;
+}
+
+function wrap(before, after) {
+  const ta = document.getElementById('mdInput');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.slice(0, s) + before + ta.value.slice(s, e) + after + ta.value.slice(e);
+  ta.selectionStart = s + before.length;
+  ta.selectionEnd   = e + before.length;
+  ta.focus(); update();
+}
+
+function prefix(pfx) {
+  const ta = document.getElementById('mdInput');
+  const s = ta.selectionStart;
+  const ls = ta.value.lastIndexOf('\n', s - 1) + 1;
+  ta.value = ta.value.slice(0, ls) + pfx + ta.value.slice(ls);
+  ta.selectionStart = ta.selectionEnd = s + pfx.length;
+  ta.focus(); update();
+}
+
+function insertBlock(before, after) {
+  const ta = document.getElementById('mdInput');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.slice(0, s) + before + ta.value.slice(s, e) + after + ta.value.slice(e);
+  ta.selectionStart = s + before.length;
+  ta.selectionEnd   = e + before.length;
+  ta.focus(); update();
+}
+
+function copyHtml() {
+  const html = document.getElementById('preview').innerHTML;
+  navigator.clipboard.writeText(html).then(() => {
+    const btn = [...document.querySelectorAll('.toolbar button')].find(b => b.textContent === 'Copy HTML');
+    if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy HTML', 2000); }
+  });
+}
+
+function clearAll() {
+  document.getElementById('mdInput').value = '';
+  update();
+}
+
+/* ── Sample content ── */
+document.getElementById('mdInput').value =
+`# Welcome to Markdown Preview
+
+Write Markdown on the left and see the **live preview** on the right.
+
+## Formatting
+
+- **Bold**, *italic*, and ~~strikethrough~~ text
+- \`inline code\` with backticks
+- [Links](https://devkitbox.xyz) and images
+
+## Code Block
+
+\`\`\`javascript
+function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+\`\`\`
+
+## Table
+
+| Tool       | Category  | Free? |
+|------------|-----------|-------|
+| JSON Fmt   | Formatter | ✓     |
+| UUID Gen   | Generator | ✓     |
+| Cron Edit  | Dev       | ✓     |
+
+> Blockquotes are supported too.
+
+---
+
+Happy writing!`;
+update();
+</script>
+</body>
+</html>
