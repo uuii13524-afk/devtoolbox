@@ -7,15 +7,21 @@ body {
 
 .layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 #sidebar {
   width: 240px;
+  min-width: 240px;
   background: #1e1e1e;
   color: white;
   padding: 15px;
   box-sizing: border-box;
+  /* Sticky sidebar on desktop */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 #sidebar h2 {
@@ -137,6 +143,52 @@ h1 {
 .tool-card-icon { font-size: 1.1em; min-width: 22px; color: #555; font-family: monospace; }
 .tool-card-body strong { font-size: 0.88em; display: block; margin-bottom: 3px; color: #111; }
 .tool-card-body p { margin: 0; font-size: 0.77em; color: #666; line-height: 1.4; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    min-width: unset;
+    height: auto;
+    position: static;
+    overflow-y: visible;
+    padding: 10px 12px;
+  }
+
+  #sidebar h2 { display: none; }
+
+  #search { margin-bottom: 6px; }
+
+  #nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  #nav button {
+    width: auto;
+    flex: 0 0 auto;
+    font-size: 0.78em;
+    padding: 5px 9px;
+  }
+
+  .nav-cat {
+    width: 100%;
+    padding: 6px 2px 1px;
+  }
+
+  main {
+    padding: 14px;
+  }
+
+  .tool-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
 
 /* Dark Mode */
 body.dark {
