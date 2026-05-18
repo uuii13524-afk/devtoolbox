@@ -38,14 +38,12 @@ const UI = {
   
     if (!isSearching) {
       if (fav.length) {
-        html += '<div><b>★ Favorites</b></div>';
-        // Recentはフラットリスト、カテゴリループなし
+        html += '<span class="nav-cat">★ Favorites</span>';
         html += fav.map(t => this.toolButton(t)).join('');
         html += '<hr/>';
       }
       if (hist.length) {
-        html += '<div><b>🕒 Recent</b></div>';
-        // Recentはフラットリスト、カテゴリループなし
+        html += '<span class="nav-cat">🕒 Recent</span>';
         html += hist.map(t => this.toolButton(t)).join('');
         html += '<hr/>';
       }
@@ -56,31 +54,30 @@ const UI = {
       t.name.toLowerCase().includes(keyword.toLowerCase()) &&
       (isSearching || !usedIds.has(t.id))
     );
-  
-    const categories = {};
-    tools.forEach(t => {
-      const cat = t.category || 'Other';
-      if (!categories[cat]) categories[cat] = [];
-      categories[cat].push(t);
-    });
-  
-    const catEntries = Object.entries(categories);
-    catEntries.forEach(([cat, catTools], index) => {
-      if (!isSearching) {
-        html += `<div class="nav-category-label">${cat}</div>`;
+
+    if (isSearching) {
+      html += tools.map(t => this.toolButton(t)).join('');
+    } else {
+      // Group by category
+      const byCat = {};
+      tools.forEach(t => {
+        const cat = t.category || 'Other';
+        if (!byCat[cat]) byCat[cat] = [];
+        byCat[cat].push(t);
+      });
+      for (const [cat, catTools] of Object.entries(byCat)) {
+        html += `<span class="nav-cat">${cat}</span>`;
+        html += catTools.map(t => this.toolButton(t)).join('');
       }
-      html += catTools.map(t => this.toolButton(t)).join('');
-      if (index < catEntries.length - 1) {
-        html += '<hr/>';
-      }
-    });
-  
+    }
+
     nav.innerHTML = html;
   },
 
   toolButton(t) {
-    const isFav = State.favorites.includes(t.id);
-    return `<button onclick="Router.go('${t.id}')">${isFav ? '★ ' : ''}${t.name}</button>`;
+    const isFav  = State.favorites.includes(t.id);
+    const active = State.currentTool === t.id ? ' active' : '';
+    return `<button class="${active.trim()}" onclick="Router.go('${t.id}')">${isFav ? '★ ' : ''}${t.name}</button>`;
   },
 
   renderHome() {

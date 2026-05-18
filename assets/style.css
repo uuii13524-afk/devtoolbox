@@ -33,17 +33,36 @@ body {
 #nav button {
   display: block;
   width: 100%;
-  margin-bottom: 5px;
-  padding: 8px;
-  background: #333;
-  color: white;
+  margin-bottom: 4px;
+  padding: 8px 10px;
+  background: #2e2e2e;
+  color: #d0d0d0;
   border: none;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
   cursor: pointer;
   text-align: left;
+  font-size: 0.88em;
 }
 
 #nav button:hover {
-  background: #555;
+  background: #3a3a3a;
+  color: #fff;
+}
+
+#nav button.active {
+  background: #1e3055;
+  border-left-color: #5b8dee;
+  color: #90b8ee;
+}
+
+.nav-cat {
+  display: block;
+  font-size: 0.68em;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: #555;
+  padding: 10px 2px 3px;
 }
 
 .nav-category-label {
@@ -146,6 +165,24 @@ body.dark button {
 body.dark button:hover {
   background: #555;
 }
+
+/* Sidebar nav buttons are always dark — don't let body.dark override them */
+body.dark #nav button {
+  background: #2e2e2e;
+  color: #d0d0d0;
+  border: none;
+  border-left: 3px solid transparent;
+}
+body.dark #nav button:hover {
+  background: #3a3a3a;
+  color: #fff;
+}
+body.dark #nav button.active {
+  background: #1e3055;
+  border-left-color: #5b8dee;
+  color: #90b8ee;
+}
+
 body.dark .home-category-title { border-color: #333; color: #666; }
 body.dark .tool-card { background: #2a2a2a; border-color: #3a3a3a; }
 body.dark .tool-card:hover { border-color: #555; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
