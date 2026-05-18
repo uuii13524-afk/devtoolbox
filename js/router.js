@@ -3,6 +3,11 @@ const Router = {
     // Standalone-page tools: navigate directly
     const tool = Registry.tools.find(t => t.id === toolId);
     if (tool && tool.url) {
+      State.history = [
+        tool.id,
+        ...State.history.filter(t => t !== tool.id)
+      ].slice(0, 20);
+      Registry.saveHistory();
       location.href = tool.url;
       return;
     }
