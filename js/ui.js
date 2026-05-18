@@ -29,6 +29,8 @@ const UI = {
       .filter(Boolean)
       .slice(0, 5);
     const isSearching = keyword.length > 0;
+  
+    // url持ちツールもusedIdsに含める（カテゴリリストから除外するため）
     const usedIds = new Set([...fav.map(t => t.id), ...hist.map(t => t.id)]);
   
     let html = `<button onclick="Router.go('home')">🏠 Home</button>
@@ -37,22 +39,24 @@ const UI = {
     if (!isSearching) {
       if (fav.length) {
         html += '<div><b>★ Favorites</b></div>';
+        // Recentはフラットリスト、カテゴリループなし
         html += fav.map(t => this.toolButton(t)).join('');
         html += '<hr/>';
       }
       if (hist.length) {
         html += '<div><b>🕒 Recent</b></div>';
+        // Recentはフラットリスト、カテゴリループなし
         html += hist.map(t => this.toolButton(t)).join('');
         html += '<hr/>';
       }
     }
   
+    // カテゴリリスト（RecentとFavを除いたもの）
     const tools = Registry.tools.filter(t =>
       t.name.toLowerCase().includes(keyword.toLowerCase()) &&
       (isSearching || !usedIds.has(t.id))
     );
   
-    // カテゴリ別にグループ化して出力
     const categories = {};
     tools.forEach(t => {
       const cat = t.category || 'Other';
@@ -66,7 +70,6 @@ const UI = {
         html += `<div class="nav-category-label">${cat}</div>`;
       }
       html += catTools.map(t => this.toolButton(t)).join('');
-      // 最後のカテゴリ以外にだけhrを入れる
       if (index < catEntries.length - 1) {
         html += '<hr/>';
       }
