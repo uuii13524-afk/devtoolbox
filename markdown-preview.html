@@ -54,8 +54,9 @@
       gap: 10px;
       height: 480px;
       margin-bottom: 28px;
+      overflow: hidden;
     }
-    .pane { display: flex; flex-direction: column; }
+    .pane { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
     .pane-label { font-size: 0.72em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     #mdInput {
       flex: 1;
@@ -183,8 +184,8 @@
     footer a:hover { color: #aaa; }
 
     @media (max-width: 700px) {
-      .editor-pane { grid-template-columns: 1fr; height: auto; }
-      .pane { height: 300px; }
+      .editor-pane { grid-template-columns: 1fr; height: auto; overflow: visible; }
+      .pane { height: 300px; min-height: 0; }
     }
   </style>
 </head>

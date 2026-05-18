@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Commit Message Generator - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online Git commit message generator following the Conventional Commits specification. Build feat, fix, docs and other commit types with scope, breaking change, and footer support.">
+  <meta name="keywords" content="git commit message generator, conventional commits, commit message format, git commit template, semantic commit">
+  <link rel="canonical" href="https://devkitbox.xyz/git-commit-generator.html">
+  <meta property="og:title" content="Git Commit Message Generator - Dev Toolbox">
+  <meta property="og:description" content="Free online Git commit message generator following the Conventional Commits specification. Build structured commit messages instantly.">
+  <meta property="og:url" content="https://devkitbox.xyz/git-commit-generator.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 20px; font-size: 1.8em; color: #f0f0f0; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Layout */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .form-panel, .output-panel {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .panel-label {
+      font-size: 0.72em;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    /* Form elements */
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 0.82em;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+    .field label span { color: #e05050; }
+    .field select, .field input[type="text"], .field textarea {
+      width: 100%;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 8px 10px;
+      font-size: 0.9em;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field select:focus,
+    .field input[type="text"]:focus,
+    .field textarea:focus { border-color: #5b8dee; }
+    .field textarea { resize: vertical; min-height: 70px; }
+
+    /* Type selector */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .type-btn {
+      background: #2e2e2e;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 7px 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.1s, border-color 0.1s;
+    }
+    .type-btn:hover { background: #333; }
+    .type-btn.active { background: #1a3a6a; border-color: #5b8dee; }
+    .type-btn .type-name { font-size: 0.82em; font-weight: bold; color: #e0e0e0; }
+    .type-btn .type-desc { font-size: 0.68em; color: #888; margin-top: 2px; }
+
+    /* Breaking change toggle */
+    .breaking-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .breaking-row input[type="checkbox"] { width: auto; accent-color: #e05050; }
+    .breaking-row label { font-size: 0.85em; color: #e07070; cursor: pointer; margin: 0; }
+
+    /* Output */
+    .output-box {
+      background: #1a1a1a;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88em;
+      line-height: 1.7;
+      color: #d4d4d4;
+      min-height: 160px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-bottom: 10px;
+    }
+    .char-info {
+      font-size: 0.78em;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .char-info .warn { color: #e0a050; }
+    .char-info .ok   { color: #50e090; }
+    .copy-btn {
+      width: 100%;
+      padding: 9px;
+      background: #1a3a6a;
+      color: #90b8f0;
+      border: 1px solid #2a5aaa;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .copy-btn:hover { background: #22427a; }
+
+    /* Type badges */
+    .badge {
+      display: inline-block;
+      font-size: 0.72em;
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-weight: bold;
+      font-family: monospace;
+      margin-right: 4px;
+    }
+    .badge-feat     { background: #1a4a2a; color: #50c080; }
+    .badge-fix      { background: #4a1a1a; color: #e07070; }
+    .badge-docs     { background: #1a2a4a; color: #7090d0; }
+    .badge-style    { background: #3a2a1a; color: #d09050; }
+    .badge-refactor { background: #2a1a4a; color: #9070c0; }
+    .badge-test     { background: #1a3a3a; color: #50b0b0; }
+    .badge-chore    { background: #2a2a2a; color: #888; }
+    .badge-perf     { background: #3a3a1a; color: #c0c040; }
+    .badge-ci       { background: #1a3a2a; color: #60c080; }
+    .badge-build    { background: #2a2a3a; color: #8080c0; }
+    .badge-revert   { background: #3a1a2a; color: #c06080; }
+
+    /* Steps / FAQ */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute; left: 12px; top: 10px;
+      background: #5b8dee; color: #fff;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p  { margin: 0; color: #bbb; line-height: 1.6; }
+    code {
+      background: #2e2e2e; padding: 1px 5px; border-radius: 3px;
+      font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080;
+    }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424; border: 1px solid #3a3a3a; border-radius: 6px;
+      padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer {
+      margin-top: 40px; padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em; color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 650px) {
+      .tool-grid { grid-template-columns: 1fr; }
+      .type-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>Git Commit Message Generator</h1>
+
+  <div class="tool-grid">
+    <!-- Form -->
+    <div class="form-panel">
+      <div class="panel-label">Commit fields</div>
+
+      <div class="field">
+        <label>Type <span>*</span></label>
+        <div class="type-grid" id="typeGrid">
+          <div class="type-btn active" data-type="feat"     onclick="selectType(this)"><div class="type-name">feat</div><div class="type-desc">New feature</div></div>
+          <div class="type-btn"       data-type="fix"      onclick="selectType(this)"><div class="type-name">fix</div><div class="type-desc">Bug fix</div></div>
+          <div class="type-btn"       data-type="docs"     onclick="selectType(this)"><div class="type-name">docs</div><div class="type-desc">Docs only</div></div>
+          <div class="type-btn"       data-type="style"    onclick="selectType(this)"><div class="type-name">style</div><div class="type-desc">Formatting</div></div>
+          <div class="type-btn"       data-type="refactor" onclick="selectType(this)"><div class="type-name">refactor</div><div class="type-desc">Code change</div></div>
+          <div class="type-btn"       data-type="test"     onclick="selectType(this)"><div class="type-name">test</div><div class="type-desc">Tests</div></div>
+          <div class="type-btn"       data-type="chore"    onclick="selectType(this)"><div class="type-name">chore</div><div class="type-desc">Build/tools</div></div>
+          <div class="type-btn"       data-type="perf"     onclick="selectType(this)"><div class="type-name">perf</div><div class="type-desc">Performance</div></div>
+          <div class="type-btn"       data-type="ci"       onclick="selectType(this)"><div class="type-name">ci</div><div class="type-desc">CI config</div></div>
+          <div class="type-btn"       data-type="build"    onclick="selectType(this)"><div class="type-name">build</div><div class="type-desc">Build system</div></div>
+          <div class="type-btn"       data-type="revert"   onclick="selectType(this)"><div class="type-name">revert</div><div class="type-desc">Revert</div></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Scope <em style="color:#666;font-size:0.9em">(optional)</em></label>
+        <input type="text" id="scope" placeholder="e.g. auth, api, ui" oninput="generate()">
+      </div>
+
+      <div class="field">
+        <label>Short description <span>*</span></label>
+        <input type="text" id="desc" placeholder="imperative, lowercase, no period" oninput="generate()">
+      </div>
+
+      <div class="breaking-row">
+        <input type="checkbox" id="breaking" onchange="generate()">
+        <label for="breaking">Breaking change</label>
+      </div>
+      <div class="field" id="breakingDescField" style="display:none">
+        <label>Breaking change description <span>*</span></label>
+        <input type="text" id="breakingDesc" placeholder="describe what breaks and how to migrate" oninput="generate()">
+      </div>
+
+      <div class="field">
+        <label>Body <em style="color:#666;font-size:0.9em">(optional)</em></label>
+        <textarea id="body" placeholder="Motivation, context, or additional details..." oninput="generate()"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Footer <em style="color:#666;font-size:0.9em">(optional)</em></label>
+        <input type="text" id="footer" placeholder="e.g. Closes #42, Refs #101" oninput="generate()">
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="output-panel">
+      <div class="panel-label">Generated commit message</div>
+      <div class="output-box" id="output"></div>
+      <div class="char-info" id="charInfo"></div>
+      <button class="copy-btn" onclick="copy()">Copy to clipboard</button>
+    </div>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Select a commit <strong>type</strong> from the grid — <code>feat</code> for new features, <code>fix</code> for bug fixes, and so on.</li>
+    <li>Optionally enter a <strong>scope</strong> to indicate which part of the codebase is affected (e.g. <code>auth</code>, <code>api</code>).</li>
+    <li>Write a concise <strong>short description</strong> in the imperative mood, lowercase, without a trailing period.</li>
+    <li>Check <strong>Breaking change</strong> if the commit introduces an API incompatibility, then describe what breaks.</li>
+    <li>Click <strong>Copy to clipboard</strong> and paste directly into your terminal: <code>git commit -m "$(pbpaste)"</code></li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>
+    <a href="https://www.conventionalcommits.org/" target="_blank" rel="noopener" style="color:#5b8dee">Conventional Commits</a> is a lightweight specification for writing structured, machine-readable Git commit messages. It is the standard used by projects like Angular, Vue, and many open-source libraries to automate changelogs and semantic versioning. This generator lets you build a correctly formatted message without memorizing the spec — all processing happens in your browser.
+  </p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>What is the Conventional Commits format?</h3>
+    <p>The format is <code>type(scope): description</code> on the first line, followed by an optional blank line and body, then an optional blank line and footer. Breaking changes go in the footer as <code>BREAKING CHANGE: description</code> and/or by adding <code>!</code> after the type.</p>
+  </div>
+  <div class="faq">
+    <h3>Why should the short description be under 72 characters?</h3>
+    <p>Most Git clients, terminal tools, and code review UIs truncate the first line of a commit message at 72 characters. Keeping it short ensures the entire summary is visible without horizontal scrolling.</p>
+  </div>
+  <div class="faq">
+    <h3>Can I use this with commitlint or semantic-release?</h3>
+    <p>Yes. The output of this generator follows the Conventional Commits spec that <code>commitlint</code>, <code>semantic-release</code>, and <code>standard-version</code> all parse. Copy the message and use it directly in your commit command.</p>
+  </div>
+
+  <!-- Related tools -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#regex">Regex Tester</a>
+    <a href="cron-editor.html">⏱ Cron Expression Editor</a>
+    <a href="env-parser.html">⚙ .env File Parser</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+let currentType = 'feat';
+
+function selectType(el) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentType = el.dataset.type;
+  document.getElementById('breaking').onchange();
+  generate();
+}
+
+document.getElementById('breaking').onchange = function () {
+  document.getElementById('breakingDescField').style.display = this.checked ? 'block' : 'none';
+  generate();
+};
+
+function generate() {
+  const scope      = document.getElementById('scope').value.trim();
+  const desc       = document.getElementById('desc').value.trim();
+  const body       = document.getElementById('body').value.trim();
+  const isBreaking = document.getElementById('breaking').checked;
+  const breakDesc  = document.getElementById('breakingDesc').value.trim();
+  const footer     = document.getElementById('footer').value.trim();
+
+  if (!desc) {
+    document.getElementById('output').textContent = '← Fill in the fields to generate a commit message';
+    document.getElementById('charInfo').innerHTML = '';
+    return;
+  }
+
+  const bang   = isBreaking ? '!' : '';
+  const scopePart = scope ? `(${scope})` : '';
+  const header = `${currentType}${scopePart}${bang}: ${desc}`;
+
+  const parts = [header];
+  if (body) parts.push('', body);
+
+  const footerLines = [];
+  if (isBreaking && breakDesc) footerLines.push(`BREAKING CHANGE: ${breakDesc}`);
+  if (footer) footerLines.push(footer);
+  if (footerLines.length) parts.push('', ...footerLines);
+
+  const msg = parts.join('\n');
+  document.getElementById('output').textContent = msg;
+
+  const hLen = header.length;
+  const cls  = hLen > 72 ? 'warn' : 'ok';
+  const icon = hLen > 72 ? '⚠' : '✓';
+  document.getElementById('charInfo').innerHTML =
+    `<span class="${cls}">${icon} First line: ${hLen} chars${hLen > 72 ? ' (recommended: ≤ 72)' : ''}</span>`;
+}
+
+function copy() {
+  const text = document.getElementById('output').textContent;
+  if (!text || text.startsWith('←')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+  });
+}
+
+generate();
+</script>
+</body>
+</html>
