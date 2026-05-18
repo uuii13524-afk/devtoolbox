@@ -28,13 +28,14 @@ const UI = {
       .map(id => Registry.tools.find(t => t.id === id))
       .filter(Boolean)
       .slice(0, 5);
-
     const isSearching = keyword.length > 0;
+  
+    // url持ちツールもusedIdsに含める（カテゴリリストから除外するため）
     const usedIds = new Set([...fav.map(t => t.id), ...hist.map(t => t.id)]);
-
+  
     let html = `<button onclick="Router.go('home')">🏠 Home</button>
                 <button onclick="UI.toggleTheme()">🌓 Theme</button><hr/>`;
-
+  
     if (!isSearching) {
       if (fav.length) {
         html += '<span class="nav-cat">★ Favorites</span>';
@@ -47,7 +48,8 @@ const UI = {
         html += '<hr/>';
       }
     }
-
+  
+    // カテゴリリスト（RecentとFavを除いたもの）
     const tools = Registry.tools.filter(t =>
       t.name.toLowerCase().includes(keyword.toLowerCase()) &&
       (isSearching || !usedIds.has(t.id))
