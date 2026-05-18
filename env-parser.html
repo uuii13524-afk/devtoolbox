@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>.env File Parser - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online .env file parser and viewer. Paste your dotenv file to instantly see all key-value pairs in a table, detect empty values, duplicate keys, and export as JSON.">
+  <meta name="keywords" content="env parser, dotenv parser, env file viewer, dotenv viewer, env to json, environment variables"  >
+  <link rel="canonical" href="https://devkitbox.xyz/env-parser.html">
+  <meta property="og:title" content=".env File Parser - Dev Toolbox">
+  <meta property="og:description" content="Free online .env file parser and viewer. Paste your dotenv file to instantly see all key-value pairs in a table, detect empty values and duplicate keys.">
+  <meta property="og:url" content="https://devkitbox.xyz/env-parser.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 20px; font-size: 1.8em; color: #f0f0f0; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Input area */
+    .input-area {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .panel-label {
+      font-size: 0.72em; color: #666;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    #envInput {
+      width: 100%;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88em;
+      line-height: 1.65;
+      resize: vertical;
+      min-height: 200px;
+      outline: none;
+    }
+    #envInput:focus { border-color: #444; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      align-items: center; margin-bottom: 14px;
+    }
+    .toolbar button {
+      background: #2e2e2e; color: #bbb;
+      border: 1px solid #3a3a3a; border-radius: 4px;
+      padding: 6px 14px; cursor: pointer; font-size: 0.85em;
+    }
+    .toolbar button:hover { background: #3a3a3a; color: #eee; }
+    .stats { margin-left: auto; font-size: 0.8em; color: #666; }
+
+    /* Issues */
+    .issues-box {
+      margin-bottom: 14px;
+    }
+    .issue {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.83em;
+      margin-bottom: 4px;
+    }
+    .issue.warn  { background: #2e2400; color: #c09040; }
+    .issue.error { background: #2e0e0e; color: #d07070; }
+    .issue-icon  { font-size: 0.9em; }
+
+    /* Table */
+    .table-wrap {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #2a2a2a; }
+    th {
+      padding: 9px 14px; text-align: left;
+      font-size: 0.78em; color: #888;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      border-bottom: 1px solid #333;
+    }
+    td {
+      padding: 8px 14px;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 0.88em; vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    .td-key { font-family: 'Courier New', monospace; color: #90b8f0; }
+    .td-val { font-family: 'Courier New', monospace; color: #d4d4d4; word-break: break-all; }
+    .td-val.empty { color: #666; font-style: italic; }
+    .td-status { white-space: nowrap; }
+    .badge-ok   { color: #50c080; font-size: 0.8em; }
+    .badge-warn { color: #c09040; font-size: 0.8em; }
+    .badge-dup  { color: #e07070; font-size: 0.8em; }
+    .no-data { padding: 20px; text-align: center; color: #555; font-size: 0.9em; }
+
+    /* Steps / FAQ */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute; left: 12px; top: 10px;
+      background: #5b8dee; color: #fff;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code {
+      background: #2e2e2e; padding: 1px 5px; border-radius: 3px;
+      font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080;
+    }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424; border: 1px solid #3a3a3a; border-radius: 6px;
+      padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer {
+      margin-top: 40px; padding-top: 18px;
+      border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>.env File Parser</h1>
+
+  <!-- Tool body -->
+  <div class="input-area">
+    <div class="panel-label">.env file content</div>
+    <textarea id="envInput" placeholder="Paste your .env file here...
+# Example:
+DATABASE_URL=postgres://localhost:5432/mydb
+API_KEY=abc123
+SECRET=
+DEBUG=true" oninput="parse()"></textarea>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="copyJson()">Copy as JSON</button>
+    <button onclick="copyKeys()">Copy keys only</button>
+    <button onclick="clearAll()">Clear</button>
+    <span class="stats" id="stats"></span>
+  </div>
+
+  <div class="issues-box" id="issuesBox"></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:35%">Key</th>
+          <th>Value</th>
+          <th style="width:90px">Status</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td class="no-data" colspan="3">Paste your .env content above to parse it</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Paste the contents of your <code>.env</code> file into the text area above.</li>
+    <li>All key-value pairs are instantly shown in the table below, grouped with status indicators.</li>
+    <li>Issues like empty values or duplicate keys are highlighted with warnings.</li>
+    <li>Use <strong>Copy as JSON</strong> to export all variables as a JSON object.</li>
+    <li>Use <strong>Copy keys only</strong> to get a list of all variable names — useful for documenting your <code>.env.example</code>.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>
+    The <code>.env</code> file format is used by virtually every modern web framework — Node.js via <code>dotenv</code>, Python via <code>python-decouple</code>, Ruby, PHP, and more — to separate configuration from code. This parser reads your file in the browser, displays every variable in a structured table, and flags common mistakes like missing values or accidentally duplicated keys. Your content never leaves your device.
+  </p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Is it safe to paste my real .env file here?</h3>
+    <p>All parsing happens entirely in your browser using JavaScript — no data is sent to any server. That said, real secrets like API keys and database passwords should be treated with care. Consider using dummy values when testing in a shared environment.</p>
+  </div>
+  <div class="faq">
+    <h3>What syntax is supported?</h3>
+    <p>Standard dotenv syntax: <code>KEY=value</code> pairs, <code>#</code> comments, and blank lines. Quoted values (<code>KEY="hello world"</code> or <code>KEY='value'</code>) have their quotes stripped. Lines that do not match the <code>KEY=value</code> pattern are flagged as invalid.</p>
+  </div>
+  <div class="faq">
+    <h3>What does "duplicate key" mean?</h3>
+    <p>If the same key appears more than once in a <code>.env</code> file, most dotenv libraries use the first occurrence and silently ignore later ones. This tool highlights duplicates so you can clean them up and avoid unexpected behaviour.</p>
+  </div>
+
+  <!-- Related tools -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#json">{ } JSON Formatter</a>
+    <a href="git-commit-generator.html">Git Commit Generator</a>
+    <a href="index.html#base64">Base64 Encode/Decode</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+let parsed = [];
+
+function parse() {
+  const text = document.getElementById('envInput').value;
+  const lines = text.split('\n');
+  const keyCounts = {};
+  const entries   = [];
+  const issues    = [];
+
+  lines.forEach((raw, idx) => {
+    const line = raw.trim();
+    const lineNum = idx + 1;
+
+    if (line === '')       return; // blank
+    if (line.startsWith('#')) return; // comment
+
+    // Quoted value: KEY="val" or KEY='val'
+    const quoted = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(['"])(.*)\2\s*(?:#.*)?$/);
+    if (quoted) {
+      const [, key, , val] = quoted;
+      keyCounts[key] = (keyCounts[key] || 0) + 1;
+      entries.push({ key, val, lineNum, quoted: true });
+      return;
+    }
+
+    // Unquoted value: KEY=value or KEY=
+    const plain = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*?)(?:\s*#.*)?$/);
+    if (plain) {
+      const [, key, val] = plain;
+      keyCounts[key] = (keyCounts[key] || 0) + 1;
+      entries.push({ key, val: val.trim(), lineNum, quoted: false });
+      return;
+    }
+
+    issues.push({ type: 'error', msg: `Line ${lineNum}: invalid format — "${line.slice(0, 40)}${line.length > 40 ? '…' : ''}"` });
+  });
+
+  // Tag duplicates
+  entries.forEach(e => { e.isDup = keyCounts[e.key] > 1; });
+
+  // Warn on empty values
+  entries.forEach(e => {
+    if (e.val === '' && !e.isDup) {
+      issues.push({ type: 'warn', msg: `${e.key} has an empty value (line ${e.lineNum})` });
+    }
+  });
+  Object.entries(keyCounts).filter(([, c]) => c > 1).forEach(([key]) => {
+    issues.push({ type: 'error', msg: `Duplicate key: ${key} (appears ${keyCounts[key]} times)` });
+  });
+
+  parsed = entries;
+
+  // Stats
+  const totalVars   = entries.length;
+  const emptyCount  = entries.filter(e => e.val === '').length;
+  const commentLines = lines.filter(l => l.trim().startsWith('#')).length;
+  document.getElementById('stats').textContent =
+    `${totalVars} variable${totalVars !== 1 ? 's' : ''} · ${emptyCount} empty · ${commentLines} comment${commentLines !== 1 ? 's' : ''}`;
+
+  // Issues
+  const issBox = document.getElementById('issuesBox');
+  issBox.innerHTML = issues.map(i =>
+    `<div class="issue ${i.type}"><span class="issue-icon">${i.type === 'error' ? '✕' : '⚠'}</span>${i.msg}</div>`
+  ).join('');
+
+  // Table
+  const tbody = document.getElementById('tableBody');
+  if (entries.length === 0) {
+    tbody.innerHTML = '<tr><td class="no-data" colspan="3">No variables found</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = entries.map(e => {
+    const valDisplay = e.val === ''
+      ? '<span class="td-val empty">(empty)</span>'
+      : `<span class="td-val">${escHtml(e.val)}</span>`;
+    let status = '<span class="badge-ok">✓ ok</span>';
+    if (e.isDup) status = '<span class="badge-dup">✕ duplicate</span>';
+    else if (e.val === '') status = '<span class="badge-warn">⚠ empty</span>';
+    return `<tr><td class="td-key">${escHtml(e.key)}</td><td>${valDisplay}</td><td class="td-status">${status}</td></tr>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function copyJson() {
+  if (!parsed.length) return;
+  const obj = {};
+  parsed.forEach(e => { if (!obj.hasOwnProperty(e.key)) obj[e.key] = e.val; });
+  navigator.clipboard.writeText(JSON.stringify(obj, null, 2)).then(() => flash('copyJson', 'Copied!', 'Copy as JSON'));
+}
+
+function copyKeys() {
+  if (!parsed.length) return;
+  const keys = [...new Set(parsed.map(e => e.key))].join('\n');
+  navigator.clipboard.writeText(keys).then(() => flash('copyKeys', 'Copied!', 'Copy keys only'));
+}
+
+function flash(btnText, msg, original) {
+  const btn = [...document.querySelectorAll('.toolbar button')].find(b => b.textContent === btnText || b.textContent === original);
+  if (!btn) return;
+  btn.textContent = msg;
+  setTimeout(() => btn.textContent = original, 2000);
+}
+
+function clearAll() {
+  document.getElementById('envInput').value = '';
+  parse();
+}
+</script>
+</body>
+</html>

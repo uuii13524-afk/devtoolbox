@@ -6,8 +6,10 @@
   { "id": "jwt",              "name": "JWT Decoder",          "category": "Security",  "desc": "Decode and inspect JSON Web Tokens",                             "icon": "🔑" },
   { "id": "uuid",             "name": "UUID Generator",       "category": "Generator", "desc": "Generate random UUID v4 identifiers",                            "icon": "⊕" },
   { "id": "regex",            "name": "Regex Tester",         "category": "Dev",       "desc": "Test and debug regular expressions in real time",                 "icon": ".*" },
-  { "id": "cron-editor",      "name": "Cron Expression Editor","category": "Dev",      "desc": "Visualize cron expressions with human-readable descriptions",    "icon": "⏱", "url": "cron-editor.html" },
-  { "id": "markdown-preview", "name": "Markdown Preview",     "category": "Formatter", "desc": "Write Markdown and see a live formatted preview side by side",   "icon": "✍", "url": "markdown-preview.html" },
+  { "id": "cron-editor",           "name": "Cron Expression Editor",    "category": "Dev",       "desc": "Visualize cron expressions with human-readable descriptions",              "icon": "⏱", "url": "cron-editor.html" },
+  { "id": "git-commit-generator",  "name": "Git Commit Generator",      "category": "Dev",       "desc": "Generate Conventional Commits messages with type, scope and footer",       "icon": "✔", "url": "git-commit-generator.html" },
+  { "id": "markdown-preview",      "name": "Markdown Preview",          "category": "Formatter", "desc": "Write Markdown and see a live formatted preview side by side",             "icon": "✍", "url": "markdown-preview.html" },
+  { "id": "env-parser",            "name": ".env File Parser",          "category": "Dev",       "desc": "Parse .env files into a table, detect duplicates and export as JSON",      "icon": "⚙", "url": "env-parser.html" },
   { "id": "csv",              "name": "CSV Tool",             "category": "Data",      "desc": "Parse CSV files and view data as a sortable table",              "icon": "⊞" },
   { "id": "timestamp",        "name": "Timestamp Converter",  "category": "Utility",   "desc": "Convert Unix timestamps to human-readable dates and vice versa", "icon": "🕒" },
   { "id": "color",            "name": "Color Picker",         "category": "Design",    "desc": "Pick colors and convert between HEX, RGB and HSL formats",       "icon": "🎨" }
