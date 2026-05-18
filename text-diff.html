@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Diff Checker - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online text diff checker. Compare two texts side-by-side and highlight added, removed, and changed lines instantly — no upload, 100% browser-based.">
+  <meta name="keywords" content="text diff, diff checker, compare text online, text comparison, find differences">
+  <link rel="canonical" href="https://devkitbox.xyz/text-diff.html">
+  <meta property="og:title" content="Text Diff Checker - Dev Toolbox">
+  <meta property="og:description" content="Free online text diff checker. Compare two texts side-by-side and highlight added, removed, and changed lines instantly — no upload, 100% browser-based.">
+  <meta property="og:url" content="https://devkitbox.xyz/text-diff.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 1080px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 20px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .btn {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 6px 13px;
+      cursor: pointer;
+      font-size: 0.84em;
+    }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary {
+      background: #5b8dee;
+      color: #fff;
+      border-color: #5b8dee;
+    }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+
+    .option-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.84em;
+      color: #aaa;
+    }
+    .option-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+    /* input panels */
+    .input-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .panel {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #333;
+      font-size: 0.78em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    textarea {
+      width: 100%;
+      height: 220px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.84em;
+      line-height: 1.55;
+      resize: vertical;
+    }
+    textarea::placeholder { color: #555; }
+
+    /* stats bar */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.8em;
+      margin-bottom: 14px;
+    }
+    .stat-pill {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+    .stat-added   { background: rgba(46,160,67,0.2);  color: #4caf50; border: 1px solid rgba(46,160,67,0.3); }
+    .stat-removed { background: rgba(220,53,69,0.2);  color: #f87171; border: 1px solid rgba(220,53,69,0.3); }
+    .stat-changed { background: rgba(255,193,7,0.15); color: #fbbf24; border: 1px solid rgba(255,193,7,0.25); }
+    .stat-same    { background: #242424;               color: #666;    border: 1px solid #333; }
+
+    /* diff output */
+    .diff-output {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.83em;
+      line-height: 1.55;
+    }
+    .diff-output .diff-header {
+      display: grid;
+      grid-template-columns: 50px 1fr 50px 1fr;
+      background: #252525;
+      border-bottom: 1px solid #333;
+      padding: 6px 0;
+      font-size: 0.78em;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .diff-output .diff-header span { padding: 0 10px; }
+    .diff-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 50px 1fr;
+      border-bottom: 1px solid #242424;
+      min-height: 24px;
+    }
+    .diff-row:last-child { border-bottom: none; }
+    .diff-ln {
+      padding: 2px 10px;
+      color: #555;
+      text-align: right;
+      user-select: none;
+      border-right: 1px solid #2e2e2e;
+      white-space: nowrap;
+    }
+    .diff-text {
+      padding: 2px 10px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    /* row colors */
+    .row-added .diff-text.right  { background: rgba(46,160,67,0.12); color: #86efac; }
+    .row-added .diff-ln.right    { background: rgba(46,160,67,0.07); }
+    .row-added .diff-text.left   { background: #1e1e1e; color: #3a3a3a; }
+
+    .row-removed .diff-text.left  { background: rgba(220,53,69,0.12); color: #fca5a5; }
+    .row-removed .diff-ln.left    { background: rgba(220,53,69,0.07); }
+    .row-removed .diff-text.right { background: #1e1e1e; color: #3a3a3a; }
+
+    .row-changed .diff-text.left  { background: rgba(220,53,69,0.09); color: #fca5a5; }
+    .row-changed .diff-text.right { background: rgba(46,160,67,0.09); color: #86efac; }
+    .row-changed .diff-ln.left    { background: rgba(220,53,69,0.05); }
+    .row-changed .diff-ln.right   { background: rgba(46,160,67,0.05); }
+
+    .row-same .diff-text { color: #666; }
+
+    /* inline char diff */
+    .ins { background: rgba(46,160,67,0.35); border-radius: 2px; }
+    .del { background: rgba(220,53,69,0.35); text-decoration: line-through; border-radius: 2px; }
+
+    .diff-placeholder {
+      padding: 40px 20px;
+      text-align: center;
+      color: #555;
+    }
+
+    /* legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.8em;
+      margin-bottom: 14px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; color: #777; }
+    .legend-swatch {
+      width: 14px; height: 14px; border-radius: 3px;
+    }
+    .sw-added   { background: rgba(46,160,67,0.3); }
+    .sw-removed { background: rgba(220,53,69,0.3); }
+    .sw-changed { background: rgba(255,193,7,0.3); }
+    .sw-same    { background: #2e2e2e; }
+
+    /* how-to steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    /* FAQ */
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    /* related */
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 680px) {
+      .input-panels { grid-template-columns: 1fr; }
+      textarea { height: 160px; }
+      .diff-output .diff-header,
+      .diff-row { grid-template-columns: 36px 1fr 36px 1fr; }
+      .diff-ln { padding: 2px 4px; font-size: 0.75em; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>Text Diff Checker</h1>
+  <p class="tagline">Paste two texts and instantly see exactly what changed — added, removed, and modified lines highlighted side-by-side.</p>
+
+  <!-- Options -->
+  <div class="option-row">
+    <label><input type="checkbox" id="ignoreCase"> Ignore case</label>
+    <label><input type="checkbox" id="ignoreWhitespace"> Ignore leading/trailing whitespace</label>
+    <label><input type="checkbox" id="showSame" checked> Show unchanged lines</label>
+    <label><input type="checkbox" id="inlineChars" checked> Highlight changed characters</label>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="runDiff()">&#9654; Compare</button>
+    <button class="btn" onclick="loadSample()">Load Sample</button>
+    <button class="btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <!-- Input panels -->
+  <div class="input-panels">
+    <div class="panel">
+      <div class="panel-header"><span>Original</span></div>
+      <textarea id="textA" placeholder="Paste original text here..." spellcheck="false"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Modified</span></div>
+      <textarea id="textB" placeholder="Paste modified text here..." spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <!-- Legend + stats -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch sw-added"></div> Added</div>
+    <div class="legend-item"><div class="legend-swatch sw-removed"></div> Removed</div>
+    <div class="legend-item"><div class="legend-swatch sw-changed"></div> Changed</div>
+    <div class="legend-item"><div class="legend-swatch sw-same"></div> Unchanged</div>
+  </div>
+  <div class="stats-bar" id="statsBar" style="display:none;">
+    <span class="stat-pill stat-added"   id="cntAdded">+0 added</span>
+    <span class="stat-pill stat-removed" id="cntRemoved">-0 removed</span>
+    <span class="stat-pill stat-changed" id="cntChanged">~ 0 changed</span>
+    <span class="stat-pill stat-same"    id="cntSame">= 0 same</span>
+  </div>
+
+  <!-- Diff output -->
+  <div class="diff-output" id="diffOutput">
+    <div class="diff-placeholder">Enter text in both panels and click <strong>Compare</strong></div>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Paste the <strong>original</strong> text into the left panel and the <strong>modified</strong> text into the right panel.</li>
+    <li>Choose options: ignore case, ignore whitespace, or show/hide unchanged lines.</li>
+    <li>Click <strong>Compare</strong> to generate the diff. Results appear in the panel below.</li>
+    <li>Green lines are <em>additions</em>, red lines are <em>deletions</em>, yellow lines are <em>changes</em>.</li>
+    <li>With "Highlight changed characters" enabled, the exact changed characters within a line are marked.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>This diff checker uses the Myers diff algorithm — the same algorithm used by Git and most version-control systems — to compute the minimal edit distance between two texts. Results are displayed as a side-by-side comparison with colour-coded lines, line numbers, and optional character-level highlighting for changed lines. Everything runs in your browser: no text is ever uploaded to a server, making it safe for proprietary code, configuration files, legal documents, or any sensitive content.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Is there a size limit on the texts I can compare?</h3>
+    <p>There is no hard limit, but very large texts (hundreds of thousands of lines) may be slow because the diff is computed in the browser. For typical code files, configuration files, and documents the comparison is instantaneous.</p>
+  </div>
+  <div class="faq">
+    <h3>How is this different from <code>git diff</code>?</h3>
+    <p>The underlying algorithm is the same Myers diff, but this tool works on raw text you paste — it does not require a Git repository. It is ideal for quick comparisons of clipboard snippets, API responses, or any two blocks of text without setting up a file or running a terminal command.</p>
+  </div>
+  <div class="faq">
+    <h3>Can I compare code files?</h3>
+    <p>Yes. Simply open both files in a text editor, copy their contents, and paste them into the two panels. Syntax highlighting is not applied, but all line-level and character-level differences will be shown correctly.</p>
+  </div>
+
+  <!-- Related tools -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#json">{ } JSON Formatter</a>
+    <a href="sql-formatter.html">⊞ SQL Formatter</a>
+    <a href="markdown-preview.html">✍ Markdown Preview</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+// ── Myers diff (line-level) ───────────────────────────────────────────────────
+function myersDiff(a, b) {
+  const n = a.length, m = b.length;
+  const max = n + m;
+  const v = new Array(2 * max + 1).fill(0);
+  const trace = [];
+
+  for (let d = 0; d <= max; d++) {
+    trace.push(v.slice());
+    for (let k = -d; k <= d; k += 2) {
+      let x;
+      if (k === -d || (k !== d && v[k - 1 + max] < v[k + 1 + max])) {
+        x = v[k + 1 + max];
+      } else {
+        x = v[k - 1 + max] + 1;
+      }
+      let y = x - k;
+      while (x < n && y < m && a[x] === b[y]) { x++; y++; }
+      v[k + max] = x;
+      if (x >= n && y >= m) {
+        return backtrack(trace, a, b, max);
+      }
+    }
+  }
+  return backtrack(trace, a, b, max);
+}
+
+function backtrack(trace, a, b, max) {
+  let x = a.length, y = b.length;
+  const edits = [];
+  for (let d = trace.length - 1; d >= 0; d--) {
+    const v = trace[d];
+    const k = x - y;
+    let prevK;
+    if (k === -d || (k !== d && v[k - 1 + max] < v[k + 1 + max])) {
+      prevK = k + 1;
+    } else {
+      prevK = k - 1;
+    }
+    let prevX = v[prevK + max];
+    let prevY = prevX - prevK;
+    while (x > prevX && y > prevY) {
+      edits.push({ type: 'equal', left: x - 1, right: y - 1 });
+      x--; y--;
+    }
+    if (d > 0) {
+      if (x === prevX) {
+        edits.push({ type: 'insert', right: y - 1 });
+        y--;
+      } else {
+        edits.push({ type: 'delete', left: x - 1 });
+        x--;
+      }
+    }
+  }
+  return edits.reverse();
+}
+
+// ── character-level diff (simple LCS) ────────────────────────────────────────
+function charDiff(a, b) {
+  const la = [...a], lb = [...b];
+  const na = la.length, nb = lb.length;
+  // Build LCS table
+  const dp = Array.from({ length: na + 1 }, () => new Int16Array(nb + 1));
+  for (let i = na - 1; i >= 0; i--) {
+    for (let j = nb - 1; j >= 0; j--) {
+      if (la[i] === lb[j]) {
+        dp[i][j] = dp[i+1][j+1] + 1;
+      } else {
+        dp[i][j] = Math.max(dp[i+1][j], dp[i][j+1]);
+      }
+    }
+  }
+  // Traceback
+  const htmlA = [], htmlB = [];
+  let i = 0, j = 0;
+  function esc(c) { return c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  while (i < na || j < nb) {
+    if (i < na && j < nb && la[i] === lb[j]) {
+      htmlA.push(esc(la[i])); htmlB.push(esc(lb[j]));
+      i++; j++;
+    } else if (j < nb && (i >= na || dp[i+1][j] <= dp[i][j+1])) {
+      htmlB.push(`<span class="ins">${esc(lb[j])}</span>`);
+      j++;
+    } else {
+      htmlA.push(`<span class="del">${esc(la[i])}</span>`);
+      i++;
+    }
+  }
+  return { htmlA: htmlA.join(''), htmlB: htmlB.join('') };
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Main diff runner ──────────────────────────────────────────────────────────
+function runDiff() {
+  let rawA = document.getElementById('textA').value;
+  let rawB = document.getElementById('textB').value;
+
+  const ignoreCase = document.getElementById('ignoreCase').checked;
+  const ignoreWS   = document.getElementById('ignoreWhitespace').checked;
+  const showSame   = document.getElementById('showSame').checked;
+  const inlineChars= document.getElementById('inlineChars').checked;
+
+  const normalize = s => {
+    let r = ignoreWS ? s.trim() : s;
+    if (ignoreCase) r = r.toLowerCase();
+    return r;
+  };
+
+  const linesA = rawA.split('\n');
+  const linesB = rawB.split('\n');
+  const normA  = linesA.map(normalize);
+  const normB  = linesB.map(normalize);
+
+  const edits = myersDiff(normA, normB);
+
+  // Build side-by-side rows
+  const rows = [];
+  let lnA = 0, lnB = 0;
+  let i = 0;
+  while (i < edits.length) {
+    const e = edits[i];
+    if (e.type === 'equal') {
+      rows.push({ type: 'same', lnA: lnA + 1, lnB: lnB + 1, textA: linesA[lnA], textB: linesB[lnB] });
+      lnA++; lnB++; i++;
+    } else if (e.type === 'delete') {
+      // check if next is insert (=> changed)
+      if (i + 1 < edits.length && edits[i+1].type === 'insert') {
+        rows.push({ type: 'changed', lnA: lnA + 1, lnB: lnB + 1, textA: linesA[lnA], textB: linesB[lnB] });
+        lnA++; lnB++; i += 2;
+      } else {
+        rows.push({ type: 'removed', lnA: lnA + 1, lnB: null, textA: linesA[lnA], textB: null });
+        lnA++; i++;
+      }
+    } else {
+      rows.push({ type: 'added', lnA: null, lnB: lnB + 1, textA: null, textB: linesB[lnB] });
+      lnB++; i++;
+    }
+  }
+
+  // Stats
+  let nAdded = 0, nRemoved = 0, nChanged = 0, nSame = 0;
+  rows.forEach(r => {
+    if (r.type === 'added')   nAdded++;
+    else if (r.type === 'removed') nRemoved++;
+    else if (r.type === 'changed') nChanged++;
+    else nSame++;
+  });
+
+  document.getElementById('statsBar').style.display = 'flex';
+  document.getElementById('cntAdded').textContent   = `+${nAdded} added`;
+  document.getElementById('cntRemoved').textContent = `-${nRemoved} removed`;
+  document.getElementById('cntChanged').textContent = `~${nChanged} changed`;
+  document.getElementById('cntSame').textContent    = `=${nSame} same`;
+
+  // Render
+  const header = `
+    <div class="diff-header">
+      <span>#</span><span>Original</span>
+      <span>#</span><span>Modified</span>
+    </div>`;
+
+  const rowsHtml = rows.filter(r => showSame || r.type !== 'same').map(r => {
+    let htA, htB;
+    if (r.type === 'changed' && inlineChars && r.textA !== null && r.textB !== null) {
+      const cd = charDiff(r.textA, r.textB);
+      htA = cd.htmlA; htB = cd.htmlB;
+    } else {
+      htA = r.textA !== null ? escHtml(r.textA) : '';
+      htB = r.textB !== null ? escHtml(r.textB) : '';
+    }
+    const rowClass = `row-${r.type}`;
+    const lnAHtml  = r.lnA !== null ? r.lnA : '';
+    const lnBHtml  = r.lnB !== null ? r.lnB : '';
+    return `<div class="diff-row ${rowClass}">
+      <div class="diff-ln left">${lnAHtml}</div>
+      <div class="diff-text left">${htA}</div>
+      <div class="diff-ln right">${lnBHtml}</div>
+      <div class="diff-text right">${htB}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('diffOutput').innerHTML =
+    header + (rowsHtml || '<div class="diff-placeholder" style="color:#4caf50">&#10003; Texts are identical</div>');
+}
+
+function clearAll() {
+  document.getElementById('textA').value = '';
+  document.getElementById('textB').value = '';
+  document.getElementById('diffOutput').innerHTML = '<div class="diff-placeholder">Enter text in both panels and click <strong>Compare</strong></div>';
+  document.getElementById('statsBar').style.display = 'none';
+}
+
+function loadSample() {
+  document.getElementById('textA').value =
+`function greet(name) {
+  console.log("Hello, " + name);
+  return true;
+}
+
+const users = ["Alice", "Bob", "Charlie"];
+users.forEach(greet);`;
+
+  document.getElementById('textB').value =
+`function greet(name, greeting = "Hello") {
+  console.log(\`\${greeting}, \${name}!\`);
+  return name.length > 0;
+}
+
+const users = ["Alice", "Bob", "Dave"];
+users.forEach(u => greet(u));`;
+
+  runDiff();
+}
+
+// Auto-run on input with debounce
+let debTimer;
+function scheduleRun() {
+  clearTimeout(debTimer);
+  debTimer = setTimeout(runDiff, 500);
+}
+document.getElementById('textA').addEventListener('input', scheduleRun);
+document.getElementById('textB').addEventListener('input', scheduleRun);
+</script>
+</body>
+</html>
