@@ -1,34 +1,46 @@
 const Router = {
   go(toolId) {
-    State.currentTool = toolId;
+    // Standalone-page tools: navigate directly
+    const tool = Registry.tools.find(t => t.id === toolId);
+    if (tool && tool.url) {
+      location.href = tool.url;
+      return;
+    }
 
-    // URLに反映
-    location.hash = toolId;
+    if (toolId === 'home' || !toolId) {
+      State.currentTool = null;
+      history.pushState(null, '', location.pathname);
+    } else {
+      State.currentTool = toolId;
+      location.hash = toolId;
 
-    // 履歴
-    State.history = [
-      toolId,
-      ...State.history.filter(t => t !== toolId)
-    ].slice(0, 20);
-
-    Registry.saveHistory();
+      State.history = [
+        toolId,
+        ...State.history.filter(t => t !== toolId)
+      ].slice(0, 20);
+      Registry.saveHistory();
+    }
 
     UI.render();
+    UI.renderNav();
   },
 
   init() {
-    const hash = location.hash.replace("#", "");
+    const hash = location.hash.replace('#', '');
+    State.currentTool = hash || null;
 
-    if (hash) {
-      State.currentTool = hash;
-    }
+    window.addEventListener('hashchange', () => {
+      const newHash = location.hash.replace('#', '');
+      State.currentTool = newHash || null;
+      UI.render();
+      UI.renderNav();
+    });
 
-    window.addEventListener("hashchange", () => {
-      const newHash = location.hash.replace("#", "");
-      if (newHash) {
-        State.currentTool = newHash;
-        UI.render();
-      }
+    window.addEventListener('popstate', () => {
+      const newHash = location.hash.replace('#', '');
+      State.currentTool = newHash || null;
+      UI.render();
+      UI.renderNav();
     });
   }
 };

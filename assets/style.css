@@ -76,6 +76,41 @@ h1 {
   margin-top: 0;
 }
 
+/* Home / Landing view */
+.home-hero { margin-bottom: 8px; }
+.home-subtitle { color: #666; font-size: 0.9em; margin: 0 0 28px; }
+.home-category-section { margin-bottom: 28px; }
+.home-category-title {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #888;
+  margin: 0 0 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+}
+.tool-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.tool-card {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 13px 14px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  text-decoration: none;
+}
+.tool-card:hover { border-color: #aaa; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.tool-card-icon { font-size: 1.1em; min-width: 22px; color: #555; font-family: monospace; }
+.tool-card-body strong { font-size: 0.88em; display: block; margin-bottom: 3px; color: #111; }
+.tool-card-body p { margin: 0; font-size: 0.77em; color: #666; line-height: 1.4; }
+
 /* Dark Mode */
 body.dark {
   background: #1a1a1a;
@@ -103,3 +138,9 @@ body.dark button {
 body.dark button:hover {
   background: #555;
 }
+body.dark .home-category-title { border-color: #333; color: #666; }
+body.dark .tool-card { background: #2a2a2a; border-color: #3a3a3a; }
+body.dark .tool-card:hover { border-color: #555; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+body.dark .tool-card-body strong { color: #e0e0e0; }
+body.dark .tool-card-body p { color: #888; }
+body.dark .tool-card-icon { color: #aaa; }
