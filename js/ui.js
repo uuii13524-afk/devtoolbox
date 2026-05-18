@@ -28,13 +28,12 @@ const UI = {
       .map(id => Registry.tools.find(t => t.id === id))
       .filter(Boolean)
       .slice(0, 5);
-
     const isSearching = keyword.length > 0;
     const usedIds = new Set([...fav.map(t => t.id), ...hist.map(t => t.id)]);
-
+  
     let html = `<button onclick="Router.go('home')">🏠 Home</button>
                 <button onclick="UI.toggleTheme()">🌓 Theme</button><hr/>`;
-
+  
     if (!isSearching) {
       if (fav.length) {
         html += '<div><b>★ Favorites</b></div>';
@@ -47,12 +46,32 @@ const UI = {
         html += '<hr/>';
       }
     }
-
+  
     const tools = Registry.tools.filter(t =>
       t.name.toLowerCase().includes(keyword.toLowerCase()) &&
       (isSearching || !usedIds.has(t.id))
     );
-    html += tools.map(t => this.toolButton(t)).join('');
+  
+    // カテゴリ別にグループ化して出力
+    const categories = {};
+    tools.forEach(t => {
+      const cat = t.category || 'Other';
+      if (!categories[cat]) categories[cat] = [];
+      categories[cat].push(t);
+    });
+  
+    const catEntries = Object.entries(categories);
+    catEntries.forEach(([cat, catTools], index) => {
+      if (!isSearching) {
+        html += `<div class="nav-category-label">${cat}</div>`;
+      }
+      html += catTools.map(t => this.toolButton(t)).join('');
+      // 最後のカテゴリ以外にだけhrを入れる
+      if (index < catEntries.length - 1) {
+        html += '<hr/>';
+      }
+    });
+  
     nav.innerHTML = html;
   },
 
