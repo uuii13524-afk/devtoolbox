@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Base Converter - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online number base converter. Convert between decimal, binary, hexadecimal, and octal instantly in your browser. No signup required.">
+  <meta name="keywords" content="number base converter, hex to decimal, binary to decimal, decimal to binary, octal converter, hexadecimal converter">
+  <link rel="canonical" href="https://devkitbox.xyz/number-base-converter.html">
+  <meta property="og:title" content="Number Base Converter - Dev Toolbox">
+  <meta property="og:description" content="Free online number base converter. Convert between decimal, binary, hexadecimal, and octal instantly in your browser. No signup required.">
+  <meta property="og:url" content="https://devkitbox.xyz/number-base-converter.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 8px; font-size: 1.8em; color: #f0f0f0; }
+    .lead { color: #999; margin: 0 0 24px; font-size: 0.92em; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Converter grid */
+    .converter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .base-card {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 18px 16px;
+      position: relative;
+    }
+    .base-card.active-input { border-color: #5b8dee; }
+    .base-label {
+      font-size: 0.72em;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #888;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .base-badge {
+      background: #2e2e2e;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 0.85em;
+      color: #aaa;
+      font-family: 'Courier New', monospace;
+    }
+    .base-input {
+      width: 100%;
+      font-family: 'Courier New', monospace;
+      font-size: 1.25em;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .base-input:focus { border-color: #5b8dee; }
+    .base-input.error { border-color: #e05050; color: #e07070; }
+    .base-hint {
+      font-size: 0.73em;
+      color: #555;
+      margin-top: 6px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: #2e2e2e;
+      color: #aaa;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 0.75em;
+      transition: background 0.1s, color 0.1s;
+    }
+    .copy-btn:hover { background: #3a3a3a; color: #eee; }
+    .copy-btn.copied { background: #1e4030; color: #5cb88a; border-color: #3a6050; }
+
+    /* Error banner */
+    .error-banner {
+      background: #2e1a1a;
+      border-left: 3px solid #e05050;
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      font-size: 0.9em;
+      color: #e07070;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-banner.visible { display: block; }
+
+    /* Result summary strip */
+    .summary-strip {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 0.85em;
+      color: #888;
+      line-height: 1.8;
+    }
+    .summary-strip span { color: #5b8dee; font-family: 'Courier New', monospace; }
+
+    /* Quick examples */
+    .examples { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+    .ex-btn {
+      background: #2e2e2e;
+      color: #bbb;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      padding: 5px 11px;
+      cursor: pointer;
+      font-size: 0.8em;
+      font-family: 'Courier New', monospace;
+    }
+    .ex-btn:hover { background: #3a3a3a; color: #eee; }
+
+    /* How-to steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    /* FAQ */
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    /* Related tools */
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 580px) {
+      .converter-grid { grid-template-columns: 1fr; }
+      .base-input { font-size: 1.05em; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>Number Base Converter</h1>
+  <p class="lead">Convert between decimal, binary, hexadecimal, and octal — instantly in your browser.</p>
+
+  <!-- Quick examples -->
+  <div class="examples">
+    <button class="ex-btn" onclick="setDecimal('255')">255</button>
+    <button class="ex-btn" onclick="setDecimal('16')">16</button>
+    <button class="ex-btn" onclick="setDecimal('42')">42</button>
+    <button class="ex-btn" onclick="setDecimal('1024')">1024</button>
+    <button class="ex-btn" onclick="setDecimal('65535')">65535</button>
+    <button class="ex-btn" onclick="setDecimal('4294967295')">4294967295</button>
+  </div>
+
+  <!-- Error banner -->
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- Converter -->
+  <div class="converter-grid">
+
+    <div class="base-card" id="card-dec">
+      <div class="base-label">
+        Decimal
+        <span class="base-badge">base 10</span>
+      </div>
+      <input class="base-input" id="inp-dec" type="text" placeholder="e.g. 255"
+             inputmode="numeric" autocomplete="off" spellcheck="false"
+             oninput="convert(this,'dec')" onfocus="highlight('dec')">
+      <div class="base-hint">Digits 0–9</div>
+      <button class="copy-btn" onclick="copyField('dec')">Copy</button>
+    </div>
+
+    <div class="base-card" id="card-bin">
+      <div class="base-label">
+        Binary
+        <span class="base-badge">base 2</span>
+      </div>
+      <input class="base-input" id="inp-bin" type="text" placeholder="e.g. 11111111"
+             autocomplete="off" spellcheck="false"
+             oninput="convert(this,'bin')" onfocus="highlight('bin')">
+      <div class="base-hint">Digits 0–1</div>
+      <button class="copy-btn" onclick="copyField('bin')">Copy</button>
+    </div>
+
+    <div class="base-card" id="card-hex">
+      <div class="base-label">
+        Hexadecimal
+        <span class="base-badge">base 16</span>
+      </div>
+      <input class="base-input" id="inp-hex" type="text" placeholder="e.g. FF"
+             autocomplete="off" spellcheck="false"
+             oninput="convert(this,'hex')" onfocus="highlight('hex')">
+      <div class="base-hint">Digits 0–9, letters A–F</div>
+      <button class="copy-btn" onclick="copyField('hex')">Copy</button>
+    </div>
+
+    <div class="base-card" id="card-oct">
+      <div class="base-label">
+        Octal
+        <span class="base-badge">base 8</span>
+      </div>
+      <input class="base-input" id="inp-oct" type="text" placeholder="e.g. 377"
+             autocomplete="off" spellcheck="false"
+             oninput="convert(this,'oct')" onfocus="highlight('oct')">
+      <div class="base-hint">Digits 0–7</div>
+      <button class="copy-btn" onclick="copyField('oct')">Copy</button>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-strip" id="summary">
+    Enter a number above to see conversions.
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Type a number into any of the four input fields (Decimal, Binary, Hex, or Octal).</li>
+    <li>All other fields update automatically as you type — no button press needed.</li>
+    <li>Click <strong>Copy</strong> on any field to copy that value to your clipboard.</li>
+    <li>Use the quick-example buttons at the top to load common values like 255, 1024, or 65535.</li>
+    <li>The summary strip at the bottom shows all four representations side by side for easy reference.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>Positional numeral systems use a base (radix) to represent numbers. <strong>Decimal (base 10)</strong> is what humans use daily. <strong>Binary (base 2)</strong> is the native language of computer hardware — every bit is a 0 or a 1. <strong>Hexadecimal (base 16)</strong> is widely used in programming for memory addresses, color codes (<code>#FF5733</code>), and binary data dumps because one hex digit represents exactly four bits. <strong>Octal (base 8)</strong> appears in Unix file permissions (<code>chmod 755</code>) and some legacy systems. This tool converts instantly between all four bases in your browser — no data is sent to any server.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Why is hex commonly used in programming?</h3>
+    <p>One hexadecimal digit maps exactly to 4 bits (a nibble), so a byte (8 bits) is always two hex digits. This makes hex far more compact and readable than binary when inspecting raw memory, color values, or network packets. For example, the byte <code>11111111</code> in binary is just <code>FF</code> in hex.</p>
+  </div>
+  <div class="faq">
+    <h3>What does the 0x prefix mean?</h3>
+    <p><code>0x</code> is the conventional C/C++/JavaScript prefix that marks a literal as hexadecimal. For example, <code>0xFF</code> equals decimal 255. This tool accepts values with or without the <code>0x</code> prefix in the hex field.</p>
+  </div>
+  <div class="faq">
+    <h3>How large a number can I convert?</h3>
+    <p>This tool uses JavaScript's <code>BigInt</code> for arbitrarily large integers, so you can safely convert numbers well beyond 32-bit or 64-bit limits — up to hundreds of digits. Floating-point (decimal) numbers are not supported; only integers.</p>
+  </div>
+
+  <!-- Related tools -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#hash">＃ Hash Generator</a>
+    <a href="index.html#base64">64 Base64 Encode/Decode</a>
+    <a href="index.html#color">🎨 Color Picker (HEX)</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const RADIX = { dec: 10, bin: 2, hex: 16, oct: 8 };
+
+let activeCard = null;
+
+function highlight(base) {
+  document.querySelectorAll('.base-card').forEach(c => c.classList.remove('active-input'));
+  document.getElementById('card-' + base).classList.add('active-input');
+  activeCard = base;
+}
+
+function convert(inputEl, sourceBase) {
+  const raw = inputEl.value.trim();
+  const errorEl = document.getElementById('errorBanner');
+
+  if (raw === '' || raw === '-') {
+    clearAll(sourceBase);
+    errorEl.classList.remove('visible');
+    document.getElementById('summary').textContent = 'Enter a number above to see conversions.';
+    return;
+  }
+
+  // Strip 0x prefix for hex
+  const cleanRaw = (sourceBase === 'hex') ? raw.replace(/^0x/i, '') : raw;
+
+  let value;
+  try {
+    value = BigInt(sourceBase === 'hex' ? '0x' + cleanRaw
+                 : sourceBase === 'bin' ? '0b' + cleanRaw
+                 : sourceBase === 'oct' ? '0o' + cleanRaw
+                 : cleanRaw);
+    if (value < 0n) throw new Error('Negative numbers are not supported');
+  } catch {
+    inputEl.classList.add('error');
+    errorEl.textContent = `"${raw}" is not a valid ${sourceBase === 'dec' ? 'decimal' : sourceBase === 'bin' ? 'binary' : sourceBase === 'hex' ? 'hexadecimal' : 'octal'} number.`;
+    errorEl.classList.add('visible');
+    clearAll(sourceBase);
+    document.getElementById('summary').textContent = 'Enter a number above to see conversions.';
+    return;
+  }
+
+  inputEl.classList.remove('error');
+  errorEl.classList.remove('visible');
+
+  const results = {
+    dec: value.toString(10),
+    bin: value.toString(2),
+    hex: value.toString(16).toUpperCase(),
+    oct: value.toString(8)
+  };
+
+  for (const [base, val] of Object.entries(results)) {
+    if (base !== sourceBase) {
+      document.getElementById('inp-' + base).value = val;
+      document.getElementById('inp-' + base).classList.remove('error');
+    }
+  }
+
+  document.getElementById('summary').innerHTML =
+    `Dec&nbsp;<span>${results.dec}</span>&nbsp;&nbsp;·&nbsp;&nbsp;` +
+    `Bin&nbsp;<span>${results.bin}</span>&nbsp;&nbsp;·&nbsp;&nbsp;` +
+    `Hex&nbsp;<span>${results.hex}</span>&nbsp;&nbsp;·&nbsp;&nbsp;` +
+    `Oct&nbsp;<span>${results.oct}</span>`;
+}
+
+function clearAll(exceptBase) {
+  ['dec', 'bin', 'hex', 'oct'].forEach(b => {
+    if (b !== exceptBase) {
+      document.getElementById('inp-' + b).value = '';
+      document.getElementById('inp-' + b).classList.remove('error');
+    }
+  });
+}
+
+function setDecimal(val) {
+  const el = document.getElementById('inp-dec');
+  el.value = val;
+  highlight('dec');
+  convert(el, 'dec');
+}
+
+function copyField(base) {
+  const val = document.getElementById('inp-' + base).value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.querySelector(`#card-${base} .copy-btn`);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+</script>
+</body>
+</html>

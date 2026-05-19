@@ -12,6 +12,7 @@
   { "id": "env-parser",            "name": ".env File Parser",          "category": "Dev",       "desc": "Parse .env files into a table, detect duplicates and export as JSON",      "icon": "⚙", "url": "env-parser.html" },
   { "id": "sql-formatter",          "name": "SQL Formatter",             "category": "Formatter", "desc": "Format and beautify SQL queries with keyword uppercasing and clean indentation",  "icon": "⊟", "url": "sql-formatter.html" },
   { "id": "text-diff",              "name": "Text Diff Checker",         "category": "Dev",       "desc": "Compare two texts side-by-side and highlight added, removed and changed lines",   "icon": "±", "url": "text-diff.html" },
+  { "id": "number-base-converter",  "name": "Number Base Converter",     "category": "Converter", "desc": "Convert between decimal, binary, hexadecimal and octal instantly in your browser", "icon": "⇄", "url": "number-base-converter.html" },
   { "id": "csv",              "name": "CSV Tool",             "category": "Data",      "desc": "Parse CSV files and view data as a sortable table",              "icon": "⊞" },
   { "id": "timestamp",        "name": "Timestamp Converter",  "category": "Utility",   "desc": "Convert Unix timestamps to human-readable dates and vice versa", "icon": "🕒" },
   { "id": "color",            "name": "Color Picker",         "category": "Design",    "desc": "Pick colors and convert between HEX, RGB and HSL formats",       "icon": "🎨" }
