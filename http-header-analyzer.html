@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP Header Analyzer - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online HTTP header analyzer. Paste HTTP response headers to check security settings, detect missing headers, get a security grade, and understand each header — all in your browser.">
+  <meta name="keywords" content="http header analyzer, http security headers checker, response header parser, HSTS checker, CSP analyzer, check http headers online">
+  <link rel="canonical" href="https://devkitbox.xyz/http-header-analyzer.html">
+  <meta property="og:title" content="HTTP Header Analyzer - Dev Toolbox">
+  <meta property="og:description" content="Free online HTTP header analyzer. Paste HTTP response headers to check security settings, detect missing headers, and get a security grade instantly in your browser.">
+  <meta property="og:url" content="https://devkitbox.xyz/http-header-analyzer.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 20px; font-size: 1.8em; color: #f0f0f0; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .input-area {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .input-label { font-size: 0.8em; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    textarea {
+      width: 100%;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      border: 1px solid #444;
+      border-radius: 5px;
+      padding: 12px 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 160px;
+      transition: border-color 0.15s;
+      line-height: 1.6;
+    }
+    textarea:focus { border-color: #5b8dee; }
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn {
+      background: #5b8dee;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 9px 20px;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+    }
+    .btn:hover { background: #4a7adc; }
+    .btn-secondary {
+      background: #2e2e2e;
+      color: #bbb;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+    .btn-secondary:hover { background: #3a3a3a; color: #eee; }
+
+    /* Score bar */
+    .score-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
+    }
+    .score-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8em; font-weight: bold;
+      flex-shrink: 0;
+    }
+    .grade-a { background: #1b3d1b; color: #5de05d; border: 2.5px solid #5de05d; }
+    .grade-b { background: #3d3b1b; color: #dce05d; border: 2.5px solid #dce05d; }
+    .grade-c { background: #3d2b1b; color: #e09f5d; border: 2.5px solid #e09f5d; }
+    .grade-f { background: #3d1b1b; color: #e05d5d; border: 2.5px solid #e05d5d; }
+    .score-info { flex: 1; }
+    .score-title { font-size: 1.1em; color: #e0e0e0; margin-bottom: 4px; }
+    .score-sub { font-size: 0.83em; color: #888; }
+
+    /* Security table */
+    .sec-table-wrap {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .sec-table { width: 100%; border-collapse: collapse; }
+    .sec-table th {
+      background: #2e2e2e; color: #888;
+      font-size: 0.73em; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 9px 14px; text-align: left;
+    }
+    .sec-table td { padding: 12px 14px; border-bottom: 1px solid #2a2a2a; vertical-align: top; }
+    .sec-table tr:last-child td { border-bottom: none; }
+    .hdr-name { font-family: 'Courier New', monospace; color: #5b8dee; font-size: 0.9em; }
+    .hdr-explain { font-size: 0.8em; color: #666; margin-top: 3px; line-height: 1.4; }
+    .status-ok   { color: #5de05d; font-weight: bold; }
+    .status-warn { color: #e0a05d; font-weight: bold; }
+    .status-bad  { color: #e05d5d; font-weight: bold; }
+    .note-text { font-size: 0.85em; color: #aaa; word-break: break-all; }
+
+    /* All headers */
+    .all-wrap {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .all-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    .all-table th {
+      background: #2e2e2e; color: #888;
+      font-size: 0.73em; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 9px 14px; text-align: left;
+    }
+    .all-table td { padding: 8px 14px; border-bottom: 1px solid #2a2a2a; vertical-align: top; word-break: break-all; }
+    .all-table tr:last-child td { border-bottom: none; }
+    .hn { font-family: 'Courier New', monospace; color: #5b8dee; white-space: nowrap; }
+    .hv { color: #c8c8c8; }
+
+    /* How-to steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 48px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.55;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code {
+      background: #2e2e2e; padding: 1px 6px; border-radius: 3px;
+      font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080;
+    }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424; border: 1px solid #3a3a3a; border-radius: 6px;
+      padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer {
+      margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e;
+      font-size: 0.83em; color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+    #results { display: none; }
+    .empty-note { padding: 16px; color: #666; font-style: italic; text-align: center; }
+
+    @media (max-width: 600px) {
+      .score-section { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .sec-table th:last-child, .sec-table td:last-child { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>HTTP Header Analyzer</h1>
+
+  <!-- Tool body -->
+  <div class="input-area">
+    <div class="input-label">Paste HTTP Response Headers</div>
+    <textarea id="headerInput" placeholder="HTTP/1.1 200 OK&#10;Content-Type: text/html; charset=utf-8&#10;Strict-Transport-Security: max-age=31536000; includeSubDomains&#10;X-Frame-Options: DENY&#10;X-Content-Type-Options: nosniff&#10;..." spellcheck="false"></textarea>
+    <div class="btn-row">
+      <button class="btn" onclick="analyzeHeaders()">Analyze</button>
+      <button class="btn-secondary" onclick="loadExample()">Load Example</button>
+      <button class="btn-secondary" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="score-section">
+      <div class="score-circle" id="scoreCircle">A</div>
+      <div class="score-info">
+        <div class="score-title" id="scoreTitle">Security Grade</div>
+        <div class="score-sub" id="scoreSub"></div>
+      </div>
+    </div>
+
+    <h2>Security Header Analysis</h2>
+    <div class="sec-table-wrap">
+      <table class="sec-table">
+        <thead>
+          <tr>
+            <th style="width:36%">Header</th>
+            <th style="width:8%">Status</th>
+            <th>Value / Notes</th>
+          </tr>
+        </thead>
+        <tbody id="secTableBody"></tbody>
+      </table>
+    </div>
+
+    <h2>All Parsed Headers</h2>
+    <div class="all-wrap">
+      <table class="all-table">
+        <thead><tr><th style="width:35%">Name</th><th>Value</th></tr></thead>
+        <tbody id="allHeadersBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Open your browser DevTools (F12) → <strong>Network</strong> tab, reload the page, and click the main HTML request.</li>
+    <li>Find the <strong>Response Headers</strong> section and copy all the header lines to your clipboard.</li>
+    <li>Paste them into the textarea above and click <strong>Analyze</strong>.</li>
+    <li>Review your Security Grade and the color-coded security header checklist.</li>
+    <li>Fix any red (missing) or orange (misconfigured) headers in your server, CDN, or framework settings.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>HTTP response headers instruct browsers how to handle your page — including caching, content types, and critically, security policies. Headers like <code>Strict-Transport-Security</code> force HTTPS connections, <code>Content-Security-Policy</code> restricts which scripts can execute (blocking XSS), <code>X-Frame-Options</code> prevents clickjacking, and <code>X-Content-Type-Options</code> stops MIME sniffing attacks. This tool parses any raw HTTP header block you paste and gives you an instant security analysis with explanations — entirely in your browser, with no data sent to any server.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>How do I copy my HTTP response headers?</h3>
+    <p>Open DevTools with F12, go to the <strong>Network</strong> tab, reload the page, click the main document request, then scroll to the <strong>Response Headers</strong> section. In Chrome you can right-click the request and choose "Copy → Copy response headers". Alternatively, use <code>curl -I https://yoursite.com</code> in a terminal.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the most important security header to add?</h3>
+    <p><code>Content-Security-Policy</code> (CSP) is the most powerful, as it can prevent XSS attacks by controlling which scripts and resources browsers may load. <code>Strict-Transport-Security</code> (HSTS) is equally critical for any site served over HTTPS — without it, browsers may silently accept HTTP downgrade attacks.</p>
+  </div>
+  <div class="faq">
+    <h3>Why is <code>X-XSS-Protection</code> shown as a warning even when present?</h3>
+    <p>The <code>X-XSS-Protection</code> header activated an old browser XSS filter that has been removed from modern Chrome, Edge, and Firefox. It is no longer effective and has even been shown to introduce new vulnerabilities. It is listed here for completeness, but a proper <code>Content-Security-Policy</code> is the correct modern replacement.</p>
+  </div>
+
+  <!-- Related tools -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#jwt">🔑 JWT Decoder</a>
+    <a href="index.html#hash"># Hash Generator</a>
+    <a href="env-parser.html">⚙ .env File Parser</a>
+    <a href="js-error-decoder.html">⚠ JS Error Decoder</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const SECURITY_DEFS = [
+  {
+    name: 'Strict-Transport-Security',
+    weight: 2,
+    explain: 'Forces browsers to use HTTPS, preventing SSL stripping and man-in-the-middle attacks.',
+    check(val) {
+      if (!val) return { status: 'bad', note: 'Missing — browsers may connect over plain HTTP' };
+      const m = val.match(/max-age\s*=\s*(\d+)/i);
+      if (!m) return { status: 'warn', note: 'No max-age directive found' };
+      const age = parseInt(m[1]);
+      if (age < 31536000) return { status: 'warn', note: `max-age ${age} is less than 1 year (31536000 recommended)` };
+      const extras = [
+        val.toLowerCase().includes('includesubdomains') ? 'includeSubDomains' : '',
+        val.toLowerCase().includes('preload') ? 'preload' : ''
+      ].filter(Boolean).join(', ');
+      return { status: 'ok', note: `max-age=${age}${extras ? ' · ' + extras : ''}` };
+    }
+  },
+  {
+    name: 'Content-Security-Policy',
+    weight: 2,
+    explain: "Restricts which sources browsers may load scripts, styles, and images from, mitigating XSS attacks.",
+    check(val) {
+      if (!val) return { status: 'bad', note: 'Missing — no XSS content restrictions enforced' };
+      const issues = [];
+      if (val.includes("'unsafe-inline'")) issues.push("'unsafe-inline' weakens script protection");
+      if (val.includes("'unsafe-eval'"))   issues.push("'unsafe-eval' allows dynamic code execution");
+      if (issues.length) return { status: 'warn', note: issues.join(' · ') };
+      return { status: 'ok', note: val.length > 70 ? val.slice(0, 70) + '…' : val };
+    }
+  },
+  {
+    name: 'X-Frame-Options',
+    weight: 1,
+    explain: 'Prevents your page from being embedded in iframes on other sites, blocking clickjacking attacks.',
+    check(val) {
+      if (!val) return { status: 'bad', note: 'Missing — page can be framed by any site (clickjacking risk)' };
+      const v = val.trim().toUpperCase();
+      if (v === 'DENY' || v === 'SAMEORIGIN') return { status: 'ok', note: val };
+      return { status: 'warn', note: `Unexpected value "${val}" — use DENY or SAMEORIGIN` };
+    }
+  },
+  {
+    name: 'X-Content-Type-Options',
+    weight: 1,
+    explain: 'Prevents browsers from guessing MIME types (sniffing), which attackers can exploit for XSS.',
+    check(val) {
+      if (!val) return { status: 'bad', note: 'Missing — MIME sniffing attacks are possible' };
+      if (val.trim().toLowerCase() === 'nosniff') return { status: 'ok', note: 'nosniff' };
+      return { status: 'warn', note: `Expected "nosniff", got "${val}"` };
+    }
+  },
+  {
+    name: 'Referrer-Policy',
+    weight: 1,
+    explain: 'Controls how much referrer information is sent when the user navigates away from your site.',
+    check(val) {
+      if (!val) return { status: 'bad', note: 'Missing — full URL may be leaked to third-party sites' };
+      const safe = ['no-referrer', 'strict-origin', 'strict-origin-when-cross-origin', 'same-origin', 'no-referrer-when-downgrade'];
+      if (safe.includes(val.trim().toLowerCase())) return { status: 'ok', note: val };
+      return { status: 'warn', note: `"${val}" — consider strict-origin-when-cross-origin` };
+    }
+  },
+  {
+    name: 'Permissions-Policy',
+    weight: 1,
+    explain: 'Controls which browser features (camera, microphone, geolocation, etc.) are allowed on your page.',
+    check(val) {
+      if (!val) return { status: 'warn', note: 'Missing — all browser feature APIs use browser defaults' };
+      return { status: 'ok', note: val.length > 70 ? val.slice(0, 70) + '…' : val };
+    }
+  },
+  {
+    name: 'X-XSS-Protection',
+    weight: 0,
+    explain: 'Legacy header for old browser XSS filters. Removed from modern browsers; use CSP instead.',
+    check(val) {
+      if (!val) return { status: 'warn', note: 'Missing — legacy header, not needed if CSP is set' };
+      return { status: 'ok', note: val };
+    }
+  }
+];
+
+const EXAMPLE = `HTTP/2 200
+content-type: text/html; charset=utf-8
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-frame-options: DENY
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+cache-control: no-store
+server: cloudflare
+cf-ray: 8a1b2c3d4e5f-NRT
+content-encoding: br`;
+
+function parseHeaders(raw) {
+  const map = {};
+  for (const line of raw.trim().split('\n')) {
+    const clean = line.replace(/^[<>]\s*/, '').trim();
+    const colon = clean.indexOf(':');
+    if (colon < 1) continue;
+    const name  = clean.slice(0, colon).trim();
+    const value = clean.slice(colon + 1).trim();
+    if (name && !/^HTTP\//i.test(name)) {
+      map[name.toLowerCase()] = { original: name, value };
+    }
+  }
+  return map;
+}
+
+function analyzeHeaders() {
+  const raw = document.getElementById('headerInput').value;
+  if (!raw.trim()) return;
+
+  const headers = parseHeaders(raw);
+  document.getElementById('results').style.display = 'block';
+
+  let score = 0, maxScore = 0;
+  const rows = SECURITY_DEFS.map(def => {
+    const h   = headers[def.name.toLowerCase()];
+    const val = h ? h.value : null;
+    const res = def.check(val);
+    maxScore += def.weight * 10;
+    if (res.status === 'ok')   score += def.weight * 10;
+    else if (res.status === 'warn') score += def.weight * 5;
+    return { def, status: res.status, note: res.note };
+  });
+
+  const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+  let grade, cls;
+  if (pct >= 85)      { grade = 'A'; cls = 'grade-a'; }
+  else if (pct >= 65) { grade = 'B'; cls = 'grade-b'; }
+  else if (pct >= 45) { grade = 'C'; cls = 'grade-c'; }
+  else                { grade = 'F'; cls = 'grade-f'; }
+
+  const circle = document.getElementById('scoreCircle');
+  circle.textContent = grade;
+  circle.className   = 'score-circle ' + cls;
+
+  const badCount  = rows.filter(r => r.status === 'bad').length;
+  const warnCount = rows.filter(r => r.status === 'warn').length;
+  document.getElementById('scoreTitle').textContent = `Security Grade: ${grade}  (${pct} / 100)`;
+  document.getElementById('scoreSub').textContent =
+    badCount  > 0 ? `${badCount} missing header${badCount  > 1 ? 's' : ''}, ${warnCount} warning${warnCount !== 1 ? 's' : ''}` :
+    warnCount > 0 ? `${warnCount} header${warnCount > 1 ? 's' : ''} need attention` :
+                    'All key security headers are present ✓';
+
+  document.getElementById('secTableBody').innerHTML = rows.map(({ def, status, note }) => {
+    const icon = status === 'ok' ? '✓' : status === 'warn' ? '⚠' : '✗';
+    const cls2 = status === 'ok' ? 'status-ok' : status === 'warn' ? 'status-warn' : 'status-bad';
+    return `<tr>
+      <td><div class="hdr-name">${def.name}</div><div class="hdr-explain">${def.explain}</div></td>
+      <td><span class="${cls2}">${icon}</span></td>
+      <td><span class="note-text">${note}</span></td>
+    </tr>`;
+  }).join('');
+
+  const keys = Object.values(headers);
+  document.getElementById('allHeadersBody').innerHTML = keys.length
+    ? keys.map(h => `<tr><td class="hn">${h.original}</td><td class="hv">${h.value}</td></tr>`).join('')
+    : '<tr><td colspan="2" class="empty-note">No headers found — check the format (Name: Value, one per line)</td></tr>';
+}
+
+function loadExample() {
+  document.getElementById('headerInput').value = EXAMPLE;
+  analyzeHeaders();
+}
+
+function clearAll() {
+  document.getElementById('headerInput').value = '';
+  document.getElementById('results').style.display = 'none';
+}
+</script>
+</body>
+</html>

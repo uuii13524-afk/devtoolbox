@@ -74,6 +74,19 @@
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://devkitbox.xyz/http-header-analyzer.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://devkitbox.xyz/js-error-decoder.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Snippets -->
   <url>
     <loc>https://devkitbox.xyz/snippets/linux-grep.html</loc>
