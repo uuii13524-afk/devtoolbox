@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Minifier &amp; Beautifier - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online CSS minifier and beautifier. Minify CSS to reduce file size, or beautify compressed CSS for readability — 100% browser-based, no data sent to servers.">
+  <meta name="keywords" content="css minifier, minify css online, css beautifier, css formatter, compress css, css optimizer">
+  <link rel="canonical" href="https://devkitbox.xyz/css-minifier.html">
+  <meta property="og:title" content="CSS Minifier &amp; Beautifier - Dev Toolbox">
+  <meta property="og:description" content="Minify or beautify CSS instantly in your browser. See size savings and copy the result with one click.">
+  <meta property="og:url" content="https://devkitbox.xyz/css-minifier.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 1060px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 20px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 6px 13px;
+      cursor: pointer;
+      font-size: 0.84em;
+    }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary { background: #5b8dee; color: #fff; border-color: #5b8dee; }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+    .btn-accent { background: #9c6dee; color: #fff; border-color: #9c6dee; }
+    .btn-accent:hover { background: #8c5dde; border-color: #8c5dde; }
+    .sep { width: 1px; height: 24px; background: #333; margin: 0 4px; }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      background: #1e1e1e;
+      border: 1px solid #2e2e2e;
+      border-radius: 6px;
+      padding: 9px 16px;
+      font-size: 0.82em;
+      color: #888;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .stat-item strong { color: #ccc; }
+    .stat-savings { color: #4caf50; font-weight: bold; }
+
+    /* Main grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .panel {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #333;
+      font-size: 0.78em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid #3a3a3a;
+      color: #888;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .copy-btn:hover { color: #ccc; border-color: #555; }
+    textarea {
+      width: 100%;
+      height: 360px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.84em;
+      line-height: 1.55;
+      resize: vertical;
+    }
+    textarea::placeholder { color: #444; }
+
+    /* Mode indicator on output panel */
+    .mode-badge {
+      font-size: 0.8em;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: normal;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .mode-badge.minify { background: #1e3a1e; color: #4caf50; border: 1px solid #2e4e2e; }
+    .mode-badge.beautify { background: #1e2a4e; color: #5b8dee; border: 1px solid #2e3a6e; }
+
+    /* Steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 680px) {
+      .main-grid { grid-template-columns: 1fr; }
+      textarea { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="index.html">← Dev Toolbox</a></div>
+
+  <h1>CSS Minifier &amp; Beautifier</h1>
+  <p class="tagline">Minify CSS to reduce file size, or beautify compressed CSS to make it readable — runs entirely in your browser.</p>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="runMinify()">&#9654; Minify</button>
+    <button class="btn btn-accent" onclick="runBeautify()">&#10024; Beautify</button>
+    <div class="sep"></div>
+    <button class="btn" onclick="loadSample()">Load Sample</button>
+    <button class="btn" onclick="clearAll()">Clear</button>
+    <button class="btn" onclick="swapPanels()">&#8646; Swap</button>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <span class="stat-item">Input: <strong id="statIn">—</strong></span>
+    <span class="stat-item">Output: <strong id="statOut">—</strong></span>
+    <span class="stat-item">Saved: <strong class="stat-savings" id="statSaved">—</strong></span>
+  </div>
+
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <span>CSS Input</span>
+        <button class="copy-btn" onclick="copyPanel('cssInput', this)">Copy</button>
+      </div>
+      <textarea id="cssInput" placeholder="Paste your CSS here..." spellcheck="false"></textarea>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span>Output &nbsp;<span class="mode-badge" id="modeBadge"></span></span>
+        <button class="copy-btn" onclick="copyPanel('cssOutput', this)">Copy</button>
+      </div>
+      <textarea id="cssOutput" placeholder="Minified or beautified CSS will appear here..." spellcheck="false" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Paste your CSS code into the <strong>Input</strong> panel on the left (or click <strong>Load Sample</strong> to try it out).</li>
+    <li>Click <strong>Minify</strong> to strip comments, collapse whitespace, and produce the smallest valid CSS possible.</li>
+    <li>Click <strong>Beautify</strong> to format minified or messy CSS with proper indentation and line breaks for readability.</li>
+    <li>Check the <strong>Stats bar</strong> to see the original size, output size, and how many bytes you saved.</li>
+    <li>Click <strong>Copy</strong> on the Output panel to copy the result to your clipboard.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>CSS minification reduces stylesheet file size by removing all characters that are not required for correct rendering: whitespace, line breaks, comments, and redundant semicolons. Smaller CSS files load faster, improve Lighthouse scores, and reduce bandwidth costs — especially important on mobile connections. The beautifier does the reverse: it takes minified or poorly formatted CSS and adds consistent indentation, newlines between rules, and clear structure so the code is easy to read and edit. Both operations run entirely in your browser using JavaScript; your code is never uploaded to any server.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Will minifying break my CSS?</h3>
+    <p>For the vast majority of stylesheets, no. This tool removes comments, collapses whitespace, and drops trailing semicolons before closing braces — all of which are safe operations. Edge cases like CSS Hacks using comment syntax (<code>/*\*/</code>) or some IE-specific tricks may not survive minification, but these are rarely used in modern development.</p>
+  </div>
+  <div class="faq">
+    <h3>Should I minify CSS in production?</h3>
+    <p>Yes — serving minified CSS is a standard web performance best practice. A stylesheet that compresses from 40 KB to 28 KB saves 12 KB per visitor. At scale, this reduces both server bandwidth and perceived page load time. For development, keep the readable source file; deploy the minified version, ideally also served with gzip or Brotli compression.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the difference between minifying and gzip compression?</h3>
+    <p>They are complementary steps. Minification removes structurally unnecessary characters before the file is sent. Gzip (or Brotli) is HTTP transfer compression that the server applies automatically; the browser decompresses it on arrival. Applying both typically gives the best result: minify first, then let your server gzip the result.</p>
+  </div>
+
+  <!-- Related -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#json">{ } JSON Formatter</a>
+    <a href="sql-formatter.html">&#8863; SQL Formatter</a>
+    <a href="markdown-preview.html">&#9998; Markdown Preview</a>
+  </div>
+
+  <footer>
+    <a href="index.html">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+// ── Minifier ──────────────────────────────────────────────────────────────────
+function minifyCSS(input) {
+  let css = input;
+  // Remove block comments
+  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  // Normalize line endings
+  css = css.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  // Collapse horizontal whitespace to single space
+  css = css.replace(/[ \t]+/g, ' ');
+  // Remove spaces at the start/end of lines
+  css = css.replace(/^ /gm, '').replace(/ $/gm, '');
+  // Remove blank lines
+  css = css.replace(/\n{2,}/g, '\n');
+  // Join lines
+  css = css.replace(/\n/g, '');
+  // Remove spaces around structural characters
+  css = css.replace(/\s*\{\s*/g, '{');
+  css = css.replace(/\s*\}\s*/g, '}');
+  css = css.replace(/\s*;\s*/g, ';');
+  css = css.replace(/\s*,\s*/g, ',');
+  // Remove trailing semicolon before closing brace
+  css = css.replace(/;}/g, '}');
+  return css.trim();
+}
+
+// ── Beautifier ─────────────────────────────────────────────────────────────────
+function beautifyCSS(input) {
+  const min = minifyCSS(input);
+  let out = '';
+  let depth = 0;
+
+  for (let i = 0; i < min.length; i++) {
+    const ch = min[i];
+    if (ch === '{') {
+      out += ' {\n' + indent(depth + 1);
+      depth++;
+    } else if (ch === '}') {
+      depth = Math.max(0, depth - 1);
+      out = out.trimEnd();
+      out += '\n' + indent(depth) + '}\n\n';
+    } else if (ch === ';') {
+      out += ';\n' + indent(depth);
+    } else {
+      out += ch;
+    }
+  }
+  return out.trim();
+}
+
+function indent(n) { return '  '.repeat(n); }
+
+// ── Size helpers ───────────────────────────────────────────────────────────────
+function byteSize(str) { return new TextEncoder().encode(str).length; }
+
+function fmtBytes(n) {
+  if (n < 1024) return n + ' B';
+  return (n / 1024).toFixed(1) + ' KB';
+}
+
+function updateStats(inStr, outStr) {
+  const inB  = byteSize(inStr);
+  const outB = byteSize(outStr);
+  const saved = inB - outB;
+  const pct   = inB > 0 ? Math.round((saved / inB) * 100) : 0;
+  document.getElementById('statIn').textContent  = fmtBytes(inB);
+  document.getElementById('statOut').textContent = fmtBytes(outB);
+  document.getElementById('statSaved').textContent =
+    saved > 0 ? fmtBytes(saved) + ' (' + pct + '%)' : saved < 0 ? '+' + fmtBytes(-saved) : '0 B';
+}
+
+function setBadge(mode) {
+  const badge = document.getElementById('modeBadge');
+  if (mode === 'minify') {
+    badge.textContent = 'Minified';
+    badge.className = 'mode-badge minify';
+  } else {
+    badge.textContent = 'Beautified';
+    badge.className = 'mode-badge beautify';
+  }
+}
+
+// ── Actions ────────────────────────────────────────────────────────────────────
+function runMinify() {
+  const input = document.getElementById('cssInput').value;
+  if (!input.trim()) return;
+  const result = minifyCSS(input);
+  document.getElementById('cssOutput').value = result;
+  setBadge('minify');
+  updateStats(input, result);
+}
+
+function runBeautify() {
+  const input = document.getElementById('cssInput').value;
+  if (!input.trim()) return;
+  const result = beautifyCSS(input);
+  document.getElementById('cssOutput').value = result;
+  setBadge('beautify');
+  updateStats(input, result);
+}
+
+function clearAll() {
+  document.getElementById('cssInput').value  = '';
+  document.getElementById('cssOutput').value = '';
+  document.getElementById('statIn').textContent   = '—';
+  document.getElementById('statOut').textContent  = '—';
+  document.getElementById('statSaved').textContent = '—';
+  document.getElementById('modeBadge').textContent = '';
+  document.getElementById('modeBadge').className  = 'mode-badge';
+}
+
+function swapPanels() {
+  const inp = document.getElementById('cssInput');
+  const out = document.getElementById('cssOutput');
+  const tmp = inp.value;
+  inp.value = out.value;
+  out.value = tmp;
+}
+
+function copyPanel(id, btn) {
+  const val = document.getElementById(id).value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+const SAMPLE = `/* Base styles */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333333;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #1a1a2e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #ffffff;
+}
+
+/* Navigation */
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: #ffffff;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #5b8dee;
+  color: #ffffff;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #4a7dde;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}`;
+
+function loadSample() {
+  document.getElementById('cssInput').value = SAMPLE;
+  runMinify();
+}
+</script>
+</body>
+</html>
