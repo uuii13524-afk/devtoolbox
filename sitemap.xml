@@ -112,6 +112,19 @@
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://devkitbox.xyz/lorem-ipsum-generator.html</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://devkitbox.xyz/chmod-calculator.html</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Snippets -->
   <url>
     <loc>https://devkitbox.xyz/snippets/linux-grep.html</loc>
