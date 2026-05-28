@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chmod Calculator - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online chmod calculator. Click checkboxes to set Unix/Linux file permissions and instantly get the octal code (e.g. 755, 644) and symbolic notation. Includes common permission presets.">
+  <meta name="keywords" content="chmod calculator, unix permissions calculator, chmod 755, file permission calculator, linux chmod, octal permissions, unix file permissions">
+  <link rel="canonical" href="https://devkitbox.xyz/chmod-calculator.html">
+  <meta property="og:title" content="Chmod Calculator - Dev Toolbox">
+  <meta property="og:description" content="Visual Unix/Linux chmod permission calculator. Check boxes to build permissions, get octal and symbolic notation instantly.">
+  <meta property="og:url" content="https://devkitbox.xyz/chmod-calculator.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 28px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Permission grid */
+    .perm-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 20px;
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .perm-table th {
+      background: #2a2a2a;
+      padding: 11px 12px;
+      font-size: 0.78em;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #888;
+      font-weight: normal;
+      border-bottom: 1px solid #333;
+    }
+    .perm-table td {
+      padding: 12px;
+      border-bottom: 1px solid #2e2e2e;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .perm-table tr:last-child td { border-bottom: none; }
+    .perm-table .row-label {
+      text-align: left;
+      font-weight: bold;
+      color: #ccc;
+      padding-left: 16px;
+      font-size: 0.9em;
+    }
+    .perm-table .row-label span {
+      display: block;
+      font-size: 0.77em;
+      font-weight: normal;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* Custom checkbox */
+    .perm-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .perm-check input[type=checkbox] {
+      width: 18px; height: 18px;
+      accent-color: #5b8dee;
+      cursor: pointer;
+    }
+    .perm-check .bit-val {
+      font-size: 0.75em;
+      color: #555;
+      font-family: monospace;
+    }
+
+    /* Result display */
+    .result-box {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+    }
+    .result-item { display: flex; flex-direction: column; gap: 4px; }
+    .result-item .result-label {
+      font-size: 0.75em;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #666;
+    }
+    .result-item .result-value {
+      font-family: 'Courier New', monospace;
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #5b8dee;
+      letter-spacing: 0.05em;
+    }
+    .result-item .result-value.symbolic { font-size: 1.15em; color: #9c6dee; }
+    .result-item .result-value.command { font-size: 1em; color: #4caf50; }
+    .copy-result {
+      margin-left: auto;
+      background: none;
+      border: 1px solid #3a3a3a;
+      color: #888;
+      border-radius: 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.84em;
+    }
+    .copy-result:hover { color: #ccc; border-color: #555; }
+
+    /* Explanation bar */
+    .explain-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .explain-chip {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.83em;
+      color: #bbb;
+    }
+    .explain-chip strong { color: #fff; }
+    .explain-chip.warn { border-color: #664400; color: #ffa040; }
+
+    /* Presets */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .preset-btn {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px 14px;
+      cursor: pointer;
+      text-align: left;
+      color: #ccc;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .preset-btn:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    .preset-btn .pcode {
+      font-family: 'Courier New', monospace;
+      font-size: 1.05em;
+      color: #5b8dee;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .preset-btn .pdesc { font-size: 0.78em; color: #666; }
+
+    /* Steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 600px) {
+      .result-box { gap: 16px; }
+      .perm-table th, .perm-table td { padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+
+  <h1>Chmod Calculator</h1>
+  <p class="tagline">Click checkboxes to set Unix/Linux file permissions — get the octal code and chmod command instantly.</p>
+
+  <!-- Permission table -->
+  <table class="perm-table" id="permTable">
+    <thead>
+      <tr>
+        <th style="text-align:left; padding-left:16px;">Entity</th>
+        <th>Read (r)</th>
+        <th>Write (w)</th>
+        <th>Execute (x)</th>
+        <th>Octal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-label">Owner <span>The file's owner</span></td>
+        <td><label class="perm-check"><input type="checkbox" id="ur" onchange="update()"><span class="bit-val">4</span></label></td>
+        <td><label class="perm-check"><input type="checkbox" id="uw" onchange="update()"><span class="bit-val">2</span></label></td>
+        <td><label class="perm-check"><input type="checkbox" id="ux" onchange="update()"><span class="bit-val">1</span></label></td>
+        <td><span id="uOct" style="font-family:monospace; color:#5b8dee; font-size:1.1em;">0</span></td>
+      </tr>
+      <tr>
+        <td class="row-label">Group <span>Users in the file's group</span></td>
+        <td><label class="perm-check"><input type="checkbox" id="gr" onchange="update()"><span class="bit-val">4</span></label></td>
+        <td><label class="perm-check"><input type="checkbox" id="gw" onchange="update()"><span class="bit-val">2</span></label></td>
+        <td><label class="perm-check"><input type="checkbox" id="gx" onchange="update()"><span class="bit-val">1</span></label></td>
+        <td><span id="gOct" style="font-family:monospace; color:#5b8dee; font-size:1.1em;">0</span></td>
+      </tr>
+      <tr>
+        <td class="row-label">Others <span>Everyone else</span></td>
+        <td><label class="perm-check"><input type="checkbox" id="or" onchange="update()"><span class="bit-val">4</span></label></td>
+        <td><label class="perm-check"><input type="checkbox" id="ow" onchange="update()"><span class="bit-val">2</span></label></td>
+        <td><label class="perm-check"><input type="checkbox" id="ox" onchange="update()"><span class="bit-val">1</span></label></td>
+        <td><span id="oOct" style="font-family:monospace; color:#5b8dee; font-size:1.1em;">0</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Result -->
+  <div class="result-box">
+    <div class="result-item">
+      <div class="result-label">Octal</div>
+      <div class="result-value" id="resOctal">000</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">Symbolic</div>
+      <div class="result-value symbolic" id="resSymbolic">---------</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">Command</div>
+      <div class="result-value command" id="resCommand">chmod 000 &lt;file&gt;</div>
+    </div>
+    <button class="copy-result" onclick="copyCommand()">Copy command</button>
+  </div>
+
+  <!-- Explanation chips -->
+  <div class="explain-bar" id="explainBar"></div>
+
+  <!-- Presets -->
+  <h2>Common Permission Presets</h2>
+  <div class="preset-grid">
+    <button class="preset-btn" onclick="applyPreset(6,4,4)">
+      <span class="pcode">644</span>
+      <span class="pdesc">Standard file — owner read/write, others read</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(7,5,5)">
+      <span class="pcode">755</span>
+      <span class="pdesc">Executable / directory — owner full, others r-x</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(7,0,0)">
+      <span class="pcode">700</span>
+      <span class="pdesc">Private script — only owner can read/write/execute</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(6,0,0)">
+      <span class="pcode">600</span>
+      <span class="pdesc">SSH key / private file — owner read/write only</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(6,6,4)">
+      <span class="pcode">664</span>
+      <span class="pdesc">Shared file — owner and group read/write</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(7,7,5)">
+      <span class="pcode">775</span>
+      <span class="pdesc">Shared directory — owner and group full, others r-x</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(7,7,7)">
+      <span class="pcode">777</span>
+      <span class="pdesc warn">⚠ World writable — everyone full access (risky)</span>
+    </button>
+    <button class="preset-btn" onclick="applyPreset(4,4,4)">
+      <span class="pcode">444</span>
+      <span class="pdesc">Read-only for everyone</span>
+    </button>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Check the <strong>Read</strong>, <strong>Write</strong>, and <strong>Execute</strong> boxes for <strong>Owner</strong>, <strong>Group</strong>, and <strong>Others</strong>.</li>
+    <li>The <strong>Octal</strong> column shows the value for each row (sum of 4+2+1 for enabled bits).</li>
+    <li>The <strong>Result</strong> panel shows the combined octal code, symbolic notation, and the ready-to-run <code>chmod</code> command.</li>
+    <li>Or click one of the <strong>Common Presets</strong> to jump to a well-known permission configuration.</li>
+    <li>Click <strong>Copy command</strong> to paste the chmod command into your terminal.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>Unix and Linux file permissions control who can read, write, or execute a file. Each file has three sets of permissions: for the <strong>owner</strong>, the <strong>group</strong>, and <strong>others</strong> (everyone else). Each set is represented by three bits — read (4), write (2), and execute (1) — which are summed to produce a single digit. Three digits together form the octal code, e.g. <code>755</code> means owner has 7 (4+2+1 = rwx), group has 5 (4+1 = r-x), and others have 5 (r-x). The symbolic notation uses letters (<code>r</code>, <code>w</code>, <code>x</code>, <code>-</code>) in the format used by <code>ls -l</code>. All calculation happens locally in your browser — nothing is sent to any server.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>What does chmod 755 mean?</h3>
+    <p><code>chmod 755</code> sets permissions to <code>rwxr-xr-x</code>. The owner can read, write, and execute the file. The group and others can only read and execute it (not write). This is the standard permission for web server scripts, public executables, and directories you want everyone to traverse.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the difference between octal and symbolic notation?</h3>
+    <p>Both describe the same permissions in different formats. Octal notation uses three digits (e.g. <code>755</code>), where each digit is the sum of enabled bits (read=4, write=2, execute=1). Symbolic notation uses a 9-character string like <code>rwxr-xr-x</code>, showing explicit letters for enabled permissions and <code>-</code> for disabled ones. The <code>chmod</code> command accepts both formats.</p>
+  </div>
+  <div class="faq">
+    <h3>Why is chmod 777 considered dangerous?</h3>
+    <p><code>777</code> gives all users — including those not on your system who access the file via a web server or shared service — full read, write, and execute access. Any process on the system can modify or delete the file. For web-accessible files this creates a serious security risk, as a compromised web process could overwrite or execute arbitrary content. Use the minimum permissions necessary for your use case.</p>
+  </div>
+
+  <!-- Related -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="http-header-analyzer.html">&#8801; HTTP Header Analyzer</a>
+    <a href="robots-txt-validator.html">🤖 robots.txt Validator</a>
+    <a href="index.html#hash"># Hash Generator</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+function getBit(id) { return document.getElementById(id).checked ? 1 : 0; }
+function setBits(id, r, w, x) {
+  document.getElementById(id + 'r').checked = !!(r & 4);
+  document.getElementById(id + 'w').checked = !!(r & 2);
+  document.getElementById(id + 'x').checked = !!(r & 1);
+}
+
+function calcOctal(r, w, x) {
+  return (getBit(r) * 4) + (getBit(w) * 2) + getBit(x);
+}
+
+function toSymbol(r, w, x, id) {
+  return (getBit(id+'r') ? 'r' : '-') +
+         (getBit(id+'w') ? 'w' : '-') +
+         (getBit(id+'x') ? 'x' : '-');
+}
+
+function update() {
+  const uO = calcOctal('ur','uw','ux');
+  const gO = calcOctal('gr','gw','gx');
+  const oO = calcOctal('or','ow','ox');
+
+  document.getElementById('uOct').textContent = uO;
+  document.getElementById('gOct').textContent = gO;
+  document.getElementById('oOct').textContent = oO;
+
+  const octal = '' + uO + gO + oO;
+  const sym = toSymbol('ur','uw','ux','u') + toSymbol('gr','gw','gx','g') + toSymbol('or','ow','ox','o');
+  const cmd = 'chmod ' + octal + ' <file>';
+
+  document.getElementById('resOctal').textContent  = octal;
+  document.getElementById('resSymbolic').textContent = sym;
+  document.getElementById('resCommand').textContent  = cmd;
+
+  renderExplain(uO, gO, oO, octal);
+}
+
+function renderExplain(uO, gO, oO, octal) {
+  const bar = document.getElementById('explainBar');
+  const chips = [];
+
+  function desc(n, entity) {
+    const r = n & 4, w = n & 2, x = n & 1;
+    if (n === 0) return entity + ': no permissions';
+    const parts = [];
+    if (r) parts.push('read');
+    if (w) parts.push('write');
+    if (x) parts.push('execute');
+    return entity + ': ' + parts.join(' + ');
+  }
+
+  chips.push('<div class="explain-chip"><strong>Owner</strong> — ' + desc(uO, '') + '</div>');
+  chips.push('<div class="explain-chip"><strong>Group</strong> — ' + desc(gO, '') + '</div>');
+  chips.push('<div class="explain-chip"><strong>Others</strong> — ' + desc(oO, '') + '</div>');
+
+  if (octal === '777') {
+    chips.push('<div class="explain-chip warn">⚠ World-writable: everyone can modify this file — use with caution</div>');
+  }
+  if (document.getElementById('ux').checked || document.getElementById('gx').checked || document.getElementById('ox').checked) {
+    chips.push('<div class="explain-chip">Execute bit is set — treat as a script or directory</div>');
+  }
+
+  bar.innerHTML = chips.join('');
+}
+
+function applyPreset(u, g, o) {
+  function setRow(prefix, val) {
+    document.getElementById(prefix + 'r').checked = !!(val & 4);
+    document.getElementById(prefix + 'w').checked = !!(val & 2);
+    document.getElementById(prefix + 'x').checked = !!(val & 1);
+  }
+  setRow('u', u);
+  setRow('g', g);
+  setRow('o', o);
+  update();
+}
+
+function copyCommand() {
+  const cmd = document.getElementById('resCommand').textContent;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.querySelector('.copy-result');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+applyPreset(7, 5, 5);
+</script>
+</body>
+</html>

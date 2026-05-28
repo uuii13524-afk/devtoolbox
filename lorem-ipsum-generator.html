@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lorem Ipsum Generator - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free Lorem Ipsum generator. Generate placeholder text by paragraphs, sentences, or words. Classic Latin filler text for design mockups and web development — no login, 100% browser-based.">
+  <meta name="keywords" content="lorem ipsum generator, placeholder text generator, dummy text generator, lipsum, random text generator, filler text">
+  <link rel="canonical" href="https://devkitbox.xyz/lorem-ipsum-generator.html">
+  <meta property="og:title" content="Lorem Ipsum Generator - Dev Toolbox">
+  <meta property="og:description" content="Generate Lorem Ipsum placeholder text instantly. Choose paragraphs, sentences or words count — all in your browser.">
+  <meta property="og:url" content="https://devkitbox.xyz/lorem-ipsum-generator.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 24px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    /* Controls */
+    .controls {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-end;
+    }
+    .ctrl-group { display: flex; flex-direction: column; gap: 5px; }
+    .ctrl-group label { font-size: 0.82em; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ctrl-group select, .ctrl-group input[type=number] {
+      background: #1e1e1e;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      color: #e0e0e0;
+      padding: 7px 10px;
+      font-size: 0.9em;
+      outline: none;
+      cursor: pointer;
+    }
+    .ctrl-group select:focus, .ctrl-group input[type=number]:focus {
+      border-color: #5b8dee;
+    }
+    .ctrl-group input[type=number] { width: 90px; }
+
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 0.87em;
+      color: #bbb;
+      user-select: none;
+    }
+    .check-item input[type=checkbox] { accent-color: #5b8dee; width: 14px; height: 14px; cursor: pointer; }
+    .check-item:hover { color: #fff; }
+
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .btn {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.88em;
+    }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary { background: #5b8dee; color: #fff; border-color: #5b8dee; }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+
+    /* Output panel */
+    .output-panel {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #333;
+      font-size: 0.78em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .output-header-right { display: flex; gap: 8px; align-items: center; }
+    .stat-chip {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 2px 9px;
+      font-size: 0.88em;
+      color: #5b8dee;
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid #3a3a3a;
+      color: #888;
+      border-radius: 4px;
+      padding: 2px 9px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .copy-btn:hover { color: #ccc; border-color: #555; }
+    #outputText {
+      width: 100%;
+      min-height: 280px;
+      background: #1e1e1e;
+      color: #d8d8d8;
+      border: none;
+      outline: none;
+      padding: 16px;
+      font-family: Georgia, serif;
+      font-size: 0.93em;
+      line-height: 1.75;
+      resize: vertical;
+    }
+    #outputText::placeholder { color: #444; font-family: Arial, sans-serif; }
+
+    /* Steps */
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 600px) {
+      .controls { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+
+  <h1>Lorem Ipsum Generator</h1>
+  <p class="tagline">Generate Lorem Ipsum placeholder text for mockups and layouts — instantly, in your browser.</p>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Unit</label>
+      <select id="unitSelect">
+        <option value="paragraphs">Paragraphs</option>
+        <option value="sentences">Sentences</option>
+        <option value="words">Words</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>Amount</label>
+      <input type="number" id="amountInput" value="3" min="1" max="100">
+    </div>
+  </div>
+
+  <div class="options-row">
+    <label class="check-item">
+      <input type="checkbox" id="startClassic" checked>
+      Start with "Lorem ipsum dolor sit amet…"
+    </label>
+    <label class="check-item">
+      <input type="checkbox" id="wrapHtml">
+      Wrap in &lt;p&gt; tags
+    </label>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="generate()">&#9654; Generate</button>
+    <button class="btn" onclick="clearOutput()">Clear</button>
+  </div>
+
+  <div class="output-panel">
+    <div class="output-header">
+      <span>Generated Text</span>
+      <div class="output-header-right">
+        <span class="stat-chip" id="statChip">—</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyOutput()">Copy</button>
+      </div>
+    </div>
+    <textarea id="outputText" placeholder="Click Generate to create Lorem Ipsum text…" readonly></textarea>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Choose a <strong>Unit</strong> — paragraphs for full blocks of text, sentences for individual lines, or words for short snippets.</li>
+    <li>Set the <strong>Amount</strong> — how many paragraphs, sentences, or words you need.</li>
+    <li>Toggle <strong>"Start with Lorem ipsum…"</strong> to begin with the classic opening phrase, or generate fully randomized text.</li>
+    <li>Enable <strong>Wrap in &lt;p&gt; tags</strong> if you need HTML-ready output for direct use in code.</li>
+    <li>Click <strong>Generate</strong>, then <strong>Copy</strong> to paste the text into your project.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>Lorem Ipsum is standard placeholder text used by designers, developers, and publishers since the 1500s. It originates from a scrambled passage of "de Finibus Bonorum et Malorum" by Cicero. Its advantage over real text is that it doesn't distract reviewers from the visual layout — the eye focuses on spacing, typography, and composition instead of reading the content. This generator produces Lorem Ipsum text entirely in your browser using a randomized word pool drawn from the classic source. No data is sent to any server. Choose paragraphs for full content areas, sentences for captions and labels, or words for button copy and heading tests.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>What is Lorem Ipsum?</h3>
+    <p>Lorem Ipsum is dummy text derived from a 1st-century BC Latin text by Cicero. It has been used as placeholder text in typesetting and design since the 1960s when Letraset sheets popularized it. It is now the industry standard for mockups and prototypes because it approximates the visual weight of natural language without carrying meaningful content that could distract reviewers.</p>
+  </div>
+  <div class="faq">
+    <h3>Is Lorem Ipsum text always the same?</h3>
+    <p>The classic opening phrase — "Lorem ipsum dolor sit amet, consectetur adipiscing elit" — is standardized and widely recognized. However, subsequent paragraphs are typically randomized from a pool of Latin-derived words, so each generated block is unique. This generator randomizes all text except for the optional classic opener.</p>
+  </div>
+  <div class="faq">
+    <h3>Can I use the &lt;p&gt; tag output directly in HTML?</h3>
+    <p>Yes. Enable <strong>Wrap in &lt;p&gt; tags</strong> and the output will be formatted as <code>&lt;p&gt;...&lt;/p&gt;</code> blocks, ready to paste into your HTML template. Each paragraph gets its own tag, making it immediately usable in any web project without further editing.</p>
+  </div>
+
+  <!-- Related -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="markdown-preview.html">&#9998; Markdown Preview</a>
+    <a href="css-minifier.html">&#10022; CSS Minifier</a>
+    <a href="index.html#uuid">&#8853; UUID Generator</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const WORDS = [
+  'lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do',
+  'eiusmod','tempor','incididunt','ut','labore','et','dolore','magna','aliqua','enim',
+  'ad','minim','veniam','quis','nostrud','exercitation','ullamco','laboris','nisi',
+  'aliquip','ex','ea','commodo','consequat','duis','aute','irure','in','reprehenderit',
+  'voluptate','velit','esse','cillum','eu','fugiat','nulla','pariatur','excepteur','sint',
+  'occaecat','cupidatat','non','proident','sunt','culpa','qui','officia','deserunt',
+  'mollit','anim','id','est','laborum','perspiciatis','unde','omnis','iste','natus',
+  'error','accusantium','doloremque','laudantium','totam','rem','aperiam','eaque','ipsa',
+  'quae','ab','inventore','veritatis','quasi','architecto','beatae','vitae','dicta','explicabo',
+  'nemo','ipsam','voluptatem','quia','voluptas','aspernatur','odit','fugit','consequuntur',
+  'magni','dolores','ratione','sequi','nesciunt','neque','porro','quisquam','dolorem',
+  'adipisci','numquam','eius','modi','tempora','incidunt','magnam','quaerat',
+  'minima','nostrum','exercitationem','ullam','corporis','suscipit','aliquid','commodi',
+  'itaque','earum','rerum','hic','tenetur','sapiente','delectus','reiciendis','maiores',
+  'alias','perferendis','doloribus','asperiores','repellat','accusamus','rem','aperiam',
+  'similique','sunt','culpa','blanditiis','praesentium','voluptatum','deleniti','atque',
+  'corrupti','quos','quas','molestias','excepturi','occaecati','provident','similique'
+];
+
+const CLASSIC_START = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+function rand(n) { return Math.floor(Math.random() * n); }
+
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function makeWord() { return WORDS[rand(WORDS.length)]; }
+
+function makeSentence(minWords = 6, maxWords = 16) {
+  const count = minWords + rand(maxWords - minWords + 1);
+  const words = Array.from({ length: count }, makeWord);
+  words[0] = capitalize(words[0]);
+  return words.join(' ') + '.';
+}
+
+function makeParagraph(minSentences = 3, maxSentences = 7) {
+  const count = minSentences + rand(maxSentences - minSentences + 1);
+  return Array.from({ length: count }, makeSentence).join(' ');
+}
+
+function generate() {
+  const unit    = document.getElementById('unitSelect').value;
+  const amount  = Math.max(1, Math.min(100, parseInt(document.getElementById('amountInput').value, 10) || 3));
+  const classic = document.getElementById('startClassic').checked;
+  const html    = document.getElementById('wrapHtml').checked;
+
+  let parts = [];
+
+  if (unit === 'paragraphs') {
+    for (let i = 0; i < amount; i++) {
+      let para = (i === 0 && classic) ? (CLASSIC_START + ' ' + makeParagraph(2, 5)) : makeParagraph();
+      parts.push(html ? '<p>' + para + '</p>' : para);
+    }
+  } else if (unit === 'sentences') {
+    const sentences = [];
+    if (classic) {
+      sentences.push(CLASSIC_START);
+    }
+    while (sentences.length < amount) {
+      sentences.push(makeSentence());
+    }
+    const finalSentences = sentences.slice(0, amount);
+    if (html) {
+      parts.push('<p>' + finalSentences.join(' ') + '</p>');
+    } else {
+      parts = finalSentences;
+    }
+  } else {
+    const wordList = [];
+    if (classic) {
+      wordList.push(...CLASSIC_START.replace(/[^a-z ]/gi, '').trim().split(/\s+/));
+    }
+    while (wordList.length < amount) {
+      wordList.push(makeWord());
+    }
+    const finalWords = wordList.slice(0, amount);
+    const text = capitalize(finalWords.join(' '));
+    parts.push(html ? '<p>' + text + '</p>' : text);
+  }
+
+  const sep = (unit === 'sentences' && !html) ? '\n' : '\n\n';
+  const result = parts.join(sep);
+
+  document.getElementById('outputText').value = result;
+  updateStats(result);
+}
+
+function updateStats(text) {
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const chars = text.length;
+  document.getElementById('statChip').textContent = words + ' words · ' + chars + ' chars';
+}
+
+function clearOutput() {
+  document.getElementById('outputText').value = '';
+  document.getElementById('statChip').textContent = '—';
+}
+
+function copyOutput() {
+  const val = document.getElementById('outputText').value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+generate();
+</script>
+</body>
+</html>
