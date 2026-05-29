@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux awk Command Examples - Dev Toolbox</title>
+  <meta name="description" content="Practical Linux awk command examples for field-based text processing, filtering, and reporting. Includes column extraction, conditionals, and CSV processing.">
+  <meta name="keywords" content="linux awk, awk command, field processing, text manipulation, awk examples">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { max-width: 860px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+    .breadcrumb { font-size: 0.85em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    h1 { margin-bottom: 5px; }
+    h2 { color: #ccc; font-size: 1.1em; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .subtitle { color: #aaa; margin-bottom: 30px; font-size: 0.95em; }
+    .snippet-block { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; margin-bottom: 24px; overflow: hidden; }
+    .snippet-header { background: #2a2a2a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .snippet-title { font-weight: bold; font-size: 0.95em; color: #e0e0e0; }
+    .copy-btn { background: #444; color: #ccc; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
+    .copy-btn:hover { background: #555; color: #fff; }
+    pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 0.9em; line-height: 1.6; color: #d4d4d4; background: transparent; border-radius: 0; }
+    .snippet-desc { padding: 10px 16px; font-size: 0.85em; color: #999; border-top: 1px solid #333; }
+    .tag { display: inline-block; background: #333; color: #aaa; font-size: 0.75em; padding: 2px 8px; border-radius: 3px; margin-right: 5px; margin-bottom: 16px; }
+    .section-title { font-size: 1.1em; font-weight: bold; color: #ccc; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .how-to { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 16px 20px; margin-bottom: 24px; }
+    .how-to ol { margin: 0; padding-left: 20px; color: #ccc; line-height: 1.8; }
+    .faq-block { margin-bottom: 20px; }
+    .faq-block h3 { color: #e0e0e0; font-size: 0.95em; margin-bottom: 6px; }
+    .faq-block p { color: #999; font-size: 0.9em; margin: 0; }
+    .related-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .related-link { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 10px 16px; text-decoration: none; color: #ccc; font-size: 0.9em; }
+    .related-link:hover { border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; font-size: 0.85em; color: #666; }
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/">Dev Toolbox</a> › <a href="index.html">Snippets</a> › Linux awk
+</div>
+
+<h1>Linux awk Command Examples</h1>
+<p class="subtitle">awk is a versatile text-processing language built into every Unix/Linux system. It excels at column-based data extraction, filtering, and generating reports from structured text files.</p>
+
+<span class="tag">Linux</span>
+<span class="tag">awk</span>
+<span class="tag">CLI</span>
+<span class="tag">Text Processing</span>
+
+<div class="section-title">Field Extraction</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print the first field of each line</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '{print $1}' file.txt</pre>
+  <div class="snippet-desc">awk splits each line into fields by whitespace. <code>$1</code> refers to the first field, <code>$2</code> to the second, and so on. This is useful for extracting usernames, IP addresses, or any first column of structured output.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print multiple fields</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '{print $1, $3}' file.txt</pre>
+  <div class="snippet-desc">Prints the first and third fields separated by a space. Using a comma between fields in the print statement inserts the output field separator (OFS), which defaults to a space.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Use a custom field delimiter</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk -F',' '{print $2}' file.csv</pre>
+  <div class="snippet-desc">The <code>-F</code> flag sets the field separator. Here it is set to a comma for processing CSV files. You can also use any regex as the delimiter, e.g., <code>-F'[,;]'</code> to split on comma or semicolon.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print the last field</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '{print $NF}' file.txt</pre>
+  <div class="snippet-desc"><code>NF</code> is a built-in variable holding the number of fields on the current line, so <code>$NF</code> always refers to the last field regardless of how many fields exist.</div>
+</div>
+
+<div class="section-title">Filtering</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print lines matching a pattern</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '/ERROR/ {print}' file.txt</pre>
+  <div class="snippet-desc">Pattern matching in awk works similarly to grep. Only lines where the regex matches are passed to the action block. Omitting the action block also works: <code>awk '/ERROR/' file.txt</code>.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print line numbers with each line</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '{print NR, $0}' file.txt</pre>
+  <div class="snippet-desc"><code>NR</code> is the current record (line) number. <code>$0</code> is the entire line. This is a quick way to add line numbers to any file or command output.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Filter lines by field value</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '$3 > 100 {print $1, $3}' file.txt</pre>
+  <div class="snippet-desc">Prints columns 1 and 3 only for lines where the third field is greater than 100. awk supports standard comparison operators (<code>&gt;</code>, <code>&lt;</code>, <code>==</code>, <code>!=</code>) for numeric and string comparisons.</div>
+</div>
+
+<div class="section-title">Computation</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Sum a numeric column</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '{sum += $1} END {print sum}' file.txt</pre>
+  <div class="snippet-desc">Accumulates the value of the first field across all lines and prints the total in the END block. The END block runs once after all input has been processed, making it ideal for aggregate calculations.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Count lines matching a pattern</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '/pattern/ {count++} END {print count}' file.txt</pre>
+  <div class="snippet-desc">Increments a counter for every line matching the pattern, then prints the total at the end. This is similar to <code>grep -c</code> but with the flexibility to add more complex conditions.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Calculate the average of a column</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>awk '{sum += $1; count++} END {print sum/count}' file.txt</pre>
+  <div class="snippet-desc">Tracks both the running sum and the line count, then divides at the end to produce the average. Add a check like <code>count &gt; 0 ? sum/count : 0</code> to avoid division by zero on empty files.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to">
+  <ol>
+    <li>Run <code>awk '{print $1}' file.txt</code> to inspect the first column and verify your field splitting.</li>
+    <li>Use <code>-F</code> to set the correct delimiter for CSV, TSV, or other structured files.</li>
+    <li>Add pattern filters before the action block to process only relevant lines.</li>
+    <li>Use <code>BEGIN</code> and <code>END</code> blocks for setup and teardown (e.g., printing headers or totals).</li>
+    <li>Test with a small sample file before running on large inputs.</li>
+  </ol>
+</div>
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-block">
+  <h3>What is the difference between awk and sed?</h3>
+  <p>sed is a stream editor best suited for simple text substitutions and line deletions. awk is a full programming language with variables, loops, and arithmetic, making it better suited for column-based data extraction, filtering, and calculations. For simple replacements use sed; for structured data processing use awk.</p>
+</div>
+
+<div class="faq-block">
+  <h3>How do I process a CSV with quoted fields containing commas?</h3>
+  <p>Basic awk with <code>-F','</code> does not handle quoted CSV fields correctly. For proper CSV parsing, use a tool like <code>csvkit</code>, <code>python csv module</code>, or GNU awk's FPAT feature: <code>awk 'BEGIN{FPAT="([^,]+)|(\"[^\"]+\")"}'</code>.</p>
+</div>
+
+<div class="faq-block">
+  <h3>Can awk process multiple files at once?</h3>
+  <p>Yes, just pass multiple filenames: <code>awk '{print FILENAME, $0}' file1.txt file2.txt</code>. The built-in variable <code>FILENAME</code> contains the name of the current file being processed, and <code>FNR</code> resets the line counter for each new file (unlike <code>NR</code> which keeps counting).</p>
+</div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+  <a href="linux-sed.html" class="related-link">Linux sed Examples</a>
+  <a href="linux-grep.html" class="related-link">Linux grep Examples</a>
+</div>
+
+<footer>
+  <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+  <a href="../about.html">About</a> &nbsp;·&nbsp;
+  <a href="../privacy.html">Privacy Policy</a>
+</footer>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.snippet-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>

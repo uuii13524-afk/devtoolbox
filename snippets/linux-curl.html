@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux curl Command Examples - Dev Toolbox</title>
+  <meta name="description" content="Practical curl command examples for HTTP requests, file downloads, API testing, and authentication. Includes GET, POST, headers, and file upload examples.">
+  <meta name="keywords" content="curl command, curl examples, http request, curl POST, linux curl">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { max-width: 860px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+    .breadcrumb { font-size: 0.85em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    h1 { margin-bottom: 5px; }
+    h2 { color: #ccc; font-size: 1.1em; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .subtitle { color: #aaa; margin-bottom: 30px; font-size: 0.95em; }
+    .snippet-block { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; margin-bottom: 24px; overflow: hidden; }
+    .snippet-header { background: #2a2a2a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .snippet-title { font-weight: bold; font-size: 0.95em; color: #e0e0e0; }
+    .copy-btn { background: #444; color: #ccc; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
+    .copy-btn:hover { background: #555; color: #fff; }
+    pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 0.9em; line-height: 1.6; color: #d4d4d4; background: transparent; border-radius: 0; }
+    .snippet-desc { padding: 10px 16px; font-size: 0.85em; color: #999; border-top: 1px solid #333; }
+    .tag { display: inline-block; background: #333; color: #aaa; font-size: 0.75em; padding: 2px 8px; border-radius: 3px; margin-right: 5px; margin-bottom: 16px; }
+    .section-title { font-size: 1.1em; font-weight: bold; color: #ccc; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .how-to { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 16px 20px; margin-bottom: 24px; }
+    .how-to ol { margin: 0; padding-left: 20px; color: #ccc; line-height: 1.8; }
+    .faq-block { margin-bottom: 20px; }
+    .faq-block h3 { color: #e0e0e0; font-size: 0.95em; margin-bottom: 6px; }
+    .faq-block p { color: #999; font-size: 0.9em; margin: 0; }
+    .related-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .related-link { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 10px 16px; text-decoration: none; color: #ccc; font-size: 0.9em; }
+    .related-link:hover { border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; font-size: 0.85em; color: #666; }
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/">Dev Toolbox</a> › <a href="index.html">Snippets</a> › Linux curl
+</div>
+
+<h1>Linux curl Command Examples</h1>
+<p class="subtitle">curl is a command-line tool for transferring data with URLs, supporting HTTP, HTTPS, FTP, and more. It is the go-to utility for API testing, file downloads, and debugging web requests from the terminal.</p>
+
+<span class="tag">Linux</span>
+<span class="tag">curl</span>
+<span class="tag">HTTP</span>
+<span class="tag">CLI</span>
+
+<div class="section-title">Basic Requests</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Basic GET request</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl https://api.example.com/data</pre>
+  <div class="snippet-desc">Sends a GET request and prints the response body to stdout. curl defaults to GET when no method is specified. Pipe the output to <code>jq</code> for pretty-printed JSON: <code>curl https://api.example.com/data | jq .</code></div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Follow redirects</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -L https://example.com</pre>
+  <div class="snippet-desc">The <code>-L</code> flag tells curl to follow HTTP 3xx redirects automatically. Without it, curl stops at the redirect response. Most download URLs and short links require this flag.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Verbose output (debug mode)</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -v https://example.com</pre>
+  <div class="snippet-desc">The <code>-v</code> flag prints detailed information including the request headers, response headers, TLS handshake, and response body. Essential for debugging API issues or inspecting what headers are being sent.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Show only response headers</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -I https://example.com</pre>
+  <div class="snippet-desc">The <code>-I</code> flag sends a HEAD request and displays only the response headers. Useful for checking HTTP status codes, content types, cache headers, and server information without downloading the body.</div>
+</div>
+
+<div class="section-title">POST and Data</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">POST JSON data</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"key": "value"}' \
+  https://api.example.com/endpoint</pre>
+  <div class="snippet-desc">Sends a POST request with a JSON body. The <code>-H</code> flag sets the Content-Type header, and <code>-d</code> provides the request body. Always set Content-Type to <code>application/json</code> when sending JSON data.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">POST form data</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -X POST -d "user=foo&pass=bar" https://example.com/login</pre>
+  <div class="snippet-desc">Sends URL-encoded form data, equivalent to submitting an HTML form. curl automatically sets <code>Content-Type: application/x-www-form-urlencoded</code> when using <code>-d</code> without an explicit Content-Type header.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Bearer token authentication</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -H "Authorization: Bearer YOUR_TOKEN" https://api.example.com/protected</pre>
+  <div class="snippet-desc">Sets the Authorization header with a Bearer token, used by most modern REST APIs. Replace <code>YOUR_TOKEN</code> with your actual token. Store tokens in environment variables and use <code>-H "Authorization: Bearer $TOKEN"</code> to avoid exposing them in shell history.</div>
+</div>
+
+<div class="section-title">Files and Output</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Download a file (keep original name)</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -O https://example.com/archive.zip</pre>
+  <div class="snippet-desc">The <code>-O</code> flag saves the file using the filename from the URL. The file is saved in the current directory. Combine with <code>-L</code> if the URL redirects: <code>curl -LO https://example.com/file.zip</code>.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Save with a custom filename</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -o myfile.zip https://example.com/archive.zip</pre>
+  <div class="snippet-desc">The lowercase <code>-o</code> flag saves the output to the specified filename. Unlike <code>-O</code>, you control the destination name and path. Useful when the URL filename is generic or unclear.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Upload a file</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl -F "file=@local.txt" https://api.example.com/upload</pre>
+  <div class="snippet-desc">The <code>-F</code> flag sends a multipart form-data request, the standard way to upload files via HTTP. The <code>@</code> prefix tells curl to read the file from disk. Add additional form fields with more <code>-F</code> flags.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Set a request timeout</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>curl --max-time 10 https://example.com</pre>
+  <div class="snippet-desc">Aborts the request if it takes longer than 10 seconds. Use <code>--connect-timeout 5</code> to set a separate timeout for the connection phase. Always set timeouts in scripts to prevent hanging indefinitely on unresponsive servers.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to">
+  <ol>
+    <li>Start with a simple GET request to verify connectivity before adding authentication or request bodies.</li>
+    <li>Use <code>-v</code> or <code>-i</code> (include response headers) when debugging to see the full request/response cycle.</li>
+    <li>Store API tokens in environment variables and reference them with <code>$VARIABLE</code> to keep credentials out of your shell history.</li>
+    <li>Use <code>-s</code> (silent) to suppress the progress meter in scripts, combined with <code>-S</code> to still show errors.</li>
+    <li>Pipe JSON responses to <code>jq</code> for readable formatting and field extraction.</li>
+  </ol>
+</div>
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-block">
+  <h3>What is the difference between curl -d and curl -F?</h3>
+  <p><code>-d</code> sends data as <code>application/x-www-form-urlencoded</code> (plain key=value pairs), which is used for simple form submissions and JSON bodies. <code>-F</code> sends data as <code>multipart/form-data</code>, which is required for file uploads. Use <code>-F</code> whenever you need to upload binary file content.</p>
+</div>
+
+<div class="faq-block">
+  <h3>How do I ignore SSL certificate errors with curl?</h3>
+  <p>Use the <code>-k</code> or <code>--insecure</code> flag to skip certificate verification: <code>curl -k https://self-signed.example.com</code>. This is useful for testing with self-signed certificates in development, but should never be used in production scripts as it disables all SSL security checks.</p>
+</div>
+
+<div class="faq-block">
+  <h3>How do I save cookies and send them on subsequent requests?</h3>
+  <p>Use <code>-c cookies.txt</code> to save cookies to a file after the first request, and <code>-b cookies.txt</code> to send those cookies on subsequent requests. This mimics browser session behavior for testing login flows: <code>curl -c cookies.txt https://example.com/login -d "user=foo&pass=bar"</code> then <code>curl -b cookies.txt https://example.com/dashboard</code>.</p>
+</div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+  <a href="../http-header-analyzer.html" class="related-link">HTTP Header Analyzer</a>
+  <a href="linux-ssh.html" class="related-link">Linux ssh Examples</a>
+  <a href="linux-tar.html" class="related-link">Linux tar Examples</a>
+</div>
+
+<footer>
+  <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+  <a href="../about.html">About</a> &nbsp;·&nbsp;
+  <a href="../privacy.html">Privacy Policy</a>
+</footer>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.snippet-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux ssh Command Examples - Dev Toolbox</title>
+  <meta name="description" content="Practical SSH command examples for remote server access, tunneling, key management, and file transfer. Essential commands for every developer working with remote servers.">
+  <meta name="keywords" content="ssh command, ssh examples, remote login, ssh tunnel, linux ssh">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { max-width: 860px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+    .breadcrumb { font-size: 0.85em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    h1 { margin-bottom: 5px; }
+    h2 { color: #ccc; font-size: 1.1em; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .subtitle { color: #aaa; margin-bottom: 30px; font-size: 0.95em; }
+    .snippet-block { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; margin-bottom: 24px; overflow: hidden; }
+    .snippet-header { background: #2a2a2a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .snippet-title { font-weight: bold; font-size: 0.95em; color: #e0e0e0; }
+    .copy-btn { background: #444; color: #ccc; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
+    .copy-btn:hover { background: #555; color: #fff; }
+    pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 0.9em; line-height: 1.6; color: #d4d4d4; background: transparent; border-radius: 0; }
+    .snippet-desc { padding: 10px 16px; font-size: 0.85em; color: #999; border-top: 1px solid #333; }
+    .tag { display: inline-block; background: #333; color: #aaa; font-size: 0.75em; padding: 2px 8px; border-radius: 3px; margin-right: 5px; margin-bottom: 16px; }
+    .section-title { font-size: 1.1em; font-weight: bold; color: #ccc; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .how-to { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 16px 20px; margin-bottom: 24px; }
+    .how-to ol { margin: 0; padding-left: 20px; color: #ccc; line-height: 1.8; }
+    .faq-block { margin-bottom: 20px; }
+    .faq-block h3 { color: #e0e0e0; font-size: 0.95em; margin-bottom: 6px; }
+    .faq-block p { color: #999; font-size: 0.9em; margin: 0; }
+    .related-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .related-link { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 10px 16px; text-decoration: none; color: #ccc; font-size: 0.9em; }
+    .related-link:hover { border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; font-size: 0.85em; color: #666; }
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/">Dev Toolbox</a> › <a href="index.html">Snippets</a> › Linux ssh
+</div>
+
+<h1>Linux ssh Command Examples</h1>
+<p class="subtitle">SSH (Secure Shell) is the standard protocol for securely accessing remote servers, transferring files, and creating encrypted tunnels. Mastering SSH commands is essential for any developer or system administrator working with remote infrastructure.</p>
+
+<span class="tag">Linux</span>
+<span class="tag">ssh</span>
+<span class="tag">Remote</span>
+<span class="tag">CLI</span>
+
+<div class="section-title">Connecting</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Basic SSH connection</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh user@hostname</pre>
+  <div class="snippet-desc">Opens an interactive shell on the remote host. Replace <code>user</code> with the remote username and <code>hostname</code> with the server's IP or domain name. SSH defaults to port 22 and will prompt for a password if no key is configured.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Connect on a non-standard port</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh -p 2222 user@hostname</pre>
+  <div class="snippet-desc">The <code>-p</code> flag specifies a non-default port. Servers are often configured to listen on a non-standard port (e.g., 2222) as a basic security measure to reduce automated scanning. You can set this permanently in <code>~/.ssh/config</code>.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Connect with a specific private key</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh -i ~/.ssh/mykey.pem user@hostname</pre>
+  <div class="snippet-desc">The <code>-i</code> flag specifies the path to the private key file (identity file). This is required for cloud servers like AWS EC2 that use PEM key files instead of passwords. Ensure the key file has correct permissions: <code>chmod 400 ~/.ssh/mykey.pem</code>.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Run a single command remotely</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh user@hostname 'ls -la /var/www'</pre>
+  <div class="snippet-desc">Executes a command on the remote host and exits immediately, without opening an interactive shell. Quote the command to prevent local shell expansion. Output is printed to your local terminal, making this useful in scripts.</div>
+</div>
+
+<div class="section-title">File Transfer</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Copy a file to a remote server</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>scp localfile.txt user@hostname:/remote/path/</pre>
+  <div class="snippet-desc">Securely copies a local file to a remote directory using SCP (Secure Copy Protocol). SCP uses SSH for transport and is available on all systems with SSH. The destination path must be a directory if copying a single file.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Copy a file from a remote server</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>scp user@hostname:/remote/file.txt ./</pre>
+  <div class="snippet-desc">Copies a file from the remote server to the current local directory. Reverse the source and destination compared to uploading. Use <code>-P 2222</code> (uppercase P for scp, unlike lowercase p for ssh) to specify a non-default port.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Recursively copy a directory</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>scp -r ./localdir user@hostname:/remote/path/</pre>
+  <div class="snippet-desc">The <code>-r</code> flag copies an entire directory tree recursively. For large transfers or when bandwidth efficiency matters, prefer <code>rsync</code> which can resume interrupted transfers and skip unchanged files.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Sync directory with rsync over SSH</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>rsync -avz -e ssh ./localdir user@hostname:/remote/</pre>
+  <div class="snippet-desc">rsync with the <code>-e ssh</code> flag uses SSH as the transport. Flags: <code>-a</code> (archive mode, preserves permissions/timestamps), <code>-v</code> (verbose), <code>-z</code> (compress during transfer). rsync only transfers changed files, making it ideal for deployments.</div>
+</div>
+
+<div class="section-title">Tunneling and Config</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Local port forwarding</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh -L 8080:localhost:80 user@hostname</pre>
+  <div class="snippet-desc">Forwards your local port 8080 to port 80 on the remote server. After running this, browsing to <code>http://localhost:8080</code> on your machine reaches the remote server's port 80. Useful for accessing services behind firewalls or on private networks.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Background SSH tunnel</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh -fN -L 8080:localhost:80 user@hostname</pre>
+  <div class="snippet-desc">The <code>-f</code> flag puts SSH in the background before executing the command, and <code>-N</code> tells SSH not to execute a remote command (just maintain the tunnel). This creates a persistent background tunnel without occupying a terminal.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Copy public key to remote server</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh-copy-id user@hostname</pre>
+  <div class="snippet-desc">Appends your local public key (<code>~/.ssh/id_rsa.pub</code> by default) to the remote server's <code>~/.ssh/authorized_keys</code> file. After this, you can log in without a password. Use <code>-i ~/.ssh/mykey.pub</code> to specify a different key.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Check key fingerprint</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>ssh-keygen -lf ~/.ssh/id_rsa.pub</pre>
+  <div class="snippet-desc">Displays the fingerprint of a public key. Use this to verify that your public key matches what is registered on a server or cloud provider. The output includes the key length, fingerprint hash, comment, and key type.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to">
+  <ol>
+    <li>Generate an SSH key pair with <code>ssh-keygen -t ed25519 -C "your@email.com"</code> if you don't have one yet.</li>
+    <li>Copy your public key to servers with <code>ssh-copy-id user@hostname</code> to enable passwordless login.</li>
+    <li>Create an <code>~/.ssh/config</code> file to store host aliases, ports, and key paths for frequently accessed servers.</li>
+    <li>Set permissions: <code>chmod 700 ~/.ssh</code> and <code>chmod 600 ~/.ssh/authorized_keys</code> — SSH refuses to use keys with loose permissions.</li>
+    <li>Use the <code>-v</code> flag for verbose output when troubleshooting connection issues.</li>
+  </ol>
+</div>
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-block">
+  <h3>What is the difference between SSH keys and passwords?</h3>
+  <p>SSH key authentication uses a cryptographic key pair (public + private key) instead of a password. The private key never leaves your machine, making it significantly more secure than passwords which can be brute-forced. Most production servers and cloud providers (AWS, GCP, Azure) disable password login entirely and require SSH keys.</p>
+</div>
+
+<div class="faq-block">
+  <h3>How do I set up an SSH config file for easier connections?</h3>
+  <p>Create or edit <code>~/.ssh/config</code> with entries like: <code>Host myserver</code>, <code>HostName 192.168.1.100</code>, <code>User ubuntu</code>, <code>IdentityFile ~/.ssh/mykey.pem</code>. After this, you can connect with just <code>ssh myserver</code> instead of the full command. This also works with scp and rsync.</p>
+</div>
+
+<div class="faq-block">
+  <h3>Why does my SSH connection keep timing out?</h3>
+  <p>Idle SSH connections are often dropped by firewalls and NAT devices. Add <code>ServerAliveInterval 60</code> and <code>ServerAliveCountMax 3</code> to your <code>~/.ssh/config</code> (or pass <code>-o ServerAliveInterval=60</code> on the command line) to send keepalive packets every 60 seconds and prevent timeouts.</p>
+</div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+  <a href="linux-curl.html" class="related-link">Linux curl Examples</a>
+  <a href="linux-tar.html" class="related-link">Linux tar Examples</a>
+</div>
+
+<footer>
+  <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+  <a href="../about.html">About</a> &nbsp;·&nbsp;
+  <a href="../privacy.html">Privacy Policy</a>
+</footer>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.snippet-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
