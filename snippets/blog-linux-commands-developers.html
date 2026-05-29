@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10 Essential Linux Commands Every Developer Should Know - Dev Toolbox</title>
+  <meta name="description" content="Master the 10 most important Linux commands for developers: grep, find, curl, ssh, awk, sed, ps, tar, chmod, and more — with practical examples for each.">
+  <meta name="keywords" content="Linux commands, developer tools, terminal, bash, grep, find, curl, ssh">
+  <link rel="canonical" href="https://devkitbox.xyz/snippets/blog-linux-commands-developers.html">
+  <meta property="og:title" content="10 Essential Linux Commands Every Developer Should Know - Dev Toolbox">
+  <meta property="og:description" content="Master the 10 most important Linux commands for developers: grep, find, curl, ssh, awk, sed, ps, tar, chmod, and more — with practical examples for each.">
+  <meta property="og:url" content="https://devkitbox.xyz/snippets/blog-linux-commands-developers.html">
+  <meta property="og:type" content="article">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { background: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', sans-serif; max-width: 860px; margin: 0 auto; padding: 20px; line-height: 1.7; }
+    h1 { color: #4fc3f7; font-size: 2rem; margin-bottom: 0.4rem; }
+    h2 { color: #81c784; font-size: 1.4rem; margin-top: 2rem; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    h3 { color: #ffb74d; font-size: 1.1rem; margin-top: 1.4rem; }
+    .breadcrumb { font-size: 0.85rem; margin-bottom: 16px; color: #888; }
+    .breadcrumb a { color: #4fc3f7; text-decoration: none; }
+    .subtitle { color: #aaa; font-size: 1.05rem; margin-bottom: 1.5rem; }
+    pre { background: #2d2d2d; border-left: 3px solid #4fc3f7; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.9rem; color: #e0e0e0; }
+    code { background: #2d2d2d; padding: 2px 6px; border-radius: 4px; font-size: 0.9rem; color: #ce9178; }
+    pre code { background: none; padding: 0; color: inherit; }
+    .tag { display: inline-block; background: #263238; color: #80cbc4; border: 1px solid #37474f; border-radius: 4px; padding: 2px 10px; font-size: 0.8rem; margin: 2px; }
+    .cmd-num { display: inline-block; background: #4fc3f7; color: #1e1e1e; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; font-size: 0.9rem; margin-right: 8px; }
+    .related-links a { display: inline-block; background: #263238; color: #4fc3f7; border: 1px solid #37474f; padding: 6px 14px; border-radius: 6px; text-decoration: none; margin: 4px; font-size: 0.9rem; }
+    .related-links a:hover { background: #37474f; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #333; font-size: 0.85rem; color: #888; text-align: center; }
+    footer a { color: #4fc3f7; text-decoration: none; margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Blog</a> › Linux Commands for Developers</div>
+  <h1>10 Essential Linux Commands Every Developer Should Know</h1>
+  <p class="subtitle">Whether you work on a Mac, Linux server, or Windows with WSL, these ten commands will dramatically boost your productivity. Each command is covered with real-world developer use cases, not just theory.</p>
+  <div>
+    <span class="tag">Linux</span>
+    <span class="tag">Terminal</span>
+    <span class="tag">Bash</span>
+    <span class="tag">CLI</span>
+    <span class="tag">DevOps</span>
+  </div>
+
+  <h2>Why Linux Command-Line Skills Matter</h2>
+  <p>Nearly every production server runs Linux. CI/CD pipelines, Docker containers, cloud VMs — they all expose a bash shell. Even if you develop on Windows or macOS, you will eventually need to SSH into a server, read logs, or automate a deployment script. The developers who can move fluidly in a terminal are consistently faster at debugging, deployment, and infrastructure tasks.</p>
+  <p>This guide covers the ten commands that appear most often in real developer workflows, with practical examples beyond the typical "hello world" usage you find in textbooks.</p>
+
+  <h2><span class="cmd-num">1</span> grep — Search Text Like a Pro</h2>
+  <p><code>grep</code> searches for patterns in files or piped input. It is indispensable for searching log files, source code, and config files.</p>
+  <pre><code># Find all lines containing "ERROR" in a log file
+grep -n "ERROR" /var/log/app.log
+
+# Search recursively through all .js files for a function name
+grep -r "handleSubmit" src/ --include="*.js"
+
+# Show 3 lines of context before and after each match
+grep -n -B 3 -A 3 "NullPointerException" app.log</code></pre>
+  <p>The <code>-n</code> flag prints line numbers, <code>-r</code> searches recursively, and <code>-i</code> ignores case. Combine <code>grep</code> with pipes to filter the output of other commands in real-time.</p>
+
+  <h2><span class="cmd-num">2</span> find — Locate Files by Any Attribute</h2>
+  <p><code>find</code> searches for files and directories based on name, type, size, modification time, permissions, or any combination thereof.</p>
+  <pre><code># Find all Python files modified in the last 24 hours
+find . -name "*.py" -mtime -1
+
+# Find files larger than 100MB
+find /var -size +100M -type f
+
+# Delete all .pyc compiled files recursively
+find . -name "*.pyc" -delete</code></pre>
+  <p>Use <code>-exec</code> to run a command on every result: <code>find . -name "*.log" -exec rm {} \;</code></p>
+
+  <h2><span class="cmd-num">3</span> curl — Make HTTP Requests from the Terminal</h2>
+  <p><code>curl</code> transfers data to or from a server using various protocols. Developers use it to test APIs, download files, and debug HTTP requests.</p>
+  <pre><code># Test a REST API endpoint
+curl -s https://api.example.com/users | jq .
+
+# POST JSON data
+curl -X POST https://api.example.com/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"secret"}'
+
+# Download a file and save it
+curl -L https://example.com/file.tar.gz -o file.tar.gz</code></pre>
+
+  <h2><span class="cmd-num">4</span> ssh — Secure Remote Access</h2>
+  <p><code>ssh</code> connects to remote machines securely. You will use it daily for server management, deployments, and accessing cloud instances.</p>
+  <pre><code># Connect to a remote server
+ssh user@192.168.1.100
+
+# Connect using a specific SSH key
+ssh -i ~/.ssh/id_rsa ec2-user@3.14.159.26
+
+# Forward a remote port to your local machine (useful for databases)
+ssh -L 5432:localhost:5432 user@remote-server</code></pre>
+
+  <h2><span class="cmd-num">5</span> awk — Process Structured Text</h2>
+  <p><code>awk</code> excels at processing delimited text like CSV files, logs with consistent columns, and command output. It is a mini programming language in itself.</p>
+  <pre><code># Print the 2nd column of a space-delimited file
+awk '{print $2}' data.txt
+
+# Sum values in a CSV column
+awk -F',' '{sum += $3} END {print "Total:", sum}' sales.csv
+
+# Print lines where the 5th column exceeds 1000
+awk '$5 > 1000' access.log</code></pre>
+
+  <h2><span class="cmd-num">6</span> sed — Stream Edit Files</h2>
+  <p><code>sed</code> performs search-and-replace operations on text streams. It is ideal for making automated edits to configuration files in scripts.</p>
+  <pre><code># Replace "localhost" with "production-db" in a config file
+sed -i 's/localhost/production-db/g' config.yml
+
+# Delete blank lines from a file
+sed '/^$/d' input.txt
+
+# Extract lines 10 through 20
+sed -n '10,20p' large-file.log</code></pre>
+
+  <h2><span class="cmd-num">7</span> ps &amp; kill — Monitor and Control Processes</h2>
+  <p><code>ps</code> shows running processes. Combined with <code>grep</code> and <code>kill</code>, it lets you find and terminate stuck or runaway processes.</p>
+  <pre><code># Find all Node.js processes
+ps aux | grep node
+
+# Kill a process by PID
+kill -9 12345
+
+# Kill all processes matching a name
+pkill -f "python app.py"</code></pre>
+
+  <h2><span class="cmd-num">8</span> tar — Archive and Extract Files</h2>
+  <p><code>tar</code> creates and extracts archive files. It is commonly used for backups, distributing source code, and working with deployment artifacts.</p>
+  <pre><code># Create a gzip-compressed archive
+tar -czf backup.tar.gz /var/www/html
+
+# Extract an archive to a specific directory
+tar -xzf release.tar.gz -C /opt/app
+
+# List contents without extracting
+tar -tzf archive.tar.gz</code></pre>
+
+  <h2><span class="cmd-num">9</span> chmod &amp; chown — Manage File Permissions</h2>
+  <p>Correct file permissions are a security requirement on every server. <code>chmod</code> sets permissions and <code>chown</code> sets ownership.</p>
+  <pre><code># Make a script executable
+chmod +x deploy.sh
+
+# Set strict permissions on an SSH key (required by SSH)
+chmod 600 ~/.ssh/id_rsa
+
+# Give the web server user ownership of the web directory
+chown -R www-data:www-data /var/www/html</code></pre>
+
+  <h2><span class="cmd-num">10</span> tail &amp; less — Read Log Files Efficiently</h2>
+  <p><code>tail -f</code> streams a file in real-time as it grows — essential for watching application logs during debugging. <code>less</code> lets you scroll large files without loading them entirely into memory.</p>
+  <pre><code># Stream a log file in real-time
+tail -f /var/log/nginx/access.log
+
+# Stream multiple files simultaneously
+tail -f /var/log/app/*.log
+
+# Open a large log file for scrolling (press q to quit)
+less /var/log/syslog</code></pre>
+
+  <h2>Putting It All Together</h2>
+  <p>The real power of these commands comes from combining them in pipelines. Here is a real-world example: find all unique IP addresses that generated 404 errors in an nginx log in the last hour:</p>
+  <pre><code>grep "404" /var/log/nginx/access.log | \
+  awk '{print $1}' | \
+  sort | \
+  uniq -c | \
+  sort -rn | \
+  head -20</code></pre>
+  <p>That single pipeline uses grep, awk, sort, uniq, and head — five commands chained together to produce a sorted frequency table of offending IP addresses in seconds.</p>
+
+  <h2>Related Snippets</h2>
+  <div class="related-links">
+    <a href="linux-grep.html">grep Snippets</a>
+    <a href="linux-find.html">find Snippets</a>
+    <a href="linux-curl.html">curl Snippets</a>
+    <a href="linux-ssh.html">SSH Snippets</a>
+    <a href="linux-awk.html">awk Snippets</a>
+    <a href="linux-sed.html">sed Snippets</a>
+    <a href="linux-ps.html">ps Snippets</a>
+    <a href="linux-tar.html">tar Snippets</a>
+    <a href="linux-chmod.html">chmod Snippets</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> · <a href="../about.html">About</a> · <a href="../privacy.html">Privacy Policy</a>
+  </footer>
+</body>
+</html>

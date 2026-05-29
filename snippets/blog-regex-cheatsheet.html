@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regular Expressions Cheatsheet for Developers - Dev Toolbox</title>
+  <meta name="description" content="A practical regex cheatsheet for developers covering character classes, quantifiers, anchors, groups, lookaheads, and real-world examples in Python, JavaScript, and grep.">
+  <meta name="keywords" content="regex, regular expressions, cheatsheet, pattern matching, grep, Python, JavaScript">
+  <link rel="canonical" href="https://devkitbox.xyz/snippets/blog-regex-cheatsheet.html">
+  <meta property="og:title" content="Regular Expressions Cheatsheet for Developers - Dev Toolbox">
+  <meta property="og:description" content="A practical regex cheatsheet for developers covering character classes, quantifiers, anchors, groups, lookaheads, and real-world examples in Python, JavaScript, and grep.">
+  <meta property="og:url" content="https://devkitbox.xyz/snippets/blog-regex-cheatsheet.html">
+  <meta property="og:type" content="article">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { background: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', sans-serif; max-width: 860px; margin: 0 auto; padding: 20px; line-height: 1.7; }
+    h1 { color: #4fc3f7; font-size: 2rem; margin-bottom: 0.4rem; }
+    h2 { color: #81c784; font-size: 1.4rem; margin-top: 2rem; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    h3 { color: #ffb74d; font-size: 1.1rem; margin-top: 1.4rem; }
+    .breadcrumb { font-size: 0.85rem; margin-bottom: 16px; color: #888; }
+    .breadcrumb a { color: #4fc3f7; text-decoration: none; }
+    .subtitle { color: #aaa; font-size: 1.05rem; margin-bottom: 1.5rem; }
+    pre { background: #2d2d2d; border-left: 3px solid #4fc3f7; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.9rem; color: #e0e0e0; }
+    code { background: #2d2d2d; padding: 2px 6px; border-radius: 4px; font-size: 0.9rem; color: #ce9178; }
+    pre code { background: none; padding: 0; color: inherit; }
+    .tag { display: inline-block; background: #263238; color: #80cbc4; border: 1px solid #37474f; border-radius: 4px; padding: 2px 10px; font-size: 0.8rem; margin: 2px; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    th { background: #263238; color: #80cbc4; padding: 8px 12px; text-align: left; }
+    td { padding: 8px 12px; border-bottom: 1px solid #333; }
+    td:first-child { color: #ce9178; font-family: monospace; font-size: 1rem; }
+    tr:hover td { background: #263238; }
+    .related-links a { display: inline-block; background: #263238; color: #4fc3f7; border: 1px solid #37474f; padding: 6px 14px; border-radius: 6px; text-decoration: none; margin: 4px; font-size: 0.9rem; }
+    .related-links a:hover { background: #37474f; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #333; font-size: 0.85rem; color: #888; text-align: center; }
+    footer a { color: #4fc3f7; text-decoration: none; margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Blog</a> › Regex Cheatsheet</div>
+  <h1>Regular Expressions Cheatsheet for Developers</h1>
+  <p class="subtitle">Regular expressions are one of the most powerful tools in a developer's toolkit — and one of the most avoided. This practical cheatsheet covers everything from basic character matching to lookaheads, with real-world examples in Python, JavaScript, and grep.</p>
+  <div>
+    <span class="tag">Regex</span>
+    <span class="tag">Python</span>
+    <span class="tag">JavaScript</span>
+    <span class="tag">grep</span>
+    <span class="tag">Pattern Matching</span>
+  </div>
+
+  <h2>Character Classes</h2>
+  <table>
+    <tr><th>Pattern</th><th>Matches</th></tr>
+    <tr><td>.</td><td>Any character except newline</td></tr>
+    <tr><td>\d</td><td>Any digit (0-9)</td></tr>
+    <tr><td>\D</td><td>Any non-digit</td></tr>
+    <tr><td>\w</td><td>Word character (a-z, A-Z, 0-9, _)</td></tr>
+    <tr><td>\W</td><td>Non-word character</td></tr>
+    <tr><td>\s</td><td>Whitespace (space, tab, newline)</td></tr>
+    <tr><td>\S</td><td>Non-whitespace</td></tr>
+    <tr><td>[aeiou]</td><td>Any character in the set</td></tr>
+    <tr><td>[^aeiou]</td><td>Any character NOT in the set</td></tr>
+    <tr><td>[a-z]</td><td>Any lowercase letter</td></tr>
+    <tr><td>[A-Za-z0-9]</td><td>Alphanumeric character</td></tr>
+  </table>
+
+  <h2>Quantifiers</h2>
+  <table>
+    <tr><th>Pattern</th><th>Meaning</th></tr>
+    <tr><td>*</td><td>Zero or more (greedy)</td></tr>
+    <tr><td>+</td><td>One or more (greedy)</td></tr>
+    <tr><td>?</td><td>Zero or one (optional)</td></tr>
+    <tr><td>{3}</td><td>Exactly 3 times</td></tr>
+    <tr><td>{2,5}</td><td>Between 2 and 5 times</td></tr>
+    <tr><td>{3,}</td><td>3 or more times</td></tr>
+    <tr><td>*?</td><td>Zero or more (lazy / non-greedy)</td></tr>
+    <tr><td>+?</td><td>One or more (lazy)</td></tr>
+  </table>
+  <p>Greedy quantifiers match as much as possible. Lazy quantifiers (add <code>?</code>) match as little as possible. This matters when your pattern is inside a larger string with repeating segments.</p>
+
+  <h2>Anchors and Boundaries</h2>
+  <table>
+    <tr><th>Pattern</th><th>Meaning</th></tr>
+    <tr><td>^</td><td>Start of string (or line in multiline mode)</td></tr>
+    <tr><td>$</td><td>End of string (or line in multiline mode)</td></tr>
+    <tr><td>\b</td><td>Word boundary</td></tr>
+    <tr><td>\B</td><td>Non-word boundary</td></tr>
+    <tr><td>\A</td><td>Start of string (Python only)</td></tr>
+    <tr><td>\Z</td><td>End of string (Python only)</td></tr>
+  </table>
+
+  <h2>Groups and Alternation</h2>
+  <table>
+    <tr><th>Pattern</th><th>Meaning</th></tr>
+    <tr><td>(abc)</td><td>Capturing group</td></tr>
+    <tr><td>(?:abc)</td><td>Non-capturing group</td></tr>
+    <tr><td>(?P&lt;name&gt;abc)</td><td>Named capturing group (Python)</td></tr>
+    <tr><td>(?&lt;name&gt;abc)</td><td>Named capturing group (JavaScript)</td></tr>
+    <tr><td>cat|dog</td><td>Alternation (cat OR dog)</td></tr>
+    <tr><td>\1</td><td>Backreference to group 1</td></tr>
+  </table>
+
+  <h2>Lookaheads and Lookbehinds</h2>
+  <table>
+    <tr><th>Pattern</th><th>Meaning</th></tr>
+    <tr><td>(?=abc)</td><td>Positive lookahead: followed by "abc"</td></tr>
+    <tr><td>(?!abc)</td><td>Negative lookahead: NOT followed by "abc"</td></tr>
+    <tr><td>(?&lt;=abc)</td><td>Positive lookbehind: preceded by "abc"</td></tr>
+    <tr><td>(?&lt;!abc)</td><td>Negative lookbehind: NOT preceded by "abc"</td></tr>
+  </table>
+
+  <h2>Real-World Examples</h2>
+
+  <h3>Validate an Email Address</h3>
+  <pre><code># Python
+import re
+pattern = r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$'
+print(bool(re.match(pattern, 'user@example.com')))  # True
+print(bool(re.match(pattern, 'not-an-email')))      # False</code></pre>
+
+  <h3>Extract All URLs from HTML</h3>
+  <pre><code># Python
+import re
+html = '<a href="https://example.com">link</a> <a href="https://other.org">other</a>'
+urls = re.findall(r'href="(https?://[^"]+)"', html)
+print(urls)  # ['https://example.com', 'https://other.org']</code></pre>
+
+  <h3>Match ISO Date Format</h3>
+  <pre><code># JavaScript
+const dateRegex = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+console.log(dateRegex.test('2024-05-29'));  // true
+console.log(dateRegex.test('2024-13-01')); // false (month 13)</code></pre>
+
+  <h3>Replace All Whitespace Runs with a Single Space</h3>
+  <pre><code># Python
+import re
+clean = re.sub(r'\s+', ' ', '  hello   world  ').strip()
+print(clean)  # 'hello world'</code></pre>
+
+  <h3>Extract Named Groups (Python)</h3>
+  <pre><code>import re
+log_line = '2024-05-29 14:32:11 ERROR Failed to connect to database'
+pattern = r'(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}) (?P<level>\w+) (?P<message>.+)'
+m = re.match(pattern, log_line)
+print(m.group('level'))    # 'ERROR'
+print(m.group('message'))  # 'Failed to connect to database'</code></pre>
+
+  <h3>grep with Extended Regex</h3>
+  <pre><code># Match lines with an IP address
+grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}' access.log
+
+# Match lines containing ERROR or WARN
+grep -E 'ERROR|WARN' app.log
+
+# Extract just the matched part
+grep -oE '"[A-Z]+ /[^"]+"' access.log</code></pre>
+
+  <h2>Flags / Modifiers</h2>
+  <table>
+    <tr><th>Python flag</th><th>JS flag</th><th>Effect</th></tr>
+    <tr><td>re.IGNORECASE (re.I)</td><td>i</td><td>Case-insensitive matching</td></tr>
+    <tr><td>re.MULTILINE (re.M)</td><td>m</td><td>^ and $ match line starts/ends</td></tr>
+    <tr><td>re.DOTALL (re.S)</td><td>s</td><td>. matches newlines too</td></tr>
+    <tr><td>re.VERBOSE (re.X)</td><td>(none)</td><td>Allow whitespace and comments in pattern</td></tr>
+    <tr><td>(none)</td><td>g</td><td>Global: find all matches (not just first)</td></tr>
+  </table>
+
+  <h2>Tips for Writing Readable Regex</h2>
+  <p>Long regex patterns become unmaintainable. Use Python's <code>re.VERBOSE</code> mode to add comments and whitespace:</p>
+  <pre><code>import re
+pattern = re.compile(r'''
+  ^                    # Start of string
+  (\d{4})             # Year (4 digits)
+  -
+  (0[1-9]|1[0-2])    # Month (01-12)
+  -
+  (0[1-9]|[12]\d|3[01])  # Day (01-31)
+  $                    # End of string
+''', re.VERBOSE)
+
+print(bool(pattern.match('2024-05-29')))  # True</code></pre>
+
+  <h2>Related Tools</h2>
+  <div class="related-links">
+    <a href="linux-grep.html">grep Snippets</a>
+    <a href="linux-sed.html">sed Snippets</a>
+    <a href="linux-awk.html">awk Snippets</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> · <a href="../about.html">About</a> · <a href="../privacy.html">Privacy Policy</a>
+  </footer>
+</body>
+</html>

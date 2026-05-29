@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Cherry-Pick Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Git cherry-pick examples for applying specific commits to another branch. Covers single commits, ranges, no-commit mode, and conflict resolution.">
+<meta name="keywords" content="git cherry-pick, cherry pick commit, apply commit, git cherry-pick examples, pick specific commit">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/git-cherry-pick.html">
+<meta property="og:title" content="Git Cherry-Pick Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/git-cherry-pick.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Git Cherry-Pick</div>
+<h1>Git Cherry-Pick Command Examples</h1>
+<p class="subtitle">git cherry-pick applies the changes from a specific commit onto the current branch, creating a new commit with the same changes. It is the surgical tool for porting a bug fix from one branch to another without merging the entire branch history.</p>
+<span class="tag">Git</span><span class="tag">Cherry-Pick</span><span class="tag">Version Control</span><span class="tag">CLI</span>
+
+<div class="section-title">Basic Cherry-Pick</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Apply a single commit</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick abc1234</pre>
+<div class="snippet-desc">Applies the changes introduced by commit <code>abc1234</code> to the current branch and creates a new commit. The new commit has a different SHA but the same code changes and commit message. Use <code>git log --oneline</code> to find the commit SHA.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Apply without immediately committing</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick --no-commit abc1234</pre>
+<div class="snippet-desc">Applies the changes to the working tree and staging area but does not create a commit. This lets you inspect or modify the changes before committing, or combine changes from multiple cherry-picks into a single commit.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Apply and edit the commit message</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick --edit abc1234</pre>
+<div class="snippet-desc">Opens the editor to let you modify the commit message before the cherry-pick commit is created. Useful when porting a fix to a release branch and you want to add a note like "[backport]" to the message.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Pick the most recent commit from another branch</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick feature-branch</pre>
+<div class="snippet-desc">Using a branch name instead of a SHA picks the tip (most recent commit) of that branch. This is a quick way to grab the latest commit from another branch without needing to look up its SHA.</div>
+</div>
+
+<div class="section-title">Ranges &amp; Multiple</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Cherry-pick a range of commits</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick abc1234^..def5678</pre>
+<div class="snippet-desc">Applies a range of commits from <code>abc1234</code> (inclusive, due to <code>^</code>) through <code>def5678</code>. Without the <code>^</code>, the range starts after abc1234 (exclusive). All commits in the range are applied in order.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Cherry-pick multiple specific commits</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick abc1234 def5678 ghi9012</pre>
+<div class="snippet-desc">List multiple commit SHAs separated by spaces to apply each one individually in the order given. Each creates a separate commit on the current branch. This is useful for selectively backporting non-consecutive commits.</div>
+</div>
+
+<div class="section-title">Conflict Resolution</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Continue after resolving a conflict</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre># 1. Edit conflicting files to resolve
+git add resolved-file.txt
+git cherry-pick --continue</pre>
+<div class="snippet-desc">When a cherry-pick hits a conflict, it pauses and shows the conflicting files. Resolve the conflicts manually, stage the resolved files, and then continue. Git will create the cherry-pick commit.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Abort a cherry-pick</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick --abort</pre>
+<div class="snippet-desc">Cancels the cherry-pick and restores the branch to its pre-cherry-pick state. Use this if the conflicts are too complex or if you realize you picked the wrong commit. Nothing is permanently changed.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Skip a conflicting commit in a range</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick --skip</pre>
+<div class="snippet-desc">When cherry-picking a range, <code>--skip</code> discards the current conflicting commit and moves on to the next one. Use this when a specific commit in the range is not relevant to the target branch and can be safely omitted.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Find the commit SHA you want to copy with <code>git log --oneline branch-name</code>.</li>
+<li>Switch to the target branch: <code>git checkout target-branch</code>.</li>
+<li>Run <code>git cherry-pick SHA</code> to apply the commit.</li>
+<li>Resolve any conflicts, then <code>git add</code> and <code>git cherry-pick --continue</code>.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>When should I use cherry-pick instead of merge?</h3><p>Use cherry-pick when you only need specific commits from another branch, not the entire branch history. Common use cases: backporting a bug fix to an older release branch, moving a single feature commit to a different branch, or recovering a specific commit that was accidentally left off a release.</p></div>
+<div class="faq-block"><h3>Does cherry-pick modify the original commit?</h3><p>No — cherry-pick creates a new commit on the current branch with the same changes as the original. The original commit on its branch is unchanged. The new commit gets a different SHA because it has a different parent commit and potentially a different timestamp.</p></div>
+<div class="faq-block"><h3>What is the difference between cherry-pick and rebase?</h3><p>Cherry-pick applies specific individual commits you choose. Rebase replays a whole series of commits onto a new base. Use cherry-pick for surgical, targeted commit copying. Use rebase when you want to update an entire feature branch to include recent changes from main.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="git-rebase.html">Git Rebase Examples</a>
+<a class="related-link" href="git-stash.html">Git Stash Examples</a>
+<a class="related-link" href="git-reflog.html">Git Reflog Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

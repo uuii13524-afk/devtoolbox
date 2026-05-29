@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL JOIN Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical SQL JOIN examples covering INNER, LEFT, RIGHT, FULL OUTER, CROSS, and SELF joins. Real-world query patterns and guidance on when to use each join type.">
+<meta name="keywords" content="sql joins, sql join examples, inner join, left join, sql query joins">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/sql-joins.html">
+<meta property="og:title" content="SQL JOIN Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/sql-joins.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › SQL JOINs</div>
+<h1>SQL JOIN Examples</h1>
+<p class="subtitle">SQL JOINs combine rows from two or more tables based on a related column. Understanding the different join types — INNER, LEFT, RIGHT, FULL OUTER, CROSS, and SELF — is fundamental to writing effective database queries. Each type controls which rows are included when records don't match.</p>
+<span class="tag">SQL</span><span class="tag">Joins</span><span class="tag">Database</span><span class="tag">Query</span>
+
+<div class="section-title">Core Join Types</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">INNER JOIN - only matching rows</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, o.order_date, o.total
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id;</pre>
+<div class="snippet-desc">INNER JOIN returns only rows where the join condition matches in both tables. Users with no orders are excluded, and orders with no matching user are excluded. This is the most common join type for retrieving related records.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">LEFT JOIN - all left rows, matching right</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, o.order_date, o.total
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;</pre>
+<div class="snippet-desc">LEFT JOIN returns all rows from the left table (users) plus matching rows from the right table (orders). Users without orders appear with NULL for order columns. Use LEFT JOIN to find records that may or may not have related data.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">RIGHT JOIN - all right rows, matching left</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, o.order_date, o.total
+FROM users u
+RIGHT JOIN orders o ON u.id = o.user_id;</pre>
+<div class="snippet-desc">RIGHT JOIN returns all rows from the right table (orders) plus matching rows from the left (users). Orders without a matching user appear with NULL for user columns. Less common than LEFT JOIN — you can usually rewrite by swapping the table order.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">FULL OUTER JOIN - all rows from both sides</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, o.order_date
+FROM users u
+FULL OUTER JOIN orders o ON u.id = o.user_id;</pre>
+<div class="snippet-desc">FULL OUTER JOIN returns all rows from both tables. Unmatched rows from either side appear with NULLs for the other table's columns. Useful for finding all discrepancies between two datasets — records that exist in one but not the other.</div>
+</div>
+
+<div class="section-title">Advanced Patterns</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Find records with no match (anti-join)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE o.id IS NULL;</pre>
+<div class="snippet-desc">Filter a LEFT JOIN for NULL on the right side to find records with no match. This returns all users who have never placed an order. This pattern (LEFT JOIN + WHERE IS NULL) is more efficient than NOT IN subqueries on large tables.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">SELF JOIN - join a table to itself</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT e.name AS employee, m.name AS manager
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.id;</pre>
+<div class="snippet-desc">A SELF JOIN joins a table to itself using different aliases. This example retrieves each employee alongside their manager's name, where both exist in the same employees table. Essential for hierarchical data like org charts and category trees.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">JOIN with aggregation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, COUNT(o.id) AS order_count, SUM(o.total) AS total_spent
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name
+ORDER BY total_spent DESC;</pre>
+<div class="snippet-desc">Combine a LEFT JOIN with GROUP BY to count or sum related records per parent row. Using LEFT JOIN ensures users with zero orders appear with count 0 rather than being excluded, giving a complete picture of all users.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Join three tables</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, p.name AS product, o.order_date
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN order_items oi ON o.id = oi.order_id
+INNER JOIN products p ON oi.product_id = p.id;</pre>
+<div class="snippet-desc">Chain multiple JOINs to traverse several tables at once. Each JOIN adds another table to the result set. Ensure proper indexes exist on join columns (foreign keys) to avoid slow full-table scans on large datasets.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">USING clause (simpler syntax)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT u.name, o.order_date
+FROM users u
+INNER JOIN orders o USING (user_id);</pre>
+<div class="snippet-desc">When both tables have a column with the same name, <code>USING (column_name)</code> is cleaner than <code>ON table1.col = table2.col</code>. The column appears only once in SELECT * results. Supported in PostgreSQL, MySQL, and SQLite.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Choose INNER JOIN when you only want rows with matches in both tables.</li>
+<li>Choose LEFT JOIN when you want all left-table rows regardless of matches.</li>
+<li>Add WHERE right_table.id IS NULL after LEFT JOIN to find unmatched records.</li>
+<li>Always alias tables with short names (u, o, p) when joining multiple tables.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the most commonly used join type?</h3><p>INNER JOIN and LEFT JOIN cover the vast majority of real-world use cases. INNER JOIN is the default when you need only matching rows. LEFT JOIN is used when you need all records from the primary table regardless of whether related data exists.</p></div>
+<div class="faq-block"><h3>How do JOINs affect query performance?</h3><p>JOINs on columns without indexes cause full table scans and can be very slow on large tables. Always create indexes on foreign key columns used in JOIN conditions. Use EXPLAIN or EXPLAIN ANALYZE to see the query plan and identify missing indexes.</p></div>
+<div class="faq-block"><h3>What is a Cartesian product and when does it happen?</h3><p>A Cartesian product (CROSS JOIN) returns every combination of rows from both tables. It happens accidentally if you forget the ON clause in a JOIN. With tables of 1000 and 500 rows, the result has 500,000 rows. Always double-check that your JOIN has a proper ON condition.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="sql-window-functions.html">SQL Window Functions</a>
+<a class="related-link" href="../sql-formatter.html">SQL Formatter Tool</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

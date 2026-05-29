@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell Function Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical shell function examples for Bash scripting. Covers defining functions, passing arguments, return values, local variables, default parameters, and useful patterns.">
+<meta name="keywords" content="shell functions, bash functions, function arguments, shell scripting, bash function examples">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/shell-functions.html">
+<meta property="og:title" content="Shell Function Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/shell-functions.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Shell Functions</div>
+<h1>Shell Function Examples</h1>
+<p class="subtitle">Functions in Bash let you group reusable commands, accept arguments, return values, and build modular scripts. They are the key to writing maintainable shell scripts that don't repeat code. This page covers defining functions, argument handling, local variables, and practical real-world patterns.</p>
+<span class="tag">Shell</span><span class="tag">Bash</span><span class="tag">Functions</span><span class="tag">Scripting</span>
+
+<div class="section-title">Basics</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Define and call a function</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>greet() {
+  echo "Hello, $1!"
+}
+
+# Call the function
+greet "World"     # Output: Hello, World!
+greet "Alice"     # Output: Hello, Alice!</pre>
+<div class="snippet-desc">Define a function with <code>name() { ... }</code>. Positional parameters <code>$1</code>, <code>$2</code>, etc. hold the arguments passed when calling. Functions must be defined before they are called in the script. No need to declare parameter types or count.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Use local variables</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>calculate() {
+  local result=$(( $1 + $2 ))
+  echo "Sum: $result"
+}
+
+result="global value"
+calculate 3 7   # Output: Sum: 10
+echo $result    # Still: global value</pre>
+<div class="snippet-desc">Use the <code>local</code> keyword to declare variables that are scoped to the function. Without <code>local</code>, variables are global and can overwrite variables in the calling scope. Always use <code>local</code> for function-internal variables to prevent bugs.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Return a value via echo</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>get_timestamp() {
+  echo $(date +%Y%m%d_%H%M%S)
+}
+
+ts=$(get_timestamp)
+echo "Backup file: backup_${ts}.tar.gz"</pre>
+<div class="snippet-desc">Bash functions can't return values like other languages — <code>return</code> only sets an exit code (0-255). The idiomatic way to return a string value is to echo it and capture the output with command substitution <code>$()</code>.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set a default parameter value</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>deploy() {
+  local env="${1:-production}"
+  local branch="${2:-main}"
+  echo "Deploying $branch to $env"
+}
+
+deploy              # production / main
+deploy staging      # staging / main
+deploy staging dev  # staging / dev</pre>
+<div class="snippet-desc">The <code>${var:-default}</code> syntax uses <code>default</code> if <code>var</code> is unset or empty. This is the standard pattern for optional function arguments with sensible defaults. It works for positional parameters too.</div>
+</div>
+
+<div class="section-title">Argument Handling</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Validate required arguments</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>backup_db() {
+  if [ $# -lt 2 ]; then
+    echo "Usage: backup_db &lt;host&gt; &lt;dbname&gt;" &gt;&amp;2
+    return 1
+  fi
+  local host="$1"
+  local db="$2"
+  echo "Backing up $db from $host"
+}</pre>
+<div class="snippet-desc"><code>$#</code> is the count of arguments passed. Check it at the start of functions that require specific arguments. Write usage messages to stderr (<code>&gt;&amp;2</code>) and use <code>return 1</code> to signal an error without exiting the script.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Pass all arguments to another command</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>log_run() {
+  echo "Running: $*"
+  "$@"
+  echo "Exit code: $?"
+}
+
+log_run ls -la /tmp</pre>
+<div class="snippet-desc"><code>"$@"</code> expands to all positional parameters as separate quoted words — the safe way to forward all arguments to another command. <code>$*</code> expands to a single string. Always use <code>"$@"</code> when forwarding arguments.</div>
+</div>
+
+<div class="section-title">Practical Patterns</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Check if a command exists</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>require_command() {
+  if ! command -v "$1" &gt;/dev/null 2&gt;&amp;1; then
+    echo "Error: '$1' is required but not installed." &gt;&amp;2
+    exit 1
+  fi
+}
+
+require_command docker
+require_command jq</pre>
+<div class="snippet-desc"><code>command -v</code> checks if a command is available in PATH without running it. This is more portable than <code>which</code>. Redirecting to <code>/dev/null</code> suppresses all output. Use this at the start of scripts to fail fast with clear error messages.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Logging function with levels</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>log() {
+  local level="$1"
+  shift
+  echo "[$(date +%H:%M:%S)] [$level] $*"
+}
+
+log INFO "Starting deployment"
+log WARN "Config file not found, using defaults"
+log ERROR "Database connection failed"</pre>
+<div class="snippet-desc">A reusable logging function adds timestamps and log levels to all messages. <code>shift</code> removes the first argument (<code>level</code>), leaving <code>$@</code> as the message. This pattern makes scripts much easier to debug and monitor.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Retry a command N times</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>retry() {
+  local max="${1}"; shift
+  local count=0
+  until "$@"; do
+    count=$((count + 1))
+    [ $count -ge $max ] &amp;&amp; return 1
+    echo "Attempt $count failed, retrying..."
+    sleep 2
+  done
+}
+
+retry 3 curl -sf https://api.example.com/health</pre>
+<div class="snippet-desc">A retry wrapper runs a command and retries up to N times on failure. This pattern is essential in deployment scripts where transient network errors can cause intermittent failures. The command and all its arguments are forwarded via <code>"$@"</code>.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Recursive function (factorial)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>factorial() {
+  local n=$1
+  if [ $n -le 1 ]; then
+    echo 1
+  else
+    local prev=$(factorial $((n - 1)))
+    echo $((n * prev))
+  fi
+}
+
+factorial 5   # Output: 120</pre>
+<div class="snippet-desc">Bash functions can call themselves recursively. Capture the recursive result with command substitution. Be aware that each recursive call spawns a subshell, which is slow for deep recursion. Bash has a default stack limit of ~1000 levels.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Define functions at the top of your script before any code that calls them.</li>
+<li>Use <code>local</code> for all variables inside functions to avoid polluting the global scope.</li>
+<li>Validate <code>$#</code> at the start and print a usage message if required args are missing.</li>
+<li>Use <code>"$@"</code> to forward all arguments; capture return values with <code>$(function_name)</code>.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>How do I return a value from a bash function?</h3><p>Bash's <code>return</code> statement only sets an integer exit code (0 = success, non-zero = error). To return a string, echo it inside the function and capture it with command substitution: <code>result=$(my_function)</code>. For multiple values, echo them separated by a delimiter and use <code>IFS</code> to split.</p></div>
+<div class="faq-block"><h3>What is the difference between $@ and $* in functions?</h3><p><code>"$@"</code> expands each argument as a separate quoted word: <code>"arg1" "arg2" "arg3"</code>. <code>"$*"</code> expands all arguments as a single word joined by IFS (default space): <code>"arg1 arg2 arg3"</code>. Always use <code>"$@"</code> when forwarding arguments to preserve spaces within individual arguments.</p></div>
+<div class="faq-block"><h3>Can I export functions to subshells?</h3><p>Yes, use <code>export -f function_name</code> to make a function available in child processes and subshells. This is useful when you need a function to be available in scripts called from your script. However, note that exported functions are passed via environment variables and can have security implications.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="shell-loops.html">Shell Loops</a>
+<a class="related-link" href="linux-sed.html">Linux sed Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

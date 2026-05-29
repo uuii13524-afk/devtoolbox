@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Reflog Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Git reflog examples for recovering lost commits and deleted branches. Reflog tracks every HEAD movement, making it the ultimate undo mechanism in Git.">
+<meta name="keywords" content="git reflog, recover lost commits, git reflog examples, undo git reset, find deleted branch">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/git-reflog.html">
+<meta property="og:title" content="Git Reflog Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/git-reflog.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Git Reflog</div>
+<h1>Git Reflog Command Examples</h1>
+<p class="subtitle">git reflog records every movement of HEAD in your local repository — commits, resets, checkouts, rebases, and merges. This makes it the ultimate safety net for recovering from "I just destroyed my work" situations. Deleted branches, lost commits, and bad resets can almost always be recovered with reflog.</p>
+<span class="tag">Git</span><span class="tag">Reflog</span><span class="tag">Recovery</span><span class="tag">CLI</span>
+
+<div class="section-title">Viewing Reflog</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">View the full reflog</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git reflog</pre>
+<div class="snippet-desc">Shows the complete history of HEAD movements in reverse chronological order. Each entry shows the short SHA, the reflog index (<code>HEAD@{N}</code>), the action (commit, checkout, reset, etc.), and the commit message. This is where you look when something goes wrong.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">View reflog with timestamps</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git reflog --date=iso</pre>
+<div class="snippet-desc">Adds ISO timestamps to each reflog entry. Useful for finding the state of your repository at a specific point in time — for example, to recover work that was lost before a specific hour of the day.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">View reflog for a specific branch</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git reflog show feature-branch</pre>
+<div class="snippet-desc">Shows the reflog for a specific branch reference instead of HEAD. Useful for seeing all the commits a branch pointed to, even after force-pushes or rebases changed its history.</div>
+</div>
+
+<div class="section-title">Recovery Operations</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Undo a git reset --hard</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre># Find the commit before the bad reset
+git reflog
+# Reset back to it
+git reset --hard HEAD@{3}</pre>
+<div class="snippet-desc">Even after <code>git reset --hard</code>, reflog records the previous state. Find the entry just before the reset in the reflog output, then reset back to it. This is the most common recovery use case and saves developers daily.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Recover a deleted branch</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre># Find the last commit of the deleted branch
+git reflog
+# Recreate the branch pointing to that commit
+git branch recovered-branch HEAD@{5}</pre>
+<div class="snippet-desc">When you delete a branch, the commits still exist in the object store temporarily. Use reflog to find the commit SHA from the deleted branch, then create a new branch pointing to it to recover all the work.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Checkout a past state from reflog</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git checkout HEAD@{10}</pre>
+<div class="snippet-desc">Checks out the state of the repository as it was at reflog entry 10. This puts you in "detached HEAD" state, letting you inspect or copy files from that point. Create a branch from here to preserve the state permanently.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Cherry-pick a lost commit from reflog</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git cherry-pick HEAD@{7}</pre>
+<div class="snippet-desc">Instead of resetting to a past state, cherry-pick applies only the changes from a specific reflog entry to your current branch. Useful when you want to recover one specific commit without discarding more recent work.</div>
+</div>
+
+<div class="section-title">Stash Reflog</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">View stash reflog</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git reflog show stash</pre>
+<div class="snippet-desc">Shows the reflog for the stash reference. Even stashes that were dropped with <code>git stash drop</code> or <code>git stash clear</code> may still be visible here. You can recover dropped stashes by cherry-picking their SHA from this list.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Recover a dropped stash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre># Find the SHA of the dropped stash
+git reflog show stash
+# Apply it directly
+git stash apply SHA</pre>
+<div class="snippet-desc">If you accidentally dropped a stash, find its SHA in the stash reflog and apply it. This works as long as Git hasn't garbage collected the object yet (typically safe for up to 90 days by default).</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Run <code>git reflog</code> immediately after an accidental reset or deletion.</li>
+<li>Find the <code>HEAD@{N}</code> entry that represents the state you want to recover.</li>
+<li>Use <code>git reset --hard HEAD@{N}</code> to restore to that exact state.</li>
+<li>Or use <code>git branch new-branch HEAD@{N}</code> to create a branch without losing current work.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>How long does reflog keep entries?</h3><p>By default, reflog entries expire after 90 days (unreachable objects after 30 days). You can change this with <code>git config gc.reflogExpire</code>. Once an entry expires and Git garbage collects it, the data is permanently gone — so act quickly when recovering lost work.</p></div>
+<div class="faq-block"><h3>Is reflog available on remote repositories?</h3><p>No — reflog is strictly local. Remote repositories (like GitHub) do not keep reflog entries for your pushes. However, as long as you haven't run <code>git gc</code> locally and the expiry hasn't passed, your local reflog has everything you need to recover.</p></div>
+<div class="faq-block"><h3>What is the difference between git log and git reflog?</h3><p><code>git log</code> shows the commit history of a branch — only commits reachable from the current HEAD. <code>git reflog</code> shows every movement of HEAD including checkouts, resets, and rebases. Reflog can find commits that are no longer in any branch's history.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="git-rebase.html">Git Rebase Examples</a>
+<a class="related-link" href="git-cherry-pick.html">Git Cherry-Pick Examples</a>
+<a class="related-link" href="git-stash.html">Git Stash Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

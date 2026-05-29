@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Window Function Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical SQL window function examples. Covers ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, PARTITION BY, running totals, and moving averages.">
+<meta name="keywords" content="sql window functions, row_number, rank sql, partition by, lag lead sql">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/sql-window-functions.html">
+<meta property="og:title" content="SQL Window Function Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/sql-window-functions.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › SQL Window Functions</div>
+<h1>SQL Window Function Examples</h1>
+<p class="subtitle">SQL window functions perform calculations across a set of rows related to the current row — without collapsing them into a single group like GROUP BY does. They are essential for analytics: ranking, running totals, moving averages, and accessing previous or next row values in a single query.</p>
+<span class="tag">SQL</span><span class="tag">Window Functions</span><span class="tag">Analytics</span><span class="tag">Database</span>
+
+<div class="section-title">Ranking Functions</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">ROW_NUMBER - unique row number per partition</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT name, department, salary,
+  ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS row_num
+FROM employees;</pre>
+<div class="snippet-desc">ROW_NUMBER assigns a unique sequential number to each row within a partition, restarting at 1 for each new partition. No ties: even rows with the same salary get different numbers. Use this to get the Nth row per group.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">RANK - ranking with gaps for ties</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT name, score,
+  RANK() OVER (ORDER BY score DESC) AS rank
+FROM leaderboard;</pre>
+<div class="snippet-desc">RANK assigns the same rank to tied rows but leaves gaps. If two rows are ranked 1st, the next rank is 3rd (not 2nd). Use RANK when gaps in ranking are acceptable and ties should share the same rank.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">DENSE_RANK - ranking without gaps</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT name, score,
+  DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rank
+FROM leaderboard;</pre>
+<div class="snippet-desc">DENSE_RANK assigns the same rank to ties but does not skip numbers. If two rows are 1st, the next is 2nd (not 3rd). Use DENSE_RANK when you need continuous ranking without gaps — common in leaderboard and competition scenarios.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Get top N rows per group</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT * FROM (
+  SELECT name, department, salary,
+    ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rn
+  FROM employees
+) ranked
+WHERE rn &lt;= 3;</pre>
+<div class="snippet-desc">Wrap a ROW_NUMBER window function in a subquery and filter by the row number to get the top N records per group. This is the standard pattern for "top 3 highest-paid employees per department" type queries.</div>
+</div>
+
+<div class="section-title">Offset Functions</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">LAG - access the previous row's value</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT date, revenue,
+  LAG(revenue, 1) OVER (ORDER BY date) AS prev_revenue,
+  revenue - LAG(revenue, 1) OVER (ORDER BY date) AS day_over_day
+FROM daily_sales;</pre>
+<div class="snippet-desc">LAG accesses a value from a previous row without a self-join. The second argument is the offset (default 1 = previous row). Use LAG for day-over-day comparisons, period-over-period calculations, and detecting value changes.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">LEAD - access the next row's value</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT date, revenue,
+  LEAD(revenue, 1) OVER (ORDER BY date) AS next_revenue
+FROM daily_sales;</pre>
+<div class="snippet-desc">LEAD accesses a value from a future row. Like LAG but looks forward instead of backward. Useful for calculating time-to-next-event, previewing the next period's value, or flagging when a value will change.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">FIRST_VALUE and LAST_VALUE</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT name, salary, department,
+  FIRST_VALUE(salary) OVER (PARTITION BY department ORDER BY salary DESC) AS highest_in_dept
+FROM employees;</pre>
+<div class="snippet-desc">FIRST_VALUE returns the first value in the window frame and LAST_VALUE returns the last. Use them to compare each row against the first or last record in its partition — for example, showing the highest salary in each department alongside each employee.</div>
+</div>
+
+<div class="section-title">Aggregate Windows</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Running total (cumulative sum)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT date, revenue,
+  SUM(revenue) OVER (ORDER BY date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total
+FROM daily_sales;</pre>
+<div class="snippet-desc">SUM with a window frame computes a running total. <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> means "all rows from the start through the current row". This is the standard cumulative sum pattern for financial dashboards.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Moving average (7-day window)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT date, revenue,
+  AVG(revenue) OVER (
+    ORDER BY date
+    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+  ) AS moving_avg_7d
+FROM daily_sales;</pre>
+<div class="snippet-desc">A moving average smooths out short-term fluctuations. <code>ROWS BETWEEN 6 PRECEDING AND CURRENT ROW</code> creates a 7-row window (6 before + current). Widely used in time-series analysis and financial charting to show trends.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Percentage of total per partition</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>SELECT name, department, salary,
+  ROUND(100.0 * salary / SUM(salary) OVER (PARTITION BY department), 2) AS pct_of_dept
+FROM employees;</pre>
+<div class="snippet-desc">Divide each row's value by the partition total to get a percentage. The SUM OVER without ORDER BY sums all rows in the partition. This calculates each employee's salary as a percentage of their department's total payroll.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Window functions use OVER() to define the window — add PARTITION BY to split into groups.</li>
+<li>Add ORDER BY inside OVER() for ranking and offset functions.</li>
+<li>Use ROWS BETWEEN ... for explicit frame control in aggregate windows.</li>
+<li>Wrap in a subquery to filter by window function results (e.g., WHERE rn = 1).</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between window functions and GROUP BY?</h3><p>GROUP BY collapses multiple rows into one row per group, removing individual row details. Window functions perform calculations across rows but return a value for every row, preserving all original rows. Use GROUP BY for aggregated summaries; use window functions when you need both the detail rows and an aggregate value.</p></div>
+<div class="faq-block"><h3>Can I use window functions in a WHERE clause?</h3><p>No — window functions are evaluated after WHERE and cannot be used directly in WHERE, GROUP BY, or HAVING clauses. Wrap the query in a subquery or CTE and filter in the outer query: <code>SELECT * FROM (SELECT ..., ROW_NUMBER() OVER(...) rn FROM ...) t WHERE rn = 1</code>.</p></div>
+<div class="faq-block"><h3>Do all databases support window functions?</h3><p>Yes, all major databases support them: PostgreSQL (since 8.4), MySQL (since 8.0), SQL Server (since 2005), Oracle (since 8i), and SQLite (since 3.25). If you're on an older MySQL version (5.x), you'll need to use workarounds with user variables or subqueries.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="sql-joins.html">SQL JOIN Examples</a>
+<a class="related-link" href="../sql-formatter.html">SQL Formatter Tool</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

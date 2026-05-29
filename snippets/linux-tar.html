@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux tar Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Linux tar command examples for creating and extracting archives. Covers gzip, bzip2, listing contents, extracting single files, and more.">
+<meta name="keywords" content="linux tar, tar command, tar examples, extract tar, gzip archive">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/linux-tar.html">
+<meta property="og:title" content="Linux tar Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/linux-tar.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Linux tar</div>
+<h1>Linux tar Command Examples</h1>
+<p class="subtitle">tar (tape archive) is the standard Unix tool for bundling files into a single archive. It is commonly combined with gzip or bzip2 compression for backups, deployments, and sharing file collections. Mastering tar flags is essential for any Linux workflow.</p>
+<span class="tag">Linux</span><span class="tag">tar</span><span class="tag">Archive</span><span class="tag">CLI</span>
+
+<div class="section-title">Create Archives</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Create a tar archive</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -cvf archive.tar files/</pre>
+<div class="snippet-desc"><code>-c</code> creates an archive, <code>-v</code> shows verbose output (filenames being added), and <code>-f</code> specifies the output filename. This produces an uncompressed .tar archive of the files/ directory.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Create a gzip-compressed archive</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -czvf archive.tar.gz files/</pre>
+<div class="snippet-desc">Adding <code>-z</code> compresses with gzip, producing a .tar.gz (also called a tarball). This is the most common archive format on Linux — it offers a good balance of compression speed and ratio.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Create a bzip2-compressed archive</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -cjvf archive.tar.bz2 files/</pre>
+<div class="snippet-desc">The <code>-j</code> flag uses bzip2 compression, which produces smaller files than gzip at the cost of more CPU time. Use .tar.bz2 when archive size matters more than compression speed.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Archive multiple directories</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -czvf backup.tar.gz /etc /var/www /home/user</pre>
+<div class="snippet-desc">tar accepts multiple source paths. This creates a single archive containing the full /etc, /var/www, and /home/user directories. Useful for creating complete server configuration backups.</div>
+</div>
+
+<div class="section-title">Extract Archives</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Extract a gzip archive</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -xzvf archive.tar.gz</pre>
+<div class="snippet-desc"><code>-x</code> extracts files, <code>-z</code> handles gzip, <code>-v</code> shows progress, and <code>-f</code> specifies the archive. Files are extracted into the current directory by default.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Extract to a specific directory</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -xzvf archive.tar.gz -C /destination/</pre>
+<div class="snippet-desc">The <code>-C</code> flag sets the extraction destination directory. The target directory must already exist. This avoids cluttering your current working directory when extracting large archives.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Extract a single file from archive</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -xzvf archive.tar.gz path/to/file.txt</pre>
+<div class="snippet-desc">Append the internal archive path to extract only one specific file. Use <code>tar -tzvf archive.tar.gz</code> first to list all files and find the exact internal path you need.</div>
+</div>
+
+<div class="section-title">Inspect &amp; Misc</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">List archive contents without extracting</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -tzvf archive.tar.gz</pre>
+<div class="snippet-desc"><code>-t</code> lists the archive contents without extracting. This shows every file path, size, and timestamp inside the archive. Use this to verify an archive before extracting or to find the path of a specific file.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Extract and strip leading directory</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -xzvf archive.tar.gz --strip-components=1</pre>
+<div class="snippet-desc">The <code>--strip-components=1</code> flag removes the top-level directory from the extracted paths. Useful when an archive wraps everything in a version-named folder (e.g., myapp-1.0/) and you want the contents directly.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Add a file to an existing archive</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>tar -rvf archive.tar newfile.txt</pre>
+<div class="snippet-desc">The <code>-r</code> flag appends files to an existing uncompressed .tar archive. Note: you cannot append to a compressed archive (.tar.gz); you must extract, add, and recompress.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Remember the core flags: <code>-c</code> (create), <code>-x</code> (extract), <code>-t</code> (list), <code>-f</code> (filename).</li>
+<li>Add <code>-z</code> for gzip (.tar.gz) or <code>-j</code> for bzip2 (.tar.bz2) compression.</li>
+<li>Always add <code>-v</code> to see progress when working with large archives.</li>
+<li>Use <code>-C /path/</code> to extract to a specific directory instead of the current one.</li>
+<li>Preview archive contents with <code>-t</code> before extracting to avoid surprises.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between .tar, .tar.gz, and .tar.bz2?</h3><p>.tar is an uncompressed archive (just bundles files). .tar.gz adds gzip compression (faster, widely compatible). .tar.bz2 uses bzip2 (better compression ratio, slower). Most Linux software distributions use .tar.gz or the newer .tar.xz format.</p></div>
+<div class="faq-block"><h3>How do I create a tar archive excluding certain files?</h3><p>Use the <code>--exclude</code> flag: <code>tar -czvf archive.tar.gz ./project --exclude="./project/node_modules" --exclude="./project/.git"</code>. You can use multiple <code>--exclude</code> flags and wildcards.</p></div>
+<div class="faq-block"><h3>Can I use tar with pipes for network transfers?</h3><p>Yes! Combine tar with SSH for efficient transfers: <code>tar -czvf - ./files | ssh user@host 'tar -xzvf - -C /destination/'</code>. The dash <code>-</code> uses stdout/stdin instead of a file, enabling streaming without a temporary archive file.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="linux-ssh.html">Linux ssh Examples</a>
+<a class="related-link" href="linux-find.html">Linux find Examples</a>
+<a class="related-link" href="linux-curl.html">Linux curl Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

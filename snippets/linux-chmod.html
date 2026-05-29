@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux chmod Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Linux chmod examples for managing file permissions. Covers numeric and symbolic modes, recursive changes, and common permission patterns like 644 and 755.">
+<meta name="keywords" content="linux chmod, chmod command, file permissions, chmod examples, unix permissions">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/linux-chmod.html">
+<meta property="og:title" content="Linux chmod Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/linux-chmod.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Linux chmod</div>
+<h1>Linux chmod Command Examples</h1>
+<p class="subtitle">chmod (change mode) sets the read, write, and execute permissions for files and directories. You can use numeric (octal) notation for precision or symbolic notation for readability. Understanding chmod is fundamental for Linux system administration and secure file management.</p>
+<span class="tag">Linux</span><span class="tag">chmod</span><span class="tag">Permissions</span><span class="tag">CLI</span>
+
+<div class="section-title">Numeric (Octal) Mode</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set permissions 644 (files)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod 644 filename.txt</pre>
+<div class="snippet-desc">644 means: owner can read+write (6), group can read (4), others can read (4). This is the standard permission for regular files — readable by everyone, writable only by the owner. Use for web server content, config files, and documents.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set permissions 755 (directories/executables)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod 755 script.sh</pre>
+<div class="snippet-desc">755 means: owner can read+write+execute (7), group can read+execute (5), others can read+execute (5). This is the standard permission for directories and executable scripts — everyone can run/traverse them, only owner can modify.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set permissions 700 (private)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod 700 ~/.ssh</pre>
+<div class="snippet-desc">700 gives full access to the owner only; group and others have no access. Required for the ~/.ssh directory by SSH — if permissions are too open, SSH will refuse to use your keys and show a "permissions too open" error.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set permissions 600 (private file)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod 600 ~/.ssh/id_rsa</pre>
+<div class="snippet-desc">600 allows owner to read and write; no access for group or others. Required for SSH private key files. If a private key has looser permissions, SSH will reject it with a warning about being too permissive.</div>
+</div>
+
+<div class="section-title">Symbolic Mode</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Add execute permission for the owner</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod u+x script.sh</pre>
+<div class="snippet-desc">Symbolic mode uses <code>u</code> (user/owner), <code>g</code> (group), <code>o</code> (others), <code>a</code> (all). Operators: <code>+</code> (add), <code>-</code> (remove), <code>=</code> (set exactly). This adds execute permission only for the owner without changing other permissions.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Add execute for all users</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod a+x script.sh</pre>
+<div class="snippet-desc">The <code>a</code> target applies the change to all three classes (user, group, others) simultaneously. This makes the file executable by everyone on the system — commonly used for public utility scripts.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Remove write permission from group and others</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod go-w filename.txt</pre>
+<div class="snippet-desc">You can combine target characters: <code>go</code> means group and others. This removes write permission from both simultaneously. Useful for hardening config files that were accidentally made world-writable.</div>
+</div>
+
+<div class="section-title">Recursive &amp; Bulk</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set permissions recursively on a directory</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>chmod -R 755 /var/www/html/</pre>
+<div class="snippet-desc">The <code>-R</code> flag applies the permission change recursively to all files and subdirectories. Use with caution — this sets the same permissions on both files and directories, which is often incorrect (files shouldn't be executable by default).</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set 644 on files only (with find)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find /var/www -type f -exec chmod 644 {} \;</pre>
+<div class="snippet-desc">A safer pattern than <code>chmod -R</code>: uses find to target only regular files. Combine with a second find command for directories to set different permissions for each type — 644 for files, 755 for directories.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set 755 on directories only (with find)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find /var/www -type d -exec chmod 755 {} \;</pre>
+<div class="snippet-desc">Targets only directories. Run this together with the previous snippet to correctly set a web directory to the standard 644/755 split: files are readable but not executable, directories are traversable.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Use <code>ls -la</code> to view current permissions before changing them.</li>
+<li>For numeric mode: each digit is owner/group/others; values are r=4, w=2, x=1.</li>
+<li>For symbolic mode: combine <code>u/g/o/a</code> with <code>+/-/=</code> and <code>r/w/x</code>.</li>
+<li>Use find with -exec instead of chmod -R to set different permissions for files vs. directories.</li>
+<li>Use the <a href="../chmod-calculator.html" style="color:#aaa">chmod Calculator tool</a> to convert between numeric and symbolic modes visually.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What do the three permission digits represent?</h3><p>The three digits in numeric mode represent: owner, group, and others (world). Each digit is the sum of: read (4) + write (2) + execute (1). So 7 = rwx, 6 = rw-, 5 = r-x, 4 = r--. For example, 755 = rwxr-xr-x.</p></div>
+<div class="faq-block"><h3>What is the difference between chmod and chown?</h3><p>chmod changes the permission bits (what users can do with a file). chown changes the ownership of a file (which user and group own it). Both together control file access: ownership determines which user/group the permission bits apply to.</p></div>
+<div class="faq-block"><h3>Why shouldn't I use chmod 777?</h3><p>chmod 777 gives read, write, and execute permission to everyone on the system, including malicious users. It is especially dangerous for web-accessible files and directories. Always use the minimum permissions necessary: 644 for files, 755 for directories, 600 for private keys.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="../chmod-calculator.html">Chmod Calculator</a>
+<a class="related-link" href="linux-find.html">Linux find Examples</a>
+<a class="related-link" href="linux-ps.html">Linux ps Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

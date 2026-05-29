@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux ps Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Linux ps command examples for monitoring and managing processes. Covers listing, filtering by name, sorting by CPU/memory, and process tree views.">
+<meta name="keywords" content="linux ps, ps command, process list, ps aux, linux processes">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/linux-ps.html">
+<meta property="og:title" content="Linux ps Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/linux-ps.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Linux ps</div>
+<h1>Linux ps Command Examples</h1>
+<p class="subtitle">ps (process status) displays a snapshot of currently running processes. It is the primary tool for inspecting what is running on a Linux system, finding PIDs, checking CPU and memory usage, and understanding process relationships. Master ps to diagnose and manage your system effectively.</p>
+<span class="tag">Linux</span><span class="tag">ps</span><span class="tag">Processes</span><span class="tag">CLI</span>
+
+<div class="section-title">Basic Listing</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">List all running processes</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps aux</pre>
+<div class="snippet-desc"><code>a</code> shows processes for all users, <code>u</code> displays user-oriented format (shows %CPU, %MEM, command), and <code>x</code> includes processes without a controlling terminal (daemons). This is the standard starting point for process inspection.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Show process tree</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps axjf</pre>
+<div class="snippet-desc">The <code>f</code> flag renders a visual ASCII tree showing parent-child process relationships. This makes it easy to see which processes spawned which others — useful for understanding how a web server or app server is organized.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Show processes for current user</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps -u $USER</pre>
+<div class="snippet-desc">The <code>-u username</code> flag filters processes owned by a specific user. Using <code>$USER</code> automatically expands to your current username. Useful for seeing only your own processes on a shared system.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Show custom columns</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu</pre>
+<div class="snippet-desc">The <code>-e</code> selects all processes and <code>-o</code> specifies custom output columns. This shows PID, parent PID, command, memory %, and CPU % sorted by CPU descending. A powerful pattern for tailored process monitoring.</div>
+</div>
+
+<div class="section-title">Filtering</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Find a process by name</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps aux | grep nginx</pre>
+<div class="snippet-desc">Pipe ps output to grep to filter for a specific process name. The grep process itself will appear in results — filter it out with <code>grep -v grep</code> or use <code>pgrep nginx</code> instead for cleaner output.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Show process by PID</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps -p 1234</pre>
+<div class="snippet-desc">The <code>-p</code> flag shows information for a specific PID. You can specify multiple PIDs separated by commas: <code>ps -p 1234,5678</code>. Useful when you already know the PID from a log file or another tool.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Show all threads</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps -eLf</pre>
+<div class="snippet-desc">The <code>-L</code> flag shows individual threads alongside processes. The LWP column shows the thread ID. Use this when diagnosing multi-threaded applications like Java services or Node.js clusters.</div>
+</div>
+
+<div class="section-title">Sorting &amp; Monitoring</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Top 10 processes by CPU usage</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps aux --sort=-%cpu | head -11</pre>
+<div class="snippet-desc">Sort ps output by CPU descending with <code>--sort=-%cpu</code> and pipe to head to show only the top consumers. The header line is included so use head -11 to see 10 processes. Useful for quickly identifying CPU hogs.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Top 10 processes by memory usage</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>ps aux --sort=-%mem | head -11</pre>
+<div class="snippet-desc">Sort by memory percentage descending to find processes consuming the most RAM. Combine with <code>watch</code> to auto-refresh: <code>watch -n 2 'ps aux --sort=-%mem | head -11'</code> for a live updating view.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Watch a specific process</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>watch -n 1 'ps aux | grep myapp | grep -v grep'</pre>
+<div class="snippet-desc">The <code>watch</code> command re-runs a command at regular intervals. This refreshes the process list every second, filtered for your app. Useful for monitoring restart behavior, resource trends, or verifying a deployment went live.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Run <code>ps aux</code> to see all running processes with CPU and memory usage.</li>
+<li>Pipe to <code>grep name</code> to filter for a specific process.</li>
+<li>Use <code>--sort=-%cpu</code> or <code>--sort=-%mem</code> to find resource hogs.</li>
+<li>Use <code>pgrep processname</code> as a cleaner alternative to <code>ps aux | grep name</code>.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between ps and top?</h3><p>ps takes a single snapshot of the process list at the moment it runs. top (and htop) provide a continuously updating interactive view. Use ps in scripts and one-time inspections; use top/htop for interactive real-time monitoring.</p></div>
+<div class="faq-block"><h3>How do I kill a process found with ps?</h3><p>Get the PID from the first column of ps output, then run <code>kill PID</code> to send SIGTERM (graceful shutdown) or <code>kill -9 PID</code> for SIGKILL (force kill). Use <code>pkill processname</code> to kill by name without needing the PID.</p></div>
+<div class="faq-block"><h3>Why does my process not appear in ps aux?</h3><p>If a process is not visible to your user, it may be running as a different user (use <code>sudo ps aux</code>) or it may have already exited. Zombie processes (Z state) appear in ps but have already terminated and are waiting for their parent to collect their exit status.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="linux-grep.html">Linux grep Examples</a>
+<a class="related-link" href="linux-find.html">Linux find Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

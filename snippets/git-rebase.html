@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Rebase Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Git rebase examples for rewriting commit history. Covers interactive rebase, squashing commits, rebasing onto branches, and conflict resolution.">
+<meta name="keywords" content="git rebase, interactive rebase, squash commits, git rebase examples, rebase onto">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/git-rebase.html">
+<meta property="og:title" content="Git Rebase Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/git-rebase.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Git Rebase</div>
+<h1>Git Rebase Command Examples</h1>
+<p class="subtitle">git rebase replays commits on top of a different base, giving you a clean linear history. Interactive rebase lets you squash, reorder, reword, or drop commits before merging. It is a powerful tool for keeping feature branches up to date and producing polished pull requests.</p>
+<span class="tag">Git</span><span class="tag">Rebase</span><span class="tag">Version Control</span><span class="tag">CLI</span>
+
+<div class="section-title">Basic Rebase</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Rebase current branch onto main</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git rebase main</pre>
+<div class="snippet-desc">Replays all commits from the current feature branch on top of the latest main. This produces a linear history without a merge commit. After rebasing, a fast-forward merge to main is possible.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Rebase onto remote main</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git fetch origin && git rebase origin/main</pre>
+<div class="snippet-desc">Fetch the latest changes from origin first, then rebase onto the remote main branch. This is the standard workflow for keeping a feature branch up to date with the main branch on GitHub or GitLab.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Pull with rebase instead of merge</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git pull --rebase origin main</pre>
+<div class="snippet-desc">Instead of creating a merge commit when pulling, <code>--rebase</code> replays your local commits on top of the incoming commits. This keeps your history linear. Set as default with <code>git config pull.rebase true</code>.</div>
+</div>
+
+<div class="section-title">Interactive Rebase</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Interactively edit last N commits</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git rebase -i HEAD~3</pre>
+<div class="snippet-desc">Opens your editor with the last 3 commits listed. You can reorder lines, change the command keyword, or delete lines. Commands: <code>pick</code> (keep), <code>reword</code> (edit message), <code>squash</code> (combine into previous), <code>drop</code> (delete commit).</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Squash all feature branch commits</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git rebase -i $(git merge-base HEAD main)</pre>
+<div class="snippet-desc">Finds the commit where the feature branch diverged from main and opens interactive rebase from that point. This lets you squash all feature commits into one clean commit before merging, regardless of how many commits there are.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Auto-squash fixup commits</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git rebase -i --autosquash HEAD~5</pre>
+<div class="snippet-desc">The <code>--autosquash</code> flag automatically reorders and marks commits that start with <code>fixup!</code> or <code>squash!</code> to be squashed into their target commits. Create such commits with <code>git commit --fixup SHA</code>.</div>
+</div>
+
+<div class="section-title">Conflict Resolution</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Continue after resolving conflicts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre># 1. Resolve conflicts in the conflicting files
+# 2. Stage the resolved files
+git add resolved-file.txt
+# 3. Continue the rebase
+git rebase --continue</pre>
+<div class="snippet-desc">When a rebase hits a conflict, it pauses and lets you resolve it manually. Edit the conflicting files, stage them with <code>git add</code>, and then run <code>git rebase --continue</code> to proceed with the remaining commits.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Abort a rebase in progress</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git rebase --abort</pre>
+<div class="snippet-desc">Cancels the rebase and returns your branch to exactly the state it was in before you started. Use this if the conflicts are too complex or you realize the rebase approach was wrong. Nothing is permanently lost.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Skip a conflicting commit</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git rebase --skip</pre>
+<div class="snippet-desc">Discards the current commit that caused the conflict and moves on to the next one. Use this only when the conflicting commit's changes are already included elsewhere and the commit itself is no longer needed.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Run <code>git rebase main</code> on a feature branch to replay its commits on top of latest main.</li>
+<li>Use <code>git rebase -i HEAD~N</code> to interactively clean up the last N commits.</li>
+<li>In the editor, change <code>pick</code> to <code>squash</code> to combine commits or <code>drop</code> to remove them.</li>
+<li>Resolve any conflicts with <code>git add</code> + <code>git rebase --continue</code>.</li>
+<li>Never rebase commits that have already been pushed and shared with others.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between rebase and merge?</h3><p>Merge combines two branch histories with a merge commit, preserving all commits as they happened. Rebase replays commits to create a linear history with no merge commit. Rebase produces cleaner git logs but rewrites commit SHAs, which is why you should never rebase shared/public branches.</p></div>
+<div class="faq-block"><h3>Is it safe to rebase a feature branch?</h3><p>Yes, if the branch is only used by you locally or the team agrees to force-push after rebasing. Rebasing rewrites commit history (new SHAs), so anyone else who has pulled the old branch will have diverged history. Always communicate with teammates before rebasing shared branches.</p></div>
+<div class="faq-block"><h3>What is the difference between squash and fixup in interactive rebase?</h3><p>Both combine a commit into the one above it. <code>squash</code> opens the editor so you can write a combined commit message from both. <code>fixup</code> silently discards the squashed commit's message and uses only the previous commit's message. Use fixup for minor typo fixes and squash for meaningful message edits.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="git-stash.html">Git Stash Examples</a>
+<a class="related-link" href="git-cherry-pick.html">Git Cherry-Pick Examples</a>
+<a class="related-link" href="git-reflog.html">Git Reflog Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>
