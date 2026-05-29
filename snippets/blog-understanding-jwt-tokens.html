@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding JWT Tokens: Structure and Security - Dev Toolbox</title>
+  <meta name="description" content="A deep dive into JWT token structure, how to decode and verify them, common security pitfalls, and best practices for using JWTs in your API authentication.">
+  <meta name="keywords" content="JWT, JSON Web Token, authentication, security, API auth, token structure">
+  <link rel="canonical" href="https://devkitbox.xyz/snippets/blog-understanding-jwt-tokens.html">
+  <meta property="og:title" content="Understanding JWT Tokens: Structure and Security - Dev Toolbox">
+  <meta property="og:description" content="A deep dive into JWT token structure, how to decode and verify them, common security pitfalls, and best practices for using JWTs in your API authentication.">
+  <meta property="og:url" content="https://devkitbox.xyz/snippets/blog-understanding-jwt-tokens.html">
+  <meta property="og:type" content="article">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { background: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', sans-serif; max-width: 860px; margin: 0 auto; padding: 20px; line-height: 1.7; }
+    h1 { color: #4fc3f7; font-size: 2rem; margin-bottom: 0.4rem; }
+    h2 { color: #81c784; font-size: 1.4rem; margin-top: 2rem; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    h3 { color: #ffb74d; font-size: 1.1rem; margin-top: 1.4rem; }
+    .breadcrumb { font-size: 0.85rem; margin-bottom: 16px; color: #888; }
+    .breadcrumb a { color: #4fc3f7; text-decoration: none; }
+    .subtitle { color: #aaa; font-size: 1.05rem; margin-bottom: 1.5rem; }
+    pre { background: #2d2d2d; border-left: 3px solid #4fc3f7; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.9rem; color: #e0e0e0; }
+    code { background: #2d2d2d; padding: 2px 6px; border-radius: 4px; font-size: 0.9rem; color: #ce9178; }
+    pre code { background: none; padding: 0; color: inherit; }
+    .tag { display: inline-block; background: #263238; color: #80cbc4; border: 1px solid #37474f; border-radius: 4px; padding: 2px 10px; font-size: 0.8rem; margin: 2px; }
+    .jwt-part { display: inline-block; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; margin: 2px; word-break: break-all; }
+    .jwt-header { background: #c62828; color: #fff; }
+    .jwt-payload { background: #1b5e20; color: #fff; }
+    .jwt-sig { background: #0d47a1; color: #fff; }
+    .warning { background: #3e2723; border-left: 3px solid #ef5350; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+    .tip { background: #1a237e; border-left: 3px solid #42a5f5; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+    .related-links a { display: inline-block; background: #263238; color: #4fc3f7; border: 1px solid #37474f; padding: 6px 14px; border-radius: 6px; text-decoration: none; margin: 4px; font-size: 0.9rem; }
+    .related-links a:hover { background: #37474f; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #333; font-size: 0.85rem; color: #888; text-align: center; }
+    footer a { color: #4fc3f7; text-decoration: none; margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Blog</a> › JWT Tokens</div>
+  <h1>Understanding JWT Tokens: Structure and Security</h1>
+  <p class="subtitle">JSON Web Tokens are everywhere in modern API authentication, but they are frequently misunderstood and misused. This guide explains exactly what a JWT is, how it works, how to decode one, and how to avoid the most dangerous security pitfalls.</p>
+  <div>
+    <span class="tag">JWT</span>
+    <span class="tag">Security</span>
+    <span class="tag">Authentication</span>
+    <span class="tag">API</span>
+  </div>
+
+  <h2>What Is a JWT?</h2>
+  <p>A JSON Web Token (JWT, pronounced "jot") is a compact, URL-safe string that encodes a set of claims — assertions about a user or session — and optionally signs or encrypts them. The defining characteristic of a JWT is that the data it carries can be verified without querying a database, because the server uses a cryptographic signature to prove the token was legitimately issued.</p>
+  <p>A typical JWT looks like this:</p>
+  <p>
+    <span class="jwt-part jwt-header">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span>.<span class="jwt-part jwt-payload">eyJ1c2VySWQiOiIxMjMiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3MTY5OTUyMDB9</span>.<span class="jwt-part jwt-sig">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+  </p>
+  <p>The three parts separated by dots are: the <strong style="color:#ef9a9a">Header</strong>, the <strong style="color:#a5d6a7">Payload</strong>, and the <strong style="color:#90caf9">Signature</strong>. Each part is Base64URL-encoded.</p>
+
+  <h2>The Three Parts Explained</h2>
+
+  <h3>1. Header</h3>
+  <p>The header specifies the token type and the signing algorithm. Decode the first part and you get:</p>
+  <pre><code>{
+  "alg": "HS256",
+  "typ": "JWT"
+}</code></pre>
+  <p><code>HS256</code> means HMAC-SHA256 — a symmetric algorithm where the same secret key both signs and verifies. <code>RS256</code> (RSA) is asymmetric: the server signs with a private key and anyone can verify with the public key.</p>
+
+  <h3>2. Payload (Claims)</h3>
+  <p>The payload contains claims. Standard registered claims include:</p>
+  <pre><code>{
+  "sub": "user_123",       // Subject (user ID)
+  "iss": "auth.example.com", // Issuer
+  "aud": "api.example.com",  // Audience
+  "exp": 1716995200,         // Expiration (Unix timestamp)
+  "iat": 1716908800,         // Issued At
+  "email": "user@example.com" // Custom claim
+}</code></pre>
+  <div class="warning">⚠️ The payload is Base64URL-encoded, NOT encrypted. Anyone who has the token can read the payload by decoding it. Never put passwords, credit card numbers, or sensitive PII in a JWT payload.</div>
+
+  <h3>3. Signature</h3>
+  <p>The signature is computed as:</p>
+  <pre><code>HMACSHA256(
+  base64url(header) + "." + base64url(payload),
+  secret_key
+)</code></pre>
+  <p>When your server receives a JWT, it recomputes this signature using the secret key. If the signature matches, the token is authentic and unmodified. If it does not match, the token was tampered with and must be rejected.</p>
+
+  <h2>How to Decode a JWT in the Terminal</h2>
+  <p>You can decode the header and payload without any tools — they are just Base64URL. In bash:</p>
+  <pre><code># Decode the payload (second part)
+echo "eyJ1c2VySWQiOiIxMjMifQ" | base64 -d 2>/dev/null
+# Output: {"userId":"123"}</code></pre>
+  <p>Using Python (handles padding automatically):</p>
+  <pre><code>import base64, json
+
+def decode_jwt_part(part):
+    # Add padding
+    padding = 4 - len(part) % 4
+    part += '=' * padding
+    return json.loads(base64.urlsafe_b64decode(part))
+
+token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEyMyJ9.xyz"
+parts = token.split('.')
+print(decode_jwt_part(parts[0]))  # header
+print(decode_jwt_part(parts[1]))  # payload</code></pre>
+
+  <h2>Verifying a JWT in Node.js</h2>
+  <pre><code>const jwt = require('jsonwebtoken');
+
+// Signing a token (on login)
+const token = jwt.sign(
+  { userId: '123', email: 'user@example.com' },
+  process.env.JWT_SECRET,
+  { expiresIn: '1h', audience: 'api.example.com' }
+);
+
+// Verifying a token (on each protected request)
+try {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+    audience: 'api.example.com'
+  });
+  console.log('User ID:', decoded.userId);
+} catch (err) {
+  // TokenExpiredError, JsonWebTokenError, etc.
+  console.error('Invalid token:', err.message);
+}</code></pre>
+
+  <h2>Common JWT Security Pitfalls</h2>
+
+  <h3>Pitfall 1: The "alg: none" Attack</h3>
+  <p>Some early JWT libraries accepted a token with <code>"alg": "none"</code> in the header, skipping signature verification entirely. An attacker could forge any payload and set the algorithm to none. Always use a library that explicitly rejects <code>alg: none</code> and explicitly specify the expected algorithm during verification.</p>
+
+  <h3>Pitfall 2: Symmetric Keys in Public APIs</h3>
+  <p>If you use <code>HS256</code> (symmetric), both signing and verifying require the same secret. If you share your JWT with third-party services to verify, they also need the secret — and now it is no longer secret. Use <code>RS256</code> for public APIs: third parties verify with your public key, while your private key remains protected.</p>
+
+  <h3>Pitfall 3: Long-Lived Tokens Without Revocation</h3>
+  <p>JWTs are stateless by design — once issued, they are valid until expiry. If you need to revoke access immediately (e.g., on logout or account suspension), a pure JWT approach cannot do this without a server-side blocklist. Keep access token expiry short (15 minutes) and use refresh tokens for long sessions.</p>
+
+  <h3>Pitfall 4: Storing JWTs in localStorage</h3>
+  <p>Tokens stored in <code>localStorage</code> are accessible to any JavaScript running on your page, making them vulnerable to XSS attacks. Prefer storing JWTs in <code>httpOnly</code> cookies, which cannot be accessed by JavaScript. If you must use localStorage, ensure strict CSP policies and sanitize all user-controlled content.</p>
+
+  <div class="tip">✅ Best practice summary: short expiry (15 min), RS256 for public APIs, httpOnly cookies for storage, explicit algorithm in verification, and a refresh token rotation strategy.</div>
+
+  <h2>JWT vs. Session Tokens</h2>
+  <p>Traditional session tokens are random strings stored server-side in a database or cache. The server must do a database lookup on every request. JWTs are self-contained — no database lookup needed. The trade-off: sessions can be revoked instantly, while JWTs cannot be revoked before expiry without extra infrastructure. Neither is universally better; choose based on your scale and security requirements.</p>
+
+  <h2>Related Tools</h2>
+  <div class="related-links">
+    <a href="/">JSON Formatter Tool</a>
+    <a href="linux-curl.html">curl Snippets</a>
+    <a href="blog-json-formatter-debug-api.html">JSON Formatter Guide</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> · <a href="../about.html">About</a> · <a href="../privacy.html">Privacy Policy</a>
+  </footer>
+</body>
+</html>
