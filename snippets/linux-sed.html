@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux sed Command Examples - Dev Toolbox</title>
+  <meta name="description" content="Practical Linux sed command examples. Learn text substitution, line deletion, in-place editing, regex, and stream editing with the sed command.">
+  <meta name="keywords" content="linux sed, sed command, stream editor, text substitution, sed examples">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body { max-width: 860px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+    .breadcrumb { font-size: 0.85em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    h1 { margin-bottom: 5px; }
+    h2 { color: #ccc; font-size: 1.1em; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .subtitle { color: #aaa; margin-bottom: 30px; font-size: 0.95em; }
+    .snippet-block { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; margin-bottom: 24px; overflow: hidden; }
+    .snippet-header { background: #2a2a2a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .snippet-title { font-weight: bold; font-size: 0.95em; color: #e0e0e0; }
+    .copy-btn { background: #444; color: #ccc; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
+    .copy-btn:hover { background: #555; color: #fff; }
+    pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 0.9em; line-height: 1.6; color: #d4d4d4; background: transparent; border-radius: 0; }
+    .snippet-desc { padding: 10px 16px; font-size: 0.85em; color: #999; border-top: 1px solid #333; }
+    .tag { display: inline-block; background: #333; color: #aaa; font-size: 0.75em; padding: 2px 8px; border-radius: 3px; margin-right: 5px; margin-bottom: 16px; }
+    .section-title { font-size: 1.1em; font-weight: bold; color: #ccc; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+    .how-to { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 16px 20px; margin-bottom: 24px; }
+    .how-to ol { margin: 0; padding-left: 20px; color: #ccc; line-height: 1.8; }
+    .faq-block { margin-bottom: 20px; }
+    .faq-block h3 { color: #e0e0e0; font-size: 0.95em; margin-bottom: 6px; }
+    .faq-block p { color: #999; font-size: 0.9em; margin: 0; }
+    .related-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .related-link { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 10px 16px; text-decoration: none; color: #ccc; font-size: 0.9em; }
+    .related-link:hover { border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; font-size: 0.85em; color: #666; }
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/">Dev Toolbox</a> › <a href="index.html">Snippets</a> › Linux sed
+</div>
+
+<h1>Linux sed Command Examples</h1>
+<p class="subtitle">sed (stream editor) is a powerful Unix utility for parsing and transforming text. It is essential for automating text substitutions, deletions, and edits in files and pipelines without opening an editor.</p>
+
+<span class="tag">Linux</span>
+<span class="tag">sed</span>
+<span class="tag">CLI</span>
+<span class="tag">Text Processing</span>
+
+<div class="section-title">Basic Substitution</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Replace first occurrence on each line</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed 's/old/new/' file.txt</pre>
+  <div class="snippet-desc">Substitutes the first occurrence of "old" with "new" on every line. The output is printed to stdout; the original file is not modified. Pipe or redirect to save changes.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Replace all occurrences (global flag)</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed 's/old/new/g' file.txt</pre>
+  <div class="snippet-desc">The <code>g</code> flag replaces every occurrence of "old" on each line, not just the first. This is one of the most commonly used sed patterns for bulk text replacement.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Edit file in-place</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed -i 's/old/new/g' file.txt</pre>
+  <div class="snippet-desc">The <code>-i</code> flag edits the file directly without needing to redirect output. Use with caution as the original content is overwritten. Always test the substitution without <code>-i</code> first.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Edit in-place with backup</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed -i.bak 's/old/new/g' file.txt</pre>
+  <div class="snippet-desc">Appending a suffix to <code>-i</code> (e.g., <code>.bak</code>) creates a backup of the original file before editing. The backup is saved as <code>file.txt.bak</code>, giving you a safety net.</div>
+</div>
+
+<div class="section-title">Line Operations</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Delete a specific line by number</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed '5d' file.txt</pre>
+  <div class="snippet-desc">Deletes line number 5 from the output. Line numbers are 1-based. You can also use a range like <code>'5,10d'</code> to delete lines 5 through 10.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Delete lines matching a pattern</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed '/^#/d' file.txt</pre>
+  <div class="snippet-desc">Deletes all lines that match the given regex pattern. This example removes comment lines starting with <code>#</code>. Useful for stripping comments from config files.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Delete blank lines</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed '/^$/d' file.txt</pre>
+  <div class="snippet-desc">The pattern <code>^$</code> matches empty lines (start of line immediately followed by end of line). This is a quick way to remove all blank lines from a file.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print a specific line number</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed -n '10p' file.txt</pre>
+  <div class="snippet-desc">The <code>-n</code> flag suppresses default output, and <code>p</code> explicitly prints matching lines. Together they print only line 10. Without <code>-n</code>, the line would appear twice.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Print a range of lines</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed -n '10,20p' file.txt</pre>
+  <div class="snippet-desc">Prints lines 10 through 20 inclusive. A faster alternative to <code>head | tail</code> for extracting a specific section of a large file.</div>
+</div>
+
+<div class="section-title">Advanced</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Multiple substitution commands</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed -e 's/foo/bar/g' -e 's/baz/qux/g' file.txt</pre>
+  <div class="snippet-desc">The <code>-e</code> flag allows chaining multiple sed expressions in one command. Each expression is applied in sequence. An alternative is to use a semicolon: <code>sed 's/foo/bar/g; s/baz/qux/g' file.txt</code>.</div>
+</div>
+
+<div class="snippet-block">
+  <div class="snippet-header">
+    <span class="snippet-title">Insert a new line after a matching line</span>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <pre>sed '/pattern/a\New line of text' file.txt</pre>
+  <div class="snippet-desc">The <code>a</code> command appends text after each line matching the pattern. Use <code>i</code> instead of <code>a</code> to insert before the matching line. Useful for injecting config entries after a specific marker.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to">
+  <ol>
+    <li>Test your sed expression without <code>-i</code> first to verify the output looks correct.</li>
+    <li>Use <code>-i.bak</code> instead of <code>-i</code> when editing files in-place to keep a backup.</li>
+    <li>Chain multiple operations with <code>-e</code> or semicolons to perform several edits in one pass.</li>
+    <li>Combine with pipes: <code>cat file.txt | sed 's/old/new/g'</code> or <code>grep pattern file | sed ...</code>.</li>
+    <li>Use single quotes around the sed expression to avoid shell interpretation of special characters.</li>
+  </ol>
+</div>
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-block">
+  <h3>What is the difference between sed -i and sed -i.bak?</h3>
+  <p>Both edit the file in-place, but <code>-i.bak</code> saves a copy of the original with a <code>.bak</code> extension before making changes. Using a backup suffix is a safer practice especially when running sed on important configuration files.</p>
+</div>
+
+<div class="faq-block">
+  <h3>Why does my sed command work differently on macOS vs Linux?</h3>
+  <p>macOS uses BSD sed, which has slightly different syntax than GNU sed on Linux. The most common difference is with <code>-i</code>: on macOS you must provide a suffix (e.g., <code>-i ''</code>), while GNU sed accepts <code>-i</code> alone. Install GNU sed via Homebrew (<code>brew install gnu-sed</code>) for consistent behavior.</p>
+</div>
+
+<div class="faq-block">
+  <h3>Can sed handle multi-line patterns?</h3>
+  <p>Yes, but it requires using the <code>N</code> command to read the next line into the pattern space. For complex multi-line transformations, <code>awk</code> or <code>perl -0777 -pe</code> are often more readable alternatives.</p>
+</div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+  <a href="linux-awk.html" class="related-link">Linux awk Examples</a>
+  <a href="linux-grep.html" class="related-link">Linux grep Examples</a>
+  <a href="linux-find.html" class="related-link">Linux find Examples</a>
+</div>
+
+<footer>
+  <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+  <a href="../about.html">About</a> &nbsp;·&nbsp;
+  <a href="../privacy.html">Privacy Policy</a>
+</footer>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.snippet-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
