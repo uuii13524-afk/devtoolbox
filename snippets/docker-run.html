@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Run Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Docker run command examples for starting containers. Covers detached mode, port mapping, volume mounts, environment variables, and resource limits.">
+<meta name="keywords" content="docker run, docker run examples, container run, docker ports, docker volumes">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/docker-run.html">
+<meta property="og:title" content="Docker Run Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/docker-run.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Docker Run</div>
+<h1>Docker Run Command Examples</h1>
+<p class="subtitle">docker run creates and starts a container from an image. Mastering its flags — for port mapping, volume mounts, environment variables, naming, and resource limits — gives you full control over how containers run in both development and production environments.</p>
+<span class="tag">Docker</span><span class="tag">Run</span><span class="tag">DevOps</span><span class="tag">CLI</span>
+
+<div class="section-title">Basic Run</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Run a container interactively</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -it ubuntu bash</pre>
+<div class="snippet-desc"><code>-i</code> keeps stdin open and <code>-t</code> allocates a pseudo-TTY. Together they give you an interactive shell inside the container. When you exit the shell, the container stops. Use this for debugging and exploration.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Run in detached mode (background)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d nginx</pre>
+<div class="snippet-desc">The <code>-d</code> flag runs the container in the background and prints the container ID. The terminal is immediately returned to you. Use <code>docker logs container_id</code> to view output and <code>docker stop container_id</code> to stop it.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Name the container</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d --name mywebserver nginx</pre>
+<div class="snippet-desc">The <code>--name</code> flag assigns a human-readable name instead of a random one. Named containers are easier to reference in logs, stop, and exec commands: <code>docker stop mywebserver</code> instead of a long container ID.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Auto-remove when stopped</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run --rm alpine echo "Hello World"</pre>
+<div class="snippet-desc">The <code>--rm</code> flag automatically removes the container when it exits. Ideal for one-off commands and CI steps where you don't want containers accumulating. Without this, stopped containers remain until manually removed.</div>
+</div>
+
+<div class="section-title">Ports &amp; Volumes</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Map a host port to container port</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d -p 8080:80 nginx</pre>
+<div class="snippet-desc">The <code>-p host:container</code> flag maps a port on your machine to a port inside the container. This makes nginx accessible at <code>http://localhost:8080</code>. The container port (80) stays fixed; change the host port (8080) as needed.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Mount a host directory as a volume</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d -v /host/path:/container/path nginx</pre>
+<div class="snippet-desc">The <code>-v host:container</code> flag mounts a host directory into the container. Changes made inside the container are immediately reflected on the host and vice versa. Essential for development workflows where you edit files locally.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Mount as read-only</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d -v /host/config:/etc/config:ro nginx</pre>
+<div class="snippet-desc">Append <code>:ro</code> to make the volume read-only inside the container. The container can read the files but cannot modify them. Use this for config files and secrets to prevent accidental modification by the containerized process.</div>
+</div>
+
+<div class="section-title">Environment &amp; Resources</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Set environment variables</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d -e NODE_ENV=production -e PORT=3000 myapp</pre>
+<div class="snippet-desc">The <code>-e</code> flag sets environment variables inside the container. Use multiple <code>-e</code> flags for multiple variables. The running process can read these like any other environment variable in its language.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Load environment from a file</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d --env-file .env myapp</pre>
+<div class="snippet-desc">The <code>--env-file</code> flag loads environment variables from a file. Each line should be in <code>KEY=VALUE</code> format. This is cleaner than multiple <code>-e</code> flags and keeps secrets out of shell history.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Limit CPU and memory</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d --cpus="1.5" --memory="512m" myapp</pre>
+<div class="snippet-desc"><code>--cpus</code> limits CPU usage (1.5 = one and a half cores). <code>--memory</code> limits RAM. Setting resource limits prevents a single runaway container from starving the host or other containers. Essential for production and shared environments.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Connect to a specific network</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker run -d --network mynetwork myapp</pre>
+<div class="snippet-desc">The <code>--network</code> flag attaches the container to a named Docker network. Containers on the same network can communicate using container names as hostnames. Create a network first with <code>docker network create mynetwork</code>.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Start with <code>docker run image-name</code> to run a container interactively.</li>
+<li>Add <code>-d</code> to run in the background and <code>--name</code> to give it a recognizable name.</li>
+<li>Map ports with <code>-p host:container</code> and mount volumes with <code>-v host:container</code>.</li>
+<li>Inject configuration with <code>-e KEY=VALUE</code> or <code>--env-file .env</code>.</li>
+<li>Use <code>--rm</code> for short-lived commands to avoid container accumulation.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between docker run and docker start?</h3><p><code>docker run</code> creates a new container from an image and starts it. <code>docker start</code> restarts a container that was previously created and stopped. Use <code>docker run</code> for new containers and <code>docker start</code> to restart existing ones.</p></div>
+<div class="faq-block"><h3>How do I get a shell in a running container?</h3><p>Use <code>docker exec -it container_name bash</code> (or <code>sh</code> for Alpine-based images). Unlike <code>docker run -it</code>, exec connects to an already-running container without starting a new one. This is the standard way to inspect or debug a live container.</p></div>
+<div class="faq-block"><h3>Why does my container stop immediately after starting?</h3><p>Containers run only as long as their main process (PID 1) is running. If your CMD or ENTRYPOINT exits immediately, the container stops. Common causes: the process runs in the background (use <code>-d</code> with the foreground command), or there's a startup error (check <code>docker logs container_id</code>).</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="docker-compose.html">Docker Compose Examples</a>
+<a class="related-link" href="docker-build.html">Docker Build Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

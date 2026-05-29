@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Stash Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Git stash examples for temporarily saving uncommitted changes. Covers saving, listing, applying, popping, branching from stash, and managing multiple stashes.">
+<meta name="keywords" content="git stash, git stash pop, git stash apply, stash changes, git stash examples">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/git-stash.html">
+<meta property="og:title" content="Git Stash Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/git-stash.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Git Stash</div>
+<h1>Git Stash Command Examples</h1>
+<p class="subtitle">git stash temporarily shelves (stashes) uncommitted changes so you can switch context — fix a bug, pull updates, or review another branch — and then come back and reapply your work. It is the cleanest way to handle mid-work interruptions without creating WIP commits.</p>
+<span class="tag">Git</span><span class="tag">Stash</span><span class="tag">Version Control</span><span class="tag">CLI</span>
+
+<div class="section-title">Saving Changes</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Stash all uncommitted changes</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash</pre>
+<div class="snippet-desc">Stashes both staged and unstaged tracked file changes. Your working directory is reset to match the last commit. Untracked (new) files are not stashed by default — use <code>git stash push -u</code> to include them.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Stash with a descriptive message</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash push -m "WIP: add user auth middleware"</pre>
+<div class="snippet-desc">The <code>-m</code> flag adds a description to the stash entry. This makes it much easier to identify specific stashes when you have multiple saved. Always add messages when you expect to have the stash for more than a few minutes.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Stash including untracked files</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash push -u</pre>
+<div class="snippet-desc">The <code>-u</code> (or <code>--include-untracked</code>) flag also stashes new files that aren't yet tracked by git. Without this flag, untracked files stay in your working directory even after stashing.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">List all stash entries</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash list</pre>
+<div class="snippet-desc">Shows all stash entries with their index, branch, and message. Entries are numbered starting at 0 (most recent). The format is <code>stash@{0}: On branch: message</code>. Use this to find the index of a specific stash before applying it.</div>
+</div>
+
+<div class="section-title">Applying Changes</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Apply and remove the latest stash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash pop</pre>
+<div class="snippet-desc">Applies the most recent stash entry and removes it from the stash list. This is the most common way to restore stashed work. If there are conflicts, they must be resolved manually before the stash entry is removed.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Apply a specific stash without removing it</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash apply stash@{2}</pre>
+<div class="snippet-desc"><code>apply</code> restores the stash but keeps the entry in the stash list, unlike <code>pop</code>. Specify a stash index from <code>git stash list</code>. Useful when you want to apply the same stash to multiple branches.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Show the diff of a stash entry</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash show -p stash@{0}</pre>
+<div class="snippet-desc">The <code>-p</code> flag shows the full diff of the stash. Without it, only a summary of changed files is shown. Use this to review what is in a stash before applying it, especially if you have multiple stashes with similar messages.</div>
+</div>
+
+<div class="section-title">Managing Stashes</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Create a branch from a stash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash branch feature/my-work stash@{0}</pre>
+<div class="snippet-desc">Creates a new branch from the commit the stash was created on, applies the stash, and drops the stash entry. This is the cleanest way to convert stashed work into a proper feature branch when the stash applies with conflicts on the current branch.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Drop a specific stash entry</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash drop stash@{1}</pre>
+<div class="snippet-desc">Permanently removes a specific stash entry without applying it. Use this to clean up stash entries you no longer need. Double-check with <code>git stash show -p stash@{1}</code> before dropping to make sure you don't need the changes.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Clear all stash entries</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>git stash clear</pre>
+<div class="snippet-desc">Removes all stash entries permanently. This action cannot be undone — the stashed changes are gone forever. Use with caution. Review stash list contents with <code>git stash list</code> before clearing.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Run <code>git stash</code> to save current changes and get a clean working directory.</li>
+<li>Switch branches or pull updates, then return to your branch.</li>
+<li>Run <code>git stash pop</code> to restore your changes and remove the stash entry.</li>
+<li>Use <code>git stash push -m "message"</code> to add a descriptive label when stashing.</li>
+<li>Run <code>git stash list</code> to see all saved stashes and manage them.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between git stash pop and git stash apply?</h3><p><code>git stash pop</code> applies the stash and removes it from the stash list in one step. <code>git stash apply</code> restores the changes but keeps the entry in the stash list. Use apply when you want to apply the same stash to multiple branches or keep it as a backup.</p></div>
+<div class="faq-block"><h3>Can I stash only specific files?</h3><p>Yes, use <code>git stash push path/to/file</code> to stash only specific files. You can also use <code>git stash push -p</code> for interactive (patch) mode, which lets you choose which hunks to stash. This is useful when you have mixed changes and only want to set aside part of them.</p></div>
+<div class="faq-block"><h3>Does git stash affect untracked files?</h3><p>By default, <code>git stash</code> only stashes changes to tracked files (modified and staged). New untracked files are left in the working directory. Add the <code>-u</code> flag (<code>git stash push -u</code>) to include untracked files, or <code>-a</code> to also include gitignored files.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="git-rebase.html">Git Rebase Examples</a>
+<a class="related-link" href="git-cherry-pick.html">Git Cherry-Pick Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>
