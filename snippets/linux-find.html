@@ -1,211 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Linux find Command Examples - Dev Toolbox</title>
-  <meta name="description" content="Practical Linux find command examples for locating files and directories. Covers name patterns, size filters, timestamps, permissions, and batch operations.">
-  <meta name="keywords" content="linux find, find command, file search, locate files, find examples">
-  <link rel="stylesheet" href="../assets/style.css">
-  <style>
-    body { max-width: 860px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
-    .breadcrumb { font-size: 0.85em; color: #888; margin-bottom: 20px; }
-    .breadcrumb a { color: #888; text-decoration: none; }
-    .breadcrumb a:hover { color: #fff; }
-    h1 { margin-bottom: 5px; }
-    h2 { color: #ccc; font-size: 1.1em; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
-    .subtitle { color: #aaa; margin-bottom: 30px; font-size: 0.95em; }
-    .snippet-block { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; margin-bottom: 24px; overflow: hidden; }
-    .snippet-header { background: #2a2a2a; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-    .snippet-title { font-weight: bold; font-size: 0.95em; color: #e0e0e0; }
-    .copy-btn { background: #444; color: #ccc; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
-    .copy-btn:hover { background: #555; color: #fff; }
-    pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 0.9em; line-height: 1.6; color: #d4d4d4; background: transparent; border-radius: 0; }
-    .snippet-desc { padding: 10px 16px; font-size: 0.85em; color: #999; border-top: 1px solid #333; }
-    .tag { display: inline-block; background: #333; color: #aaa; font-size: 0.75em; padding: 2px 8px; border-radius: 3px; margin-right: 5px; margin-bottom: 16px; }
-    .section-title { font-size: 1.1em; font-weight: bold; color: #ccc; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #333; }
-    .how-to { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 16px 20px; margin-bottom: 24px; }
-    .how-to ol { margin: 0; padding-left: 20px; color: #ccc; line-height: 1.8; }
-    .faq-block { margin-bottom: 20px; }
-    .faq-block h3 { color: #e0e0e0; font-size: 0.95em; margin-bottom: 6px; }
-    .faq-block p { color: #999; font-size: 0.9em; margin: 0; }
-    .related-links { display: flex; gap: 12px; flex-wrap: wrap; }
-    .related-link { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 10px 16px; text-decoration: none; color: #ccc; font-size: 0.9em; }
-    .related-link:hover { border-color: #555; color: #fff; }
-    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; font-size: 0.85em; color: #666; }
-    footer a { color: #666; text-decoration: none; }
-    footer a:hover { color: #fff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux find Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Linux find command examples for locating files by name, size, date, permissions, and type. Includes -exec, -delete, and xargs patterns.">
+<meta name="keywords" content="linux find, find command, file search, find examples, locate files">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/linux-find.html">
+<meta property="og:title" content="Linux find Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/linux-find.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}
+</style>
 </head>
 <body>
-
-<div class="breadcrumb">
-  <a href="/">Dev Toolbox</a> › <a href="index.html">Snippets</a> › Linux find
-</div>
-
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Linux find</div>
 <h1>Linux find Command Examples</h1>
-<p class="subtitle">The <code>find</code> command recursively searches directory trees for files and directories matching specified criteria. It is indispensable for locating files, auditing permissions, and running batch operations across large codebases.</p>
+<p class="subtitle">The find command recursively searches directory trees for files and directories matching your criteria. It supports filtering by name, type, size, modification time, and permissions. Combined with <code>-exec</code> or <code>xargs</code>, find can apply any command to matched files in bulk, making it a powerful automation building block.</p>
+<span class="tag">Linux</span><span class="tag">find</span><span class="tag">CLI</span><span class="tag">File System</span>
 
-<span class="tag">Linux</span>
-<span class="tag">find</span>
-<span class="tag">CLI</span>
-<span class="tag">File System</span>
-
-<div class="section-title">Find by Name / Type</div>
-
+<div class="section-title">Find by Name &amp; Type</div>
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find files by name pattern</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -name "*.log"</pre>
-  <div class="snippet-desc">Searches the current directory and all subdirectories for files matching the glob pattern <code>*.log</code>. The dot (<code>.</code>) means start from the current directory. Replace with an absolute path to search elsewhere.</div>
+<div class="snippet-header"><span class="snippet-title">Find files by name pattern</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -name "*.log"</pre>
+<div class="snippet-desc">Searches recursively from the current directory for files matching the glob pattern. The dot <code>.</code> is the starting point — use a specific path like <code>/var/log</code> to search from a different location.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find directories by name</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -type d -name "config"</pre>
-  <div class="snippet-desc">The <code>-type d</code> flag restricts results to directories only. Use <code>-type f</code> for regular files or <code>-type l</code> for symbolic links. This avoids confusing file and directory matches.</div>
+<div class="snippet-header"><span class="snippet-title">Case-insensitive name search</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -iname "readme*"</pre>
+<div class="snippet-desc"><code>-iname</code> matches regardless of letter case, finding README.md, readme.txt, Readme.html, and all variants simultaneously. Useful when working with codebases that mix naming conventions.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Case-insensitive name search</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -iname "readme*"</pre>
-  <div class="snippet-desc"><code>-iname</code> works like <code>-name</code> but ignores case, matching README.md, Readme.txt, readme.rst, etc. Useful when working with mixed-case file systems or codebases with inconsistent naming.</div>
+<div class="snippet-header"><span class="snippet-title">Find only directories</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -type d -name "node_modules"</pre>
+<div class="snippet-desc">Use <code>-type d</code> to restrict results to directories only, <code>-type f</code> for regular files, and <code>-type l</code> for symlinks. This finds all node_modules directories — useful before packaging or disk cleanup.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find files with multiple extensions</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -name "*.py" -o -name "*.js"</pre>
-  <div class="snippet-desc">The <code>-o</code> flag is the OR operator. This finds all Python and JavaScript files. When combining <code>-o</code> with actions, wrap conditions in parentheses to avoid precedence issues: <code>find . \( -name "*.py" -o -name "*.js" \) -type f</code>.</div>
+<div class="snippet-header"><span class="snippet-title">Find files matching either of two extensions</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . \( -name "*.py" -o -name "*.js" \)</pre>
+<div class="snippet-desc">Use <code>-o</code> for logical OR between conditions. Parentheses must be escaped with backslashes in the shell. This finds all Python and JavaScript files in the directory tree simultaneously.</div>
 </div>
 
 <div class="section-title">Find by Attributes</div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find files larger than a given size</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -size +10M</pre>
-  <div class="snippet-desc">Finds files larger than 10 megabytes. Use <code>+</code> for greater than, <code>-</code> for less than, and no sign for exact. Units: <code>k</code> (kilobytes), <code>M</code> (megabytes), <code>G</code> (gigabytes).</div>
+<div class="snippet-header"><span class="snippet-title">Find files larger than a given size</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -size +10M</pre>
+<div class="snippet-desc">Filter by file size using <code>-size</code>. The <code>+</code> prefix means "greater than". Units: <code>k</code> (KB), <code>M</code> (MB), <code>G</code> (GB). Use <code>-</code> for "less than". Great for finding disk-space hogs before cleanup.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find files modified in the last N days</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -mtime -7</pre>
-  <div class="snippet-desc">Finds files modified within the last 7 days. <code>-mtime -7</code> means less than 7 days ago. Use <code>-atime</code> for last access time and <code>-ctime</code> for last status change. Use <code>+7</code> to find files older than 7 days.</div>
+<div class="snippet-header"><span class="snippet-title">Find files modified in the last N days</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -mtime -7</pre>
+<div class="snippet-desc"><code>-mtime -7</code> matches files modified within the last 7 days. Use <code>+7</code> for files older than 7 days. Use <code>-mmin -60</code> for files modified in the last 60 minutes.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find files by permissions</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -perm 644</pre>
-  <div class="snippet-desc">Finds files with exactly 644 permissions. Use <code>-perm /644</code> to find files where any of those permission bits are set, or <code>-perm -644</code> for files where all of those bits are set (and possibly more).</div>
-</div>
-
-<div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find empty files</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -empty</pre>
-  <div class="snippet-desc">Finds all empty files (0 bytes) and empty directories. Combine with <code>-type f</code> or <code>-type d</code> to restrict to only empty files or only empty directories respectively.</div>
+<div class="snippet-header"><span class="snippet-title">Find empty files</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -type f -empty</pre>
+<div class="snippet-desc">The <code>-empty</code> flag matches files with zero bytes. Combine with <code>-type f</code> to exclude empty directories. Useful for cleaning up placeholder files, failed downloads, or empty log files.</div>
 </div>
 
 <div class="section-title">Execute Actions</div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find and delete files</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -name "*.tmp" -delete</pre>
-  <div class="snippet-desc">The <code>-delete</code> action removes matching files. Always run without <code>-delete</code> first to verify what will be deleted. This is faster than using <code>-exec rm</code> and avoids spawning a new process per file.</div>
+<div class="snippet-header"><span class="snippet-title">Find and delete matching files</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -name "*.tmp" -delete</pre>
+<div class="snippet-desc">The <code>-delete</code> action removes matched files. Always run find without <code>-delete</code> first to preview what will be removed. This is faster and safer than piping to <code>rm</code> via xargs for straightforward deletions.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find and execute a command on each result</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -name "*.sh" -exec chmod +x {} \;</pre>
-  <div class="snippet-desc">The <code>-exec</code> action runs a command for each match. <code>{}</code> is replaced by the file path, and <code>\;</code> terminates the command. For better performance with many files, use <code>+</code> instead of <code>\;</code> to batch arguments: <code>-exec chmod +x {} +</code>.</div>
+<div class="snippet-header"><span class="snippet-title">Execute a command on each result</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -name "*.sh" -exec chmod +x {} \;</pre>
+<div class="snippet-desc">The <code>-exec</code> action runs a command for each match. <code>{}</code> is replaced with the filename; <code>\;</code> terminates the expression. This example makes all shell scripts in the tree executable.</div>
 </div>
-
 <div class="snippet-block">
-  <div class="snippet-header">
-    <span class="snippet-title">Find files containing a pattern</span>
-    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  </div>
-  <pre>find . -name "*.py" -exec grep -l "TODO" {} \;</pre>
-  <div class="snippet-desc">Combines find and grep to list Python files that contain the word TODO. The <code>-l</code> flag tells grep to print only the filename rather than the matching line. Consider using <code>grep -rl "TODO" --include="*.py" .</code> as a faster alternative.</div>
+<div class="snippet-header"><span class="snippet-title">Find files containing a specific string</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>find . -name "*.py" -exec grep -l "TODO" {} \;</pre>
+<div class="snippet-desc">Combines find with grep to search inside file contents. The <code>-l</code> flag on grep prints only filenames with matches. Finds all Python files containing "TODO" — useful for code audits without a full IDE search.</div>
 </div>
 
 <h2>How to Use</h2>
-<div class="how-to">
-  <ol>
-    <li>Always start with a dry run — run the find command without any destructive action to verify results.</li>
-    <li>Use <code>-maxdepth 1</code> to limit the search to the current directory only and avoid deep recursion.</li>
-    <li>Combine multiple criteria: <code>find . -name "*.log" -size +10M -mtime +30</code> finds large, old log files.</li>
-    <li>Use <code>-exec ... +</code> instead of <code>-exec ... \;</code> when possible for better performance.</li>
-    <li>Redirect stderr to <code>/dev/null</code> to suppress "Permission denied" errors: <code>find / -name "file" 2&gt;/dev/null</code>.</li>
-  </ol>
-</div>
+<div class="how-to"><ol>
+<li>Always test find without action flags first to preview what will be matched.</li>
+<li>Use <code>-type f</code> or <code>-type d</code> to limit results to files or directories.</li>
+<li>Add attribute filters like <code>-size</code>, <code>-mtime</code>, or <code>-perm</code> to refine results.</li>
+<li>Use <code>-exec command {} \;</code> to process each result with any command.</li>
+<li>Add <code>2&gt;/dev/null</code> to suppress "Permission denied" errors in restricted directories.</li>
+</ol></div>
 
 <h2>Frequently Asked Questions</h2>
-
-<div class="faq-block">
-  <h3>What is the difference between find and locate?</h3>
-  <p><code>find</code> searches the filesystem in real-time and always returns up-to-date results. <code>locate</code> queries a pre-built database (updated by <code>updatedb</code>) and is much faster but may return stale results for recently created or deleted files. Use <code>find</code> when accuracy matters.</p>
-</div>
-
-<div class="faq-block">
-  <h3>How do I exclude a directory from find results?</h3>
-  <p>Use <code>-prune</code> to skip a directory: <code>find . -path ./node_modules -prune -o -name "*.js" -print</code>. This tells find to prune (skip) the <code>node_modules</code> directory and print all other <code>.js</code> files. Always pair <code>-prune</code> with <code>-o ... -print</code> to avoid odd output.</p>
-</div>
-
-<div class="faq-block">
-  <h3>Why does find return "Permission denied" errors?</h3>
-  <p>find tries to descend into every directory it encounters. When it hits directories you don't have read permission for, it prints a "Permission denied" error to stderr. Suppress these with <code>2&gt;/dev/null</code>, or run the command with <code>sudo</code> if you need access to those directories.</p>
-</div>
+<div class="faq-block"><h3>Why does find show "Permission denied" errors?</h3><p>find traverses all directories, including those you don't have permission to read. Suppress these errors by redirecting stderr: <code>find . -name "*.log" 2&gt;/dev/null</code>. Alternatively, run with <code>sudo</code> when searching system directories.</p></div>
+<div class="faq-block"><h3>What is the difference between -exec and xargs?</h3><p><code>-exec</code> runs a new process for each matched file, which is slower for large result sets. <code>xargs</code> batches multiple filenames into fewer invocations. Use <code>find . -name "*.txt" -print0 | xargs -0 grep "pattern"</code> for better performance with filenames that may contain spaces.</p></div>
+<div class="faq-block"><h3>How do I limit the search depth?</h3><p>Use <code>-maxdepth N</code> to limit recursion depth. For example, <code>find . -maxdepth 2 -name "*.log"</code> only searches the current directory and its immediate subdirectories. Use <code>-mindepth</code> to skip top-level results.</p></div>
 
 <h2>Related Tools</h2>
 <div class="related-links">
-  <a href="linux-grep.html" class="related-link">Linux grep Examples</a>
-  <a href="linux-sed.html" class="related-link">Linux sed Examples</a>
-  <a href="linux-chmod.html" class="related-link">Linux chmod Examples</a>
+<a class="related-link" href="linux-grep.html">Linux grep Examples</a>
+<a class="related-link" href="linux-sed.html">Linux sed Examples</a>
+<a class="related-link" href="linux-chmod.html">Linux chmod Examples</a>
 </div>
 
-<footer>
-  <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
-  <a href="../about.html">About</a> &nbsp;·&nbsp;
-  <a href="../privacy.html">Privacy Policy</a>
-</footer>
-
-<script>
-function copyCode(btn) {
-  const pre = btn.closest('.snippet-block').querySelector('pre');
-  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
-  });
-}
-</script>
-
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
 </body>
 </html>
