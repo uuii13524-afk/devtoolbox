@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell Script Loop Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical shell script loop examples for Bash. Covers for loops, while loops, until loops, looping over files, arrays, and reading line-by-line from files.">
+<meta name="keywords" content="shell loops, bash loops, for loop bash, while loop shell, bash scripting loops">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/shell-loops.html">
+<meta property="og:title" content="Shell Script Loop Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/shell-loops.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Shell Loops</div>
+<h1>Shell Script Loop Examples</h1>
+<p class="subtitle">Loops are fundamental building blocks of shell scripts. Bash provides for loops (over lists and ranges), while loops (condition-based), and until loops (run until condition is true). Mastering these patterns lets you automate repetitive tasks, process files in bulk, and build robust automation scripts.</p>
+<span class="tag">Shell</span><span class="tag">Bash</span><span class="tag">Loops</span><span class="tag">Scripting</span>
+
+<div class="section-title">For Loops</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Loop over a list of items</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>for fruit in apple banana cherry; do
+  echo "Processing: $fruit"
+done</pre>
+<div class="snippet-desc">The simplest for loop iterates over a space-separated list of items. Each item is assigned to the variable (here <code>fruit</code>) in turn. The loop body runs once for each item between <code>do</code> and <code>done</code>.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Numeric range loop (C-style)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>for ((i=1; i&lt;=5; i++)); do
+  echo "Step $i of 5"
+done</pre>
+<div class="snippet-desc">The C-style for loop uses double parentheses and supports standard C loop syntax: initializer; condition; increment. Ideal for counting loops where you need a numeric index. Bash-specific (not POSIX sh).</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Loop over files matching a pattern</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>for file in *.txt; do
+  echo "Processing $file"
+  wc -l "$file"
+done</pre>
+<div class="snippet-desc">Shell glob expansion (wildcards) in a for loop iterates over matching files. Always quote the variable <code>"$file"</code> to handle filenames with spaces correctly. If no files match, the glob is passed literally — add <code>shopt -s nullglob</code> to avoid this.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Loop over command output</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>for user in $(cat users.txt); do
+  echo "Creating account for $user"
+done</pre>
+<div class="snippet-desc">Use command substitution <code>$()</code> to loop over the output of a command. This splits on whitespace by default. For lines with spaces, use <code>while read</code> instead (see below) which handles spaces in values correctly.</div>
+</div>
+
+<div class="section-title">While &amp; Until Loops</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Basic while loop with counter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>count=1
+while [ $count -le 5 ]; do
+  echo "Count: $count"
+  ((count++))
+done</pre>
+<div class="snippet-desc">A while loop runs as long as the condition is true. This example counts from 1 to 5. The <code>[ ]</code> test uses <code>-le</code> (less than or equal). Use <code>(( ))</code> for arithmetic operations on the counter.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Read a file line by line</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>while IFS= read -r line; do
+  echo "Line: $line"
+done &lt; filename.txt</pre>
+<div class="snippet-desc">The safest way to process a file line by line. <code>IFS=</code> prevents leading/trailing whitespace from being stripped. <code>-r</code> prevents backslash interpretation. The <code>&lt;</code> redirects the file to the while loop's stdin.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Wait until a condition is true</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>until curl -sf http://localhost:8080/health; do
+  echo "Waiting for service..."
+  sleep 2
+done
+echo "Service is up!"</pre>
+<div class="snippet-desc">An until loop is the inverse of while: it runs until the condition becomes true (exits with code 0). This example polls a health endpoint every 2 seconds until the service is ready. Essential in deployment and startup scripts.</div>
+</div>
+
+<div class="section-title">Loop Control</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Break out of a loop</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>for i in 1 2 3 4 5; do
+  if [ $i -eq 3 ]; then
+    break
+  fi
+  echo "$i"
+done
+# Output: 1 2</pre>
+<div class="snippet-desc"><code>break</code> immediately exits the innermost loop. In nested loops, <code>break 2</code> exits two levels up. Use break when you've found what you're looking for and don't need to continue iterating.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Skip an iteration with continue</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>for i in 1 2 3 4 5; do
+  if [ $i -eq 3 ]; then
+    continue
+  fi
+  echo "$i"
+done
+# Output: 1 2 4 5</pre>
+<div class="snippet-desc"><code>continue</code> skips the rest of the current iteration and moves to the next one. Use it to skip invalid items, error conditions, or items that don't match your criteria without breaking the entire loop.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Loop with array elements</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>servers=("web1" "web2" "db1" "cache1")
+for server in "${servers[@]}"; do
+  echo "Deploying to: $server"
+done</pre>
+<div class="snippet-desc">Use <code>"${array[@]}"</code> to expand all array elements as separate quoted words. The double quotes and <code>@</code> together ensure elements with spaces are handled correctly. This is the standard pattern for iterating over bash arrays.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Use <code>for item in list; do ... done</code> for iterating over known items or files.</li>
+<li>Use <code>while condition; do ... done</code> when the number of iterations is not known upfront.</li>
+<li>Use <code>while IFS= read -r line; do ... done &lt; file</code> for safe line-by-line file processing.</li>
+<li>Always quote variables inside loops to handle spaces in filenames and values.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between for and while loops in bash?</h3><p>for loops iterate over a finite list (array, files, command output). while loops repeat as long as a condition is true, making them suitable for indefinite loops like polling or reading streams. Use for when you know the items to iterate; use while for condition-based repetition.</p></div>
+<div class="faq-block"><h3>Why should I use while read instead of for to process file lines?</h3><p>A for loop with command substitution splits on all whitespace (spaces, tabs, newlines) and can break lines with spaces into multiple iterations. <code>while IFS= read -r line</code> reads exactly one line at a time, preserving spaces within lines and handling all edge cases correctly.</p></div>
+<div class="faq-block"><h3>How do I loop in parallel in bash?</h3><p>Append <code>&amp;</code> inside the loop to run each iteration as a background job, then use <code>wait</code> after the loop: <code>for f in *.log; do process "$f" &amp; done; wait</code>. For more control over parallelism, use <code>xargs -P N</code> or the GNU <code>parallel</code> command.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="shell-functions.html">Shell Functions</a>
+<a class="related-link" href="linux-find.html">Linux find Examples</a>
+<a class="related-link" href="linux-awk.html">Linux awk Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>
