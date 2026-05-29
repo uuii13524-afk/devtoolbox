@@ -3,42 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - Dev Toolbox</title>
+  <title>About Dev Toolbox - Free Browser-Based Developer Utilities</title>
+  <meta name="description" content="Dev Toolbox is a free, privacy-first collection of browser-based developer utilities. JSON formatter, Base64, UUID, regex tester, SQL formatter, and more — no sign-up, no data sent to servers.">
+  <meta name="keywords" content="Dev Toolbox, developer tools, free online tools, JSON formatter, Base64, UUID generator, regex tester, privacy">
+  <link rel="canonical" href="https://devkitbox.xyz/about.html">
+  <meta property="og:title" content="About Dev Toolbox - Free Browser-Based Developer Utilities">
+  <meta property="og:description" content="Dev Toolbox is a free, privacy-first collection of browser-based developer utilities. No sign-up, no data sent to servers.">
+  <meta property="og:url" content="https://devkitbox.xyz/about.html">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="assets/style.css">
+  <style>
+    body { background: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', sans-serif; max-width: 860px; margin: 0 auto; padding: 20px; line-height: 1.7; }
+    h1 { color: #4fc3f7; font-size: 2rem; margin-bottom: 0.4rem; }
+    h2 { color: #81c784; font-size: 1.4rem; margin-top: 2rem; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    h3 { color: #ffb74d; font-size: 1.1rem; margin-top: 1.4rem; }
+    .subtitle { color: #aaa; font-size: 1.05rem; margin-bottom: 1.5rem; }
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 1rem 0; }
+    .tool-card { background: #263238; border: 1px solid #37474f; border-radius: 6px; padding: 10px 14px; }
+    .tool-card strong { color: #4fc3f7; display: block; margin-bottom: 4px; }
+    .tool-card span { font-size: 0.85rem; color: #aaa; }
+    .highlight { background: #263238; border-left: 3px solid #4fc3f7; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+    .faq-block { margin: 1rem 0; }
+    .faq-block h3 { color: #ffb74d; margin-bottom: 4px; font-size: 1rem; }
+    .faq-block p { margin: 0; color: #ccc; font-size: 0.95rem; }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #333; font-size: 0.85rem; color: #888; text-align: center; }
+    footer a { color: #4fc3f7; margin: 0 8px; }
+  </style>
 </head>
 <body>
-<main style="max-width:800px; margin:40px auto; padding:20px;">
+
   <h1>About Dev Toolbox</h1>
-  <p>
-    Dev Toolbox is a free, browser-based collection of developer utilities.
-    All tools run entirely in your browser — no data is sent to any server.
-    Your privacy is fully protected.
-  </p>
+  <p class="subtitle">A free, fast, privacy-first collection of browser-based utilities for developers — no account required, no data ever leaves your browser.</p>
+
+  <h2>What Is Dev Toolbox?</h2>
+  <p>Dev Toolbox (devkitbox.xyz) is an open collection of everyday developer utilities designed to be fast, distraction-free, and completely private. Every tool runs entirely in your browser using client-side JavaScript. When you paste JSON, a JWT token, or a password into any tool on this site, that data is processed locally on your machine and never transmitted to any server.</p>
+  <p>We built Dev Toolbox because developer tools should not require sign-ups, subscriptions, or cloud accounts. The best tool is the one that is instantly available, works offline, and does not ask for anything in return.</p>
+
+  <div class="highlight">
+    <strong style="color:#4fc3f7">100% client-side</strong> — all processing happens in your browser. No data is ever sent to a server. No accounts, no cookies, no tracking.
+  </div>
 
   <h2>Available Tools</h2>
+  <div class="tool-grid">
+    <div class="tool-card"><strong>JSON Formatter</strong><span>Format, minify, and validate JSON</span></div>
+    <div class="tool-card"><strong>Base64 Encode/Decode</strong><span>Encode and decode Base64 strings</span></div>
+    <div class="tool-card"><strong>Hash Generator</strong><span>MD5, SHA-1, SHA-256 hashes</span></div>
+    <div class="tool-card"><strong>UUID Generator</strong><span>Generate v4 random UUIDs</span></div>
+    <div class="tool-card"><strong>Regex Tester</strong><span>Live regex preview and match highlights</span></div>
+    <div class="tool-card"><strong>URL Encode/Decode</strong><span>Encode and decode URL strings</span></div>
+    <div class="tool-card"><strong>JWT Decoder</strong><span>Decode and inspect JWT token payloads</span></div>
+    <div class="tool-card"><strong>CSV Viewer</strong><span>Parse and display CSV as a table</span></div>
+    <div class="tool-card"><strong>Timestamp Converter</strong><span>Unix timestamps ↔ human-readable dates</span></div>
+    <div class="tool-card"><strong>Cron Editor</strong><span>Build and explain cron expressions visually</span></div>
+    <div class="tool-card"><strong>Markdown Preview</strong><span>Live Markdown to HTML preview</span></div>
+    <div class="tool-card"><strong>SQL Formatter</strong><span>Format and indent SQL queries</span></div>
+    <div class="tool-card"><strong>Text Diff</strong><span>Side-by-side text comparison</span></div>
+    <div class="tool-card"><strong>YAML ↔ JSON Converter</strong><span>Convert between YAML and JSON</span></div>
+    <div class="tool-card"><strong>Password Generator</strong><span>Secure random passwords with options</span></div>
+    <div class="tool-card"><strong>CSS Minifier</strong><span>Remove whitespace and comments from CSS</span></div>
+    <div class="tool-card"><strong>Lorem Ipsum Generator</strong><span>Generate placeholder text</span></div>
+    <div class="tool-card"><strong>chmod Calculator</strong><span>Visual Unix permission calculator</span></div>
+  </div>
+
+  <h2>Code Snippets Library</h2>
+  <p>Beyond interactive tools, Dev Toolbox offers a growing library of copy-ready code snippets for common developer tasks. Each snippet page includes multiple examples with explanations, a How-to-Use guide, and an FAQ section.</p>
+  <p>Current snippet categories include <strong>Linux commands</strong> (grep, sed, awk, find, curl, ssh, tar, chmod, ps), <strong>Docker</strong> (compose, build, run), <strong>Git</strong> (rebase, stash, cherry-pick, reflog), <strong>SQL</strong> (joins, window functions), and <strong>Shell scripting</strong> (loops, functions).</p>
+  <p><a href="snippets/linux-grep.html">Browse snippets →</a></p>
+
+  <h2>Developer Blog</h2>
+  <p>The Dev Toolbox blog covers practical topics that come up in everyday development work — not tutorials from scratch, but focused guides that assume you can already code and want to go deeper. Topics include API debugging, Git workflows, Docker orchestration, SQL optimization, and security concepts like JWT tokens.</p>
+  <p><a href="snippets/blog-linux-commands-developers.html">Read a recent article →</a></p>
+
+  <h2>Our Principles</h2>
   <ul>
-    <li><strong>JSON Formatter</strong> — Format, minify, and validate JSON</li>
-    <li><strong>Base64 Encode/Decode</strong> — Encode and decode Base64 strings</li>
-    <li><strong>Hash Generator</strong> — Generate MD5, SHA-1, SHA-256 hashes</li>
-    <li><strong>UUID Generator</strong> — Generate random UUIDs</li>
-    <li><strong>Regex Tester</strong> — Test regular expressions with live preview</li>
-    <li><strong>URL Encode/Decode</strong> — Encode and decode URL strings</li>
-    <li><strong>JWT Decoder</strong> — Decode and inspect JWT tokens</li>
-    <li><strong>CSV Tool</strong> — Parse and view CSV data</li>
-    <li><strong>Timestamp Converter</strong> — Convert between Unix timestamps and dates</li>
-    <li><strong>Color Picker</strong> — Pick colors and copy HEX values</li>
+    <li><strong>Free forever</strong> — Dev Toolbox will always be free to use.</li>
+    <li><strong>No sign-up required</strong> — every tool works without creating an account.</li>
+    <li><strong>Privacy first</strong> — your data never leaves your browser.</li>
+    <li><strong>Fast and lightweight</strong> — no heavy frameworks, no bloat, loads in under a second.</li>
+    <li><strong>Open source</strong> — the codebase is publicly available on <a href="https://github.com/uuii13524-afk/devtoolbox" target="_blank">GitHub</a>.</li>
   </ul>
 
-  <h2>Our Mission</h2>
-  <p>
-    We believe developer tools should be fast, simple, and free.
-    Dev Toolbox is designed to be a reliable daily companion for developers worldwide.
-  </p>
+  <h2>Frequently Asked Questions</h2>
 
-  <h2>Contact</h2>
-  <p>For feedback or inquiries, please visit our <a href="contact.html">Contact page</a>.</p>
+  <div class="faq-block">
+    <h3>Is Dev Toolbox really free?</h3>
+    <p>Yes, completely free. There are no paid tiers, no premium features, and no sign-up wall. All tools on the site are available to everyone without restriction.</p>
+  </div>
 
-  <p><a href="./index.html">← Back to Tools</a></p>
-</main>
+  <div class="faq-block">
+    <h3>Is my data safe when I use these tools?</h3>
+    <p>Yes. Every tool on Dev Toolbox runs entirely in your browser using client-side JavaScript. Data you enter — including passwords, JWT tokens, JSON payloads, and source code — is never transmitted to any server. It stays on your machine.</p>
+  </div>
+
+  <div class="faq-block">
+    <h3>Can I use Dev Toolbox offline?</h3>
+    <p>Once the page has loaded, most tools work offline since there are no server calls. For best results, load the page while online and then you can continue using it without a connection.</p>
+  </div>
+
+  <div class="faq-block">
+    <h3>How can I suggest a new tool?</h3>
+    <p>Open an issue on our <a href="https://github.com/uuii13524-afk/devtoolbox" target="_blank">GitHub repository</a> with your suggestion. We regularly add new tools based on community requests.</p>
+  </div>
+
+  <div class="faq-block">
+    <h3>Do you use cookies or tracking?</h3>
+    <p>We do not use tracking cookies or analytics that identify individual users. Please see our <a href="privacy.html">Privacy Policy</a> for full details.</p>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> · <a href="contact.html">Contact</a> · <a href="privacy.html">Privacy Policy</a>
+  </footer>
+
 </body>
 </html>
