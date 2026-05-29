@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Build Command Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Docker build command examples for building container images. Covers tagging, build args, no-cache, multi-platform, and Dockerfile selection.">
+<meta name="keywords" content="docker build, docker build examples, dockerfile, docker image build, container build">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/docker-build.html">
+<meta property="og:title" content="Docker Build Command Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/docker-build.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Docker Build</div>
+<h1>Docker Build Command Examples</h1>
+<p class="subtitle">docker build reads a Dockerfile and creates a container image. Understanding build flags lets you tag versions, inject build-time arguments, bypass the layer cache for fresh builds, and target specific platforms. These patterns are essential for CI/CD pipelines and production deployments.</p>
+<span class="tag">Docker</span><span class="tag">Build</span><span class="tag">DevOps</span><span class="tag">CLI</span>
+
+<div class="section-title">Basic Builds</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Build from current directory</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build .</pre>
+<div class="snippet-desc">The dot <code>.</code> sets the build context to the current directory, which is where Docker looks for the Dockerfile. The resulting image has no tag and is only accessible by its generated image ID.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Build and tag with a name</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build -t myapp:latest .</pre>
+<div class="snippet-desc">The <code>-t</code> flag tags the image with a name and optional tag (default: latest). Always tag your images for easy reference. Use the format <code>name:tag</code> or <code>registry/name:tag</code> for registry pushes.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Build with a version tag</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build -t myapp:1.2.0 -t myapp:latest .</pre>
+<div class="snippet-desc">Apply multiple <code>-t</code> flags to tag the same image with multiple names in one build. A common pattern: tag with the version number and also update the <code>latest</code> tag simultaneously.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Use a different Dockerfile</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build -f Dockerfile.prod -t myapp:prod .</pre>
+<div class="snippet-desc">The <code>-f</code> flag specifies a non-default Dockerfile path. Useful when you maintain separate Dockerfiles for development, staging, and production environments in the same repository.</div>
+</div>
+
+<div class="section-title">Build Options</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Build with no layer cache</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build --no-cache -t myapp:latest .</pre>
+<div class="snippet-desc">The <code>--no-cache</code> flag ignores all cached layers and rebuilds from scratch. Use this when cached layers contain stale data, such as after changing package indexes or when debugging a suspected caching issue in CI.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Pass a build argument</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build --build-arg NODE_ENV=production -t myapp .</pre>
+<div class="snippet-desc">Build arguments are passed to the Dockerfile as <code>ARG NODE_ENV</code> and are available during the build process only (not in the running container). Use them for environment-specific build settings, API endpoints, or version numbers.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Build for a specific platform</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker build --platform linux/amd64 -t myapp .</pre>
+<div class="snippet-desc">The <code>--platform</code> flag builds for a specific CPU architecture. Essential when building on Apple Silicon (arm64) for deployment to x86-64 servers. Use <code>linux/arm64</code> to build for ARM servers like AWS Graviton.</div>
+</div>
+
+<div class="section-title">Post-Build</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">List built images</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker images</pre>
+<div class="snippet-desc">Lists all locally available Docker images with their repository, tag, image ID, creation date, and size. Use <code>docker images myapp</code> to filter by a specific name. Images with no tag show as &lt;none&gt; (dangling images).</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Inspect image metadata</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker inspect myapp:latest</pre>
+<div class="snippet-desc">Returns detailed JSON metadata about an image including layers, environment variables, exposed ports, entrypoint, and build history. Useful for verifying build arguments were set correctly or understanding an unfamiliar image.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Remove dangling (untagged) images</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker image prune</pre>
+<div class="snippet-desc">Removes dangling images — images with no tag that are no longer referenced by any container. These accumulate with repeated builds. Use <code>docker image prune -a</code> to also remove unused images (not referenced by any container).</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Write a Dockerfile in your project directory with FROM, RUN, COPY, and CMD/ENTRYPOINT.</li>
+<li>Run <code>docker build -t myapp:latest .</code> from the same directory.</li>
+<li>Use <code>docker images</code> to verify the image was created with the correct tag.</li>
+<li>Test the image with <code>docker run --rm myapp:latest</code> before pushing to a registry.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the build context and why does it matter?</h3><p>The build context is the directory passed to <code>docker build</code> (usually <code>.</code>). Docker sends all files in this directory to the Docker daemon before building. A large context slows down builds significantly. Use a <code>.dockerignore</code> file to exclude node_modules, .git, and other unnecessary files.</p></div>
+<div class="faq-block"><h3>What is the difference between ARG and ENV in a Dockerfile?</h3><p><code>ARG</code> defines build-time variables available only during the docker build process. <code>ENV</code> sets environment variables that persist in the running container. Use ARG for build configuration (like version numbers) and ENV for runtime configuration (like NODE_ENV).</p></div>
+<div class="faq-block"><h3>How do I speed up Docker builds?</h3><p>Order Dockerfile instructions from least to most frequently changed to maximize layer caching. Copy dependency files (package.json, requirements.txt) and install packages before copying source code. Use multi-stage builds to keep final images small. Use a .dockerignore to reduce context size.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="docker-compose.html">Docker Compose Examples</a>
+<a class="related-link" href="docker-run.html">Docker Run Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>

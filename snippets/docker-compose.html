@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Compose Examples - Dev Toolbox | Free Developer Utilities</title>
+<meta name="description" content="Practical Docker Compose examples for defining and managing multi-container applications. Includes service configs, networking, volumes, env vars, and health checks.">
+<meta name="keywords" content="docker compose, docker-compose, compose examples, multi-container, docker services">
+<link rel="canonical" href="https://devkitbox.xyz/snippets/docker-compose.html">
+<meta property="og:title" content="Docker Compose Examples - Dev Toolbox">
+<meta property="og:url" content="https://devkitbox.xyz/snippets/docker-compose.html">
+<link rel="stylesheet" href="../assets/style.css">
+<style>body{max-width:860px;margin:0 auto;padding:20px;font-family:Arial,sans-serif}.breadcrumb{font-size:.85em;color:#888;margin-bottom:20px}.breadcrumb a{color:#888;text-decoration:none}.breadcrumb a:hover{color:#fff}h1{margin-bottom:5px}h2{color:#ccc;font-size:1.1em;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.subtitle{color:#aaa;margin-bottom:30px;font-size:.95em}.snippet-block{background:#1e1e1e;border:1px solid #333;border-radius:6px;margin-bottom:24px;overflow:hidden}.snippet-header{background:#2a2a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}.snippet-title{font-weight:bold;font-size:.95em;color:#e0e0e0}.copy-btn{background:#444;color:#ccc;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.8em}.copy-btn:hover{background:#555;color:#fff}pre{margin:0;padding:16px;overflow-x:auto;font-size:.9em;line-height:1.6;color:#d4d4d4;background:transparent}.snippet-desc{padding:10px 16px;font-size:.85em;color:#999;border-top:1px solid #333}.tag{display:inline-block;background:#333;color:#aaa;font-size:.75em;padding:2px 8px;border-radius:3px;margin-right:5px;margin-bottom:16px}.section-title{font-size:1.1em;font-weight:bold;color:#ccc;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid #333}.how-to{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:16px 20px;margin-bottom:24px}.how-to ol{margin:0;padding-left:20px;color:#ccc;line-height:1.8}.faq-block{margin-bottom:20px}.faq-block h3{color:#e0e0e0;font-size:.95em;margin-bottom:6px}.faq-block p{color:#999;font-size:.9em;margin:0}.related-links{display:flex;gap:12px;flex-wrap:wrap}.related-link{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:10px 16px;text-decoration:none;color:#ccc;font-size:.9em}.related-link:hover{border-color:#555;color:#fff}footer{margin-top:40px;padding-top:20px;border-top:1px solid #333;font-size:.85em;color:#666}footer a{color:#666;text-decoration:none}footer a:hover{color:#fff}</style>
+</head>
+<body>
+<div class="breadcrumb"><a href="/">Dev Toolbox</a> › <a href="#">Snippets</a> › Docker Compose</div>
+<h1>Docker Compose Examples</h1>
+<p class="subtitle">Docker Compose lets you define and manage multi-container applications with a single YAML file. Instead of running complex <code>docker run</code> commands, you declare all services, networks, and volumes in docker-compose.yml and manage the whole stack with simple commands.</p>
+<span class="tag">Docker</span><span class="tag">Compose</span><span class="tag">DevOps</span><span class="tag">CLI</span>
+
+<div class="section-title">Example Compose File</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Basic web + database stack</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:</pre>
+<div class="snippet-desc">A minimal but complete docker-compose.yml with an nginx web server and PostgreSQL database. <code>depends_on</code> ensures db starts before web. The named volume <code>pgdata</code> persists database data across container restarts.</div>
+</div>
+
+<div class="section-title">Common Commands</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Start all services in background</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker compose up -d</pre>
+<div class="snippet-desc">The <code>-d</code> flag runs containers in detached mode (background). Without it, logs stream to your terminal. Run this from the directory containing docker-compose.yml. Use <code>docker compose ps</code> to verify all services started.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Stop and remove containers</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker compose down</pre>
+<div class="snippet-desc">Stops and removes all containers, networks, and the default network created by <code>up</code>. Named volumes are preserved by default. Add <code>-v</code> to also remove named volumes (deletes all data — use with caution).</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Rebuild images and restart</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker compose up -d --build</pre>
+<div class="snippet-desc">The <code>--build</code> flag forces Docker to rebuild images from Dockerfiles before starting. Use this after changing your Dockerfile or application code. Without it, Compose uses cached images even if the source has changed.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">View logs from all services</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker compose logs -f</pre>
+<div class="snippet-desc">The <code>-f</code> flag follows (tails) the logs in real time. Without it, all historical logs are printed and the command exits. Specify a service name to filter: <code>docker compose logs -f web</code>.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Execute a command inside a running service</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker compose exec web sh</pre>
+<div class="snippet-desc">Opens an interactive shell inside the running web container. This is equivalent to <code>docker exec -it</code> but uses the service name instead of the container ID. Use <code>bash</code> if the container has bash installed.</div>
+</div>
+
+<div class="section-title">Advanced Patterns</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Use an .env file for configuration</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre># .env file:
+DB_PASSWORD=supersecret
+APP_PORT=3000
+
+# docker-compose.yml:
+services:
+  app:
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:3000"</pre>
+<div class="snippet-desc">The <code>env_file</code> directive loads variables from a file into the container. Variables in .env are also available for interpolation in the compose file itself with <code>${VAR}</code> syntax. Never commit .env files with secrets to version control.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Add a health check to a service</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>services:
+  web:
+    image: myapp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3</pre>
+<div class="snippet-desc">Health checks let Compose know when a container is truly ready to accept traffic, not just running. Other services using <code>depends_on: service: condition: service_healthy</code> will wait until the health check passes.</div>
+</div>
+<div class="snippet-block">
+<div class="snippet-header"><span class="snippet-title">Scale a service horizontally</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>docker compose up -d --scale web=3</pre>
+<div class="snippet-desc">The <code>--scale</code> flag runs multiple instances of a service. Useful for testing load balancing locally. Note: port mapping must use a range (e.g., <code>"8080-8082:80"</code>) or omit host port binding when scaling.</div>
+</div>
+
+<h2>How to Use</h2>
+<div class="how-to"><ol>
+<li>Create a <code>docker-compose.yml</code> file in your project root.</li>
+<li>Define each service under the <code>services:</code> key with image, ports, and environment.</li>
+<li>Run <code>docker compose up -d</code> to start all services in the background.</li>
+<li>Use <code>docker compose logs -f</code> to monitor logs and <code>docker compose down</code> to stop.</li>
+<li>Use <code>docker compose up -d --build</code> after code changes to rebuild and restart.</li>
+</ol></div>
+
+<h2>Frequently Asked Questions</h2>
+<div class="faq-block"><h3>What is the difference between docker-compose and docker compose?</h3><p>docker-compose (with hyphen) is the older standalone Python-based tool (v1). docker compose (as a subcommand) is the newer Go-based plugin integrated into the Docker CLI (v2). They are functionally similar but v2 is faster. Modern Docker Desktop includes v2 by default.</p></div>
+<div class="faq-block"><h3>How do I persist data between container restarts?</h3><p>Use named volumes (defined in the top-level <code>volumes:</code> section) or bind mounts (host directory paths). Named volumes are managed by Docker and survive <code>docker compose down</code>. They are deleted only when you explicitly remove them with <code>docker compose down -v</code>.</p></div>
+<div class="faq-block"><h3>How do services communicate with each other in Compose?</h3><p>Compose automatically creates a shared network for all services in the same file. Services can reach each other using the service name as the hostname. For example, the web service can connect to the database at hostname <code>db</code> on its exposed port.</p></div>
+
+<h2>Related Tools</h2>
+<div class="related-links">
+<a class="related-link" href="docker-build.html">Docker Build Examples</a>
+<a class="related-link" href="docker-run.html">Docker Run Examples</a>
+</div>
+
+<footer><a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp; <a href="../about.html">About</a> &nbsp;·&nbsp; <a href="../privacy.html">Privacy Policy</a></footer>
+<script>function copyCode(btn){const pre=btn.closest('.snippet-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});}</script>
+</body>
+</html>
