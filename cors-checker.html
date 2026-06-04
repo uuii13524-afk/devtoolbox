@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORS Header Checker - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online CORS header analyzer. Paste HTTP response headers to check CORS configuration, find missing Access-Control headers, and debug cross-origin resource sharing issues instantly in your browser.">
+  <meta name="keywords" content="CORS checker, CORS analyzer, cross-origin resource sharing, Access-Control-Allow-Origin, CORS debug, CORS tester, CORS headers">
+  <link rel="canonical" href="https://devkitbox.xyz/cors-checker.html">
+  <meta property="og:title" content="CORS Header Checker - Dev Toolbox">
+  <meta property="og:description" content="Paste HTTP response headers to check CORS configuration, find missing Access-Control headers, and debug cross-origin issues instantly.">
+  <meta property="og:url" content="https://devkitbox.xyz/cors-checker.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 8px; font-size: 1.8em; color: #f0f0f0; }
+    .subtitle { color: #888; margin: 0 0 24px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .input-area {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .input-label { font-size: 0.8em; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88em;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      border: 1px solid #444;
+      border-radius: 5px;
+      padding: 12px 14px;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.15s;
+    }
+    textarea:focus { border-color: #5b8dee; }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .btn {
+      background: #5b8dee;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    .btn:hover { background: #4a7de0; }
+    .btn.secondary {
+      background: #2e2e2e;
+      color: #aaa;
+      border: 1px solid #3a3a3a;
+      font-weight: normal;
+    }
+    .btn.secondary:hover { background: #3a3a3a; color: #eee; }
+
+    .grade-box {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+    .grade-letter {
+      font-size: 2.5em;
+      font-weight: bold;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .grade-A { background: #1e3a1e; color: #4caf50; border: 2px solid #4caf50; }
+    .grade-B { background: #1e3028; color: #66bb6a; border: 2px solid #66bb6a; }
+    .grade-C { background: #3a2e1e; color: #ffb74d; border: 2px solid #ffb74d; }
+    .grade-F { background: #3a1e1e; color: #ef5350; border: 2px solid #ef5350; }
+    .grade-text { font-size: 1em; color: #ccc; line-height: 1.5; }
+
+    .results { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .result-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      border-left: 3px solid;
+    }
+    .result-item.ok    { background: #1e2e1e; border-color: #4caf50; }
+    .result-item.warn  { background: #2e261e; border-color: #ffb74d; }
+    .result-item.error { background: #2e1e1e; border-color: #ef5350; }
+    .result-item.info  { background: #1e2333; border-color: #5b8dee; }
+    .badge {
+      font-size: 0.72em;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+    .badge.ok    { background: #4caf50; color: #fff; }
+    .badge.warn  { background: #ffb74d; color: #1a1a1a; }
+    .badge.error { background: #ef5350; color: #fff; }
+    .badge.info  { background: #5b8dee; color: #fff; }
+    .result-header { font-weight: bold; color: #ddd; font-size: 0.9em; font-family: 'Courier New', monospace; margin-bottom: 3px; }
+    .result-msg { color: #bbb; font-size: 0.88em; line-height: 1.5; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    .hidden { display: none; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">&larr; Dev Toolbox</a></div>
+
+  <h1>CORS Header Checker</h1>
+  <p class="subtitle">Paste HTTP response headers to analyze your CORS configuration and detect issues instantly.</p>
+
+  <div class="input-area">
+    <div class="input-label">HTTP Response Headers</div>
+    <textarea id="headerInput" placeholder="Paste your HTTP response headers here...
+
+Example:
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: Authorization, Content-Type
+Access-Control-Max-Age: 86400"></textarea>
+    <div class="btn-row">
+      <button class="btn" onclick="analyze()">Analyze CORS</button>
+      <button class="btn secondary" onclick="loadExample('good')">Load Good Example</button>
+      <button class="btn secondary" onclick="loadExample('bad')">Load Bad Example</button>
+      <button class="btn secondary" onclick="clearInput()">Clear</button>
+    </div>
+  </div>
+
+  <div id="resultsWrap" class="hidden">
+    <div class="grade-box">
+      <div class="grade-letter" id="gradeLetter">A</div>
+      <div class="grade-text" id="gradeText"></div>
+    </div>
+    <div class="results" id="resultList"></div>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Get HTTP response headers from your API using <code>curl -I https://your-api.com/endpoint</code>, or copy them from browser DevTools &rarr; Network tab &rarr; select a request &rarr; Response Headers.</li>
+    <li>Paste the full header block into the text area above. The status line (e.g. <code>HTTP/1.1 200 OK</code>) is optional.</li>
+    <li>Click <strong>Analyze CORS</strong> to check your configuration.</li>
+    <li>Review the color-coded results: green is correct, yellow is a warning, red is a critical error that will block cross-origin requests.</li>
+    <li>Fix any errors or warnings in your server or API gateway configuration, then re-test.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>Cross-Origin Resource Sharing (CORS) is a browser security mechanism that restricts how web pages can request resources from a different domain. Misconfigured CORS headers are one of the most common causes of API integration failures — everything works in Postman or curl but breaks in the browser. This tool parses your raw HTTP response headers, extracts all <code>Access-Control-*</code> headers, and validates them against the CORS specification. It catches critical issues like the forbidden combination of a wildcard origin with credentials, missing headers that break preflight requests, invalid header values, and performance issues from uncached preflights. All analysis runs entirely in your browser — no headers are ever sent to any server.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Why does CORS only block browser requests but not curl or Postman?</h3>
+    <p>CORS is enforced by browsers as a security feature, not by servers. Command-line tools like curl and API clients like Postman have no concept of an "origin", so they send and receive requests without any restrictions. The CORS headers on the server response tell the browser whether JavaScript on a given page is allowed to read the response. The browser then either grants or denies access based on those headers.</p>
+  </div>
+  <div class="faq">
+    <h3>When is <code>Access-Control-Allow-Origin: *</code> unsafe?</h3>
+    <p>The wildcard <code>*</code> allows any origin to read the response. This is acceptable for fully public APIs (like a weather API or open dataset). However, if you also send <code>Access-Control-Allow-Credentials: true</code>, the combination is forbidden by the CORS specification and browsers will block the response entirely. For authenticated endpoints, you must specify the exact allowed origin (e.g. <code>https://app.example.com</code>) rather than using a wildcard.</p>
+  </div>
+  <div class="faq">
+    <h3>What is a preflight request and when is it sent?</h3>
+    <p>For requests that are not "simple" — such as PUT, DELETE, PATCH, or any request with an <code>Authorization</code> header or <code>Content-Type: application/json</code> — browsers automatically send an <code>OPTIONS</code> preflight request first. This preflight asks the server: "Can this origin make this type of request?" Your server must respond to <code>OPTIONS</code> with the appropriate <code>Access-Control-Allow-Methods</code> and <code>Access-Control-Allow-Headers</code> headers, or the actual request will never be sent.</p>
+  </div>
+  <div class="faq">
+    <h3>What does <code>Access-Control-Max-Age</code> do?</h3>
+    <p>This header tells the browser how long (in seconds) to cache the preflight response. Without it, the browser sends a preflight <code>OPTIONS</code> request before every non-simple API call, adding latency. Setting it to <code>86400</code> (24 hours) means the browser caches the preflight result for a day, eliminating the extra round-trip for subsequent requests.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="http-header-analyzer.html">&equiv; HTTP Header Analyzer</a>
+    <a href="robots-txt-validator.html">&#x1F916; robots.txt Validator</a>
+    <a href="index.html#jwt">&#x1F511; JWT Decoder</a>
+  </div>
+
+  <footer>
+    <a href="/">&larr; Back to Dev Toolbox</a> &nbsp;&middot;&nbsp;
+    <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const EXAMPLES = {
+  good: [
+    'HTTP/1.1 200 OK',
+    'Content-Type: application/json',
+    'Access-Control-Allow-Origin: https://app.example.com',
+    'Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers: Authorization, Content-Type, X-Request-ID',
+    'Access-Control-Allow-Credentials: true',
+    'Access-Control-Max-Age: 86400',
+    'Access-Control-Expose-Headers: X-Total-Count, X-Request-ID'
+  ].join('\n'),
+  bad: [
+    'HTTP/1.1 200 OK',
+    'Content-Type: application/json',
+    'Access-Control-Allow-Origin: *',
+    'Access-Control-Allow-Credentials: true'
+  ].join('\n')
+};
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function loadExample(type) {
+  document.getElementById('headerInput').value = EXAMPLES[type];
+  analyze();
+}
+
+function clearInput() {
+  document.getElementById('headerInput').value = '';
+  document.getElementById('resultsWrap').classList.add('hidden');
+}
+
+function parseHeaders(raw) {
+  const headers = {};
+  for (const line of raw.split('\n')) {
+    const idx = line.indexOf(':');
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim().toLowerCase();
+    const val = line.slice(idx + 1).trim();
+    if (key && !key.includes(' ')) headers[key] = val;
+  }
+  return headers;
+}
+
+function analyze() {
+  const raw = document.getElementById('headerInput').value.trim();
+  if (!raw) return;
+
+  const headers = parseHeaders(raw);
+  const findings = [];
+
+  const acao = headers['access-control-allow-origin'];
+  const acam = headers['access-control-allow-methods'];
+  const acah = headers['access-control-allow-headers'];
+  const acac = headers['access-control-allow-credentials'];
+  const acma = headers['access-control-max-age'];
+  const aceh = headers['access-control-expose-headers'];
+
+  // --- Access-Control-Allow-Origin ---
+  if (!acao) {
+    findings.push({ level: 'error', header: 'Access-Control-Allow-Origin',
+      msg: 'Missing. All cross-origin requests from browsers will be blocked. Add this header with a specific origin (e.g. <code>https://app.example.com</code>) or <code>*</code> for fully public APIs.' });
+  } else if (acao === '*') {
+    if (acac === 'true') {
+      findings.push({ level: 'error', header: 'Access-Control-Allow-Origin',
+        msg: 'Wildcard <code>*</code> cannot be combined with <code>Access-Control-Allow-Credentials: true</code>. This combination is forbidden by the CORS specification and browsers will block the response. Use a specific origin instead.' });
+    } else {
+      findings.push({ level: 'warn', header: 'Access-Control-Allow-Origin',
+        msg: 'Set to wildcard <code>*</code> — any origin can read this response. Acceptable for fully public APIs. For authenticated or sensitive endpoints, restrict to a specific origin.' });
+    }
+  } else {
+    findings.push({ level: 'ok', header: 'Access-Control-Allow-Origin',
+      msg: 'Restricted to: <code>' + esc(acao) + '</code>. Only this origin is allowed to read cross-origin responses.' });
+  }
+
+  // --- Access-Control-Allow-Methods ---
+  if (!acam) {
+    findings.push({ level: 'info', header: 'Access-Control-Allow-Methods',
+      msg: 'Not present. Preflight (OPTIONS) requests for non-simple methods like PUT, DELETE, and PATCH will fail. Add this header if your API uses those methods.' });
+  } else {
+    const methods = acam.split(',').map(m => m.trim().toUpperCase());
+    const mutating = methods.filter(m => ['DELETE', 'PUT', 'PATCH'].includes(m));
+    if (mutating.length && acao === '*') {
+      findings.push({ level: 'warn', header: 'Access-Control-Allow-Methods',
+        msg: 'Allows mutating methods (<code>' + esc(mutating.join(', ')) + '</code>) from any origin (<code>*</code>). Consider restricting the allowed origin when write methods are exposed.' });
+    } else {
+      findings.push({ level: 'ok', header: 'Access-Control-Allow-Methods',
+        msg: 'Allowed methods: <code>' + esc(acam) + '</code>' });
+    }
+  }
+
+  // --- Access-Control-Allow-Headers ---
+  if (!acah) {
+    findings.push({ level: 'info', header: 'Access-Control-Allow-Headers',
+      msg: 'Not present. Requests with custom headers (<code>Authorization</code>, <code>Content-Type: application/json</code>, etc.) will fail the preflight check. Add this if your API requires custom request headers.' });
+  } else {
+    findings.push({ level: 'ok', header: 'Access-Control-Allow-Headers',
+      msg: 'Allowed headers: <code>' + esc(acah) + '</code>' });
+  }
+
+  // --- Access-Control-Allow-Credentials ---
+  if (acac === 'true') {
+    if (acao !== '*') {
+      findings.push({ level: 'ok', header: 'Access-Control-Allow-Credentials',
+        msg: 'Credentials (cookies, Authorization headers) are allowed and the response is exposed to JavaScript. The origin is correctly restricted to a specific value.' });
+    }
+  } else if (acac && acac !== 'true') {
+    findings.push({ level: 'warn', header: 'Access-Control-Allow-Credentials',
+      msg: 'Invalid value <code>' + esc(acac) + '</code>. The only valid value is the exact lowercase string <code>true</code>. Any other value is ignored by browsers.' });
+  }
+
+  // --- Access-Control-Max-Age ---
+  if (!acma) {
+    findings.push({ level: 'info', header: 'Access-Control-Max-Age',
+      msg: 'Not set. Browsers will send a preflight OPTIONS request before every non-simple cross-origin request, adding extra latency. Set this to cache the preflight result (e.g. <code>86400</code> for 24 hours).' });
+  } else {
+    const secs = parseInt(acma, 10);
+    if (isNaN(secs) || secs <= 0) {
+      findings.push({ level: 'warn', header: 'Access-Control-Max-Age',
+        msg: 'Invalid value <code>' + esc(acma) + '</code>. Must be a positive integer representing seconds.' });
+    } else if (secs > 86400) {
+      findings.push({ level: 'warn', header: 'Access-Control-Max-Age',
+        msg: 'Value <code>' + esc(acma) + '</code>s exceeds the 24-hour maximum that most browsers honor. Chrome caps at 2 hours (7200s), Firefox at 24 hours (86400s).' });
+    } else {
+      findings.push({ level: 'ok', header: 'Access-Control-Max-Age',
+        msg: 'Preflight result cached for <code>' + esc(acma) + '</code> second' + (secs !== 1 ? 's' : '') + '. Reduces preflight round-trips.' });
+    }
+  }
+
+  // --- Access-Control-Expose-Headers ---
+  if (aceh) {
+    findings.push({ level: 'ok', header: 'Access-Control-Expose-Headers',
+      msg: 'These response headers are exposed to browser JavaScript: <code>' + esc(aceh) + '</code>' });
+  }
+
+  // Grade
+  const errors = findings.filter(f => f.level === 'error').length;
+  const warns  = findings.filter(f => f.level === 'warn').length;
+  let grade, gradeDesc;
+  if (errors > 0) {
+    grade = 'F';
+    gradeDesc = errors + ' critical error' + (errors > 1 ? 's' : '') + ' found. Cross-origin requests will be blocked or the configuration is insecure.';
+  } else if (warns > 1) {
+    grade = 'C';
+    gradeDesc = warns + ' warnings found. CORS may work but has configuration issues that should be addressed.';
+  } else if (warns === 1) {
+    grade = 'B';
+    gradeDesc = '1 minor warning. CORS is mostly configured correctly with one improvement recommended.';
+  } else {
+    grade = 'A';
+    gradeDesc = 'CORS is well configured. No errors or warnings found.';
+  }
+
+  const gradeEl = document.getElementById('gradeLetter');
+  gradeEl.textContent = grade;
+  gradeEl.className = 'grade-letter grade-' + grade;
+  document.getElementById('gradeText').textContent = gradeDesc;
+
+  document.getElementById('resultList').innerHTML = findings.map(f =>
+    '<div class="result-item ' + f.level + '">'
+    + '<span class="badge ' + f.level + '">' + (f.level === 'info' ? 'INFO' : f.level.toUpperCase()) + '</span>'
+    + '<div><div class="result-header">' + esc(f.header) + '</div>'
+    + '<div class="result-msg">' + f.msg + '</div></div>'
+    + '</div>'
+  ).join('');
+
+  document.getElementById('resultsWrap').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

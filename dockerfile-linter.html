@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dockerfile Linter - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online Dockerfile linter. Paste your Dockerfile to detect common mistakes, security issues, and best-practice violations — all in your browser with no data sent anywhere.">
+  <meta name="keywords" content="Dockerfile linter, Docker best practices, Dockerfile checker, Docker security, container security, Dockerfile validator, Hadolint">
+  <link rel="canonical" href="https://devkitbox.xyz/dockerfile-linter.html">
+  <meta property="og:title" content="Dockerfile Linter - Dev Toolbox">
+  <meta property="og:description" content="Free online Dockerfile linter. Paste your Dockerfile to check for common mistakes, security issues, and best-practice violations.">
+  <meta property="og:url" content="https://devkitbox.xyz/dockerfile-linter.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 8px; font-size: 1.8em; color: #f0f0f0; }
+    .subtitle { color: #888; margin: 0 0 24px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .input-area {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .input-label { font-size: 0.8em; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      border: 1px solid #444;
+      border-radius: 5px;
+      padding: 12px 14px;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.15s;
+    }
+    textarea:focus { border-color: #5b8dee; }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .btn {
+      background: #5b8dee;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    .btn:hover { background: #4a7de0; }
+    .btn.secondary {
+      background: #2e2e2e;
+      color: #aaa;
+      border: 1px solid #3a3a3a;
+      font-weight: normal;
+    }
+    .btn.secondary:hover { background: #3a3a3a; color: #eee; }
+
+    .summary-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .count-pill {
+      font-weight: bold;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.9em;
+    }
+    .pill-error { background: #3a1e1e; color: #ef5350; border: 1px solid #ef5350; }
+    .pill-warn  { background: #3a2e1e; color: #ffb74d; border: 1px solid #ffb74d; }
+    .pill-info  { background: #1e2333; color: #5b8dee; border: 1px solid #5b8dee; }
+    .summary-label { color: #bbb; font-size: 0.9em; }
+    .summary-ok { color: #4caf50; font-weight: bold; }
+    .summary-badge { display: flex; align-items: center; gap: 7px; }
+
+    .lint-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .lint-item {
+      border-radius: 6px;
+      border-left: 3px solid;
+      padding: 12px 14px;
+    }
+    .lint-item.error { background: #2e1e1e; border-color: #ef5350; }
+    .lint-item.warn  { background: #2e261e; border-color: #ffb74d; }
+    .lint-item.info  { background: #1e2333; border-color: #5b8dee; }
+
+    .lint-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.72em;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .badge.error { background: #ef5350; color: #fff; }
+    .badge.warn  { background: #ffb74d; color: #1a1a1a; }
+    .badge.info  { background: #5b8dee; color: #fff; }
+    .rule-id { font-family: 'Courier New', monospace; font-size: 0.78em; color: #666; }
+    .line-ref { font-size: 0.8em; color: #888; margin-left: auto; }
+    .lint-title { font-weight: bold; color: #ddd; font-size: 0.92em; }
+    .lint-msg { color: #bbb; font-size: 0.88em; line-height: 1.6; margin-bottom: 4px; }
+    .lint-fix { color: #888; font-size: 0.83em; }
+    .lint-fix strong { color: #aaa; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    pre { background: #1a1a1a; border: 1px solid #333; border-radius: 5px; padding: 10px; overflow-x: auto; font-size: 0.83em; color: #ccc; margin: 6px 0 0; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    .hidden { display: none; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">&larr; Dev Toolbox</a></div>
+
+  <h1>Dockerfile Linter</h1>
+  <p class="subtitle">Paste your Dockerfile to check for common mistakes, security issues, and best-practice violations.</p>
+
+  <div class="input-area">
+    <div class="input-label">Dockerfile</div>
+    <textarea id="dockerfileInput" placeholder="Paste your Dockerfile here...
+
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install -y nodejs npm
+COPY . /app
+CMD node /app/index.js"></textarea>
+    <div class="btn-row">
+      <button class="btn" onclick="lint()">Lint Dockerfile</button>
+      <button class="btn secondary" onclick="loadExample()">Load Example</button>
+      <button class="btn secondary" onclick="clearInput()">Clear</button>
+    </div>
+  </div>
+
+  <div id="resultsWrap" class="hidden">
+    <div class="summary-bar" id="summaryBar"></div>
+    <div class="lint-list" id="lintList"></div>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Paste your Dockerfile content into the text area, or click <strong>Load Example</strong> to see a Dockerfile with typical issues pre-loaded.</li>
+    <li>Click <strong>Lint Dockerfile</strong> to run the analysis.</li>
+    <li>Review each finding: <strong style="color:#ef5350">ERROR</strong> will cause build failures or critical security issues; <strong style="color:#ffb74d">WARN</strong> is a bad practice you should fix; <strong style="color:#5b8dee">INFO</strong> is an optimization opportunity.</li>
+    <li>Apply the fix suggestion shown under each finding. Multi-line <code>RUN</code> instructions using <code>\</code> continuations are parsed correctly.</li>
+    <li>Re-paste the corrected Dockerfile and lint again to confirm all issues are resolved.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>Dockerfiles have many subtle pitfalls that lead to bloated images, unreproducible builds, slow CI pipelines, and security vulnerabilities. Common mistakes include using mutable <code>:latest</code> tags that break reproducibility, running containers as root which magnifies the blast radius of a compromise, not cleaning apt caches which permanently inflates image layers, and using <code>ADD</code> when <code>COPY</code> is more predictable. This linter checks your Dockerfile against well-established best practices from Docker's official documentation and the Hadolint project. It covers security, image size, reproducibility, and correctness &mdash; and provides clear, actionable fix suggestions for every finding. All analysis runs entirely in your browser with no data sent to any server.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Why should I avoid the <code>:latest</code> tag?</h3>
+    <p>The <code>:latest</code> tag is mutable &mdash; it points to a different image every time the upstream maintainer publishes a new version. This means the same Dockerfile might produce different images on different days, making debugging difficult and CI pipelines unpredictable. A security patch in the base image can also silently break your build. Always pin to a specific version like <code>ubuntu:24.04</code> or <code>node:22-alpine</code> for reproducible, auditable builds.</p>
+  </div>
+  <div class="faq">
+    <h3>Why does it matter to clean up apt cache in the same RUN step?</h3>
+    <p>Each <code>RUN</code> instruction creates an immutable image layer. If you run <code>apt-get install</code> in one layer and <code>rm -rf /var/lib/apt/lists/*</code> in a separate later layer, the cached package lists are permanently baked into the earlier layer &mdash; the cleanup has no effect on the final image size. To actually reduce size, always combine the update, install, and cleanup into a single <code>RUN</code> instruction connected with <code>&amp;&amp;</code>.</p>
+  </div>
+  <div class="faq">
+    <h3>Why should I run the container as a non-root user?</h3>
+    <p>By default, Docker containers run as root (UID 0). If your application has a vulnerability that allows arbitrary code execution, an attacker gains root access inside the container, which provides far more capabilities &mdash; writing to any file, loading kernel modules, and potentially escaping the container or accessing host resources via misconfigured volume mounts. Adding a <code>USER</code> directive to switch to a non-privileged user before the entrypoint is a simple, high-value security hardening step.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the difference between <code>ADD</code> and <code>COPY</code>?</h3>
+    <p><code>COPY</code> simply copies files from the build context into the image. <code>ADD</code> has additional hidden behavior: it auto-extracts local tar archives and can fetch files from remote URLs. This extra magic makes <code>ADD</code> less predictable and harder to audit. The Docker team recommends using <code>COPY</code> for all local file copies and using a <code>RUN curl</code> or <code>RUN wget</code> command (with checksum verification) for remote downloads.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="snippets/docker-compose.html">Docker Compose Examples</a>
+    <a href="snippets/docker-build.html">Docker Build Examples</a>
+    <a href="snippets/docker-run.html">Docker Run Examples</a>
+  </div>
+
+  <footer>
+    <a href="/">&larr; Back to Dev Toolbox</a> &nbsp;&middot;&nbsp;
+    <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const EXAMPLE_DOCKERFILE = [
+  'FROM ubuntu:latest',
+  '',
+  'RUN apt-get update',
+  'RUN apt-get install -y curl nodejs npm',
+  '',
+  'ADD . /app',
+  'WORKDIR /app',
+  '',
+  'EXPOSE 3000',
+  '',
+  'CMD node index.js'
+].join('\n');
+
+function loadExample() {
+  document.getElementById('dockerfileInput').value = EXAMPLE_DOCKERFILE;
+  lint();
+}
+
+function clearInput() {
+  document.getElementById('dockerfileInput').value = '';
+  document.getElementById('resultsWrap').classList.add('hidden');
+}
+
+const RULES = [
+  {
+    id: 'DL001', level: 'error',
+    title: 'No FROM instruction found',
+    check(lines) {
+      if (lines.some(l => /^FROM\s/i.test(l.text))) return [];
+      return [{ lineNo: null,
+        detail: 'Every Dockerfile must begin with a FROM instruction specifying the base image.',
+        fix: 'Add <code>FROM &lt;image&gt;:&lt;tag&gt;</code> as the first non-comment instruction.' }];
+    }
+  },
+  {
+    id: 'DL002', level: 'warn',
+    title: 'FROM uses mutable :latest tag',
+    check(lines) {
+      return lines
+        .filter(l => /^FROM\s+\S+:latest(\s|$)/i.test(l.text))
+        .map(l => ({
+          lineNo: l.no,
+          detail: 'The <code>:latest</code> tag is mutable — it points to different image content every time the upstream publishes a new version, making builds non-reproducible.',
+          fix: 'Pin to a specific version tag, e.g. <code>FROM ubuntu:24.04</code> or <code>FROM node:22-alpine</code>.'
+        }));
+    }
+  },
+  {
+    id: 'DL003', level: 'warn',
+    title: 'ADD used instead of COPY',
+    check(lines) {
+      return lines
+        .filter(l => /^ADD\s/i.test(l.text))
+        .map(l => ({
+          lineNo: l.no,
+          detail: '<code>ADD</code> has special behavior (auto-extracting tarballs, fetching remote URLs) that makes builds less predictable and harder to audit.',
+          fix: 'Replace with <code>COPY</code> for local files. Use <code>RUN curl -fsSL &lt;url&gt;</code> with checksum verification for remote downloads.'
+        }));
+    }
+  },
+  {
+    id: 'DL004', level: 'warn',
+    title: 'No non-root USER defined',
+    check(lines) {
+      if (lines.some(l => /^USER\s+(?!root(\s|$))/i.test(l.text))) return [];
+      const hasRootUser = lines.some(l => /^USER\s+root(\s|$)/i.test(l.text));
+      return [{ lineNo: null,
+        detail: hasRootUser
+          ? 'Container explicitly runs as root. If the application is compromised, an attacker gains full root access inside the container.'
+          : 'No USER instruction found — container will run as root (UID 0) by default. This is a security risk.',
+        fix: 'Add before CMD/ENTRYPOINT: <code>RUN useradd -r -u 1001 -g 0 appuser</code> then <code>USER appuser</code>.'
+      }];
+    }
+  },
+  {
+    id: 'DL005', level: 'warn',
+    title: 'apt-get install without cleaning apt cache',
+    check(lines) {
+      return lines
+        .filter(l => /apt-get\s+install/i.test(l.text) && !/rm\s+-rf.*\/var\/lib\/apt/i.test(l.text))
+        .map(l => ({
+          lineNo: l.no,
+          detail: '<code>apt-get install</code> without <code>rm -rf /var/lib/apt/lists/*</code> in the same RUN step permanently bakes cached package lists into the image layer, bloating the image.',
+          fix: 'Combine into one step: <code>RUN apt-get update &amp;&amp; apt-get install -y &lt;pkg&gt; &amp;&amp; rm -rf /var/lib/apt/lists/*</code>'
+        }));
+    }
+  },
+  {
+    id: 'DL006', level: 'info',
+    title: 'apt-get install without --no-install-recommends',
+    check(lines) {
+      return lines
+        .filter(l => /apt-get\s+install/i.test(l.text) && !/--(no-)?install-recommends/.test(l.text))
+        .map(l => ({
+          lineNo: l.no,
+          detail: 'Without <code>--no-install-recommends</code>, apt installs recommended packages too, which can add tens of megabytes of unnecessary dependencies to the image.',
+          fix: 'Add the flag: <code>apt-get install -y --no-install-recommends &lt;packages&gt;</code>'
+        }));
+    }
+  },
+  {
+    id: 'DL007', level: 'warn',
+    title: 'apt-get update without apt-get install in same RUN',
+    check(lines) {
+      return lines
+        .filter(l => /^RUN\s/i.test(l.text) && /apt-get\s+update/i.test(l.text) && !/apt-get\s+install/i.test(l.text))
+        .map(l => ({
+          lineNo: l.no,
+          detail: '<code>apt-get update</code> in a RUN step without <code>apt-get install</code> creates a cache layer. Later builds may use this stale cache and install outdated package versions.',
+          fix: 'Always combine update and install: <code>RUN apt-get update &amp;&amp; apt-get install -y &lt;packages&gt;</code>'
+        }));
+    }
+  },
+  {
+    id: 'DL008', level: 'warn',
+    title: 'No CMD or ENTRYPOINT defined',
+    check(lines) {
+      if (lines.some(l => /^(CMD|ENTRYPOINT)\s/i.test(l.text))) return [];
+      return [{ lineNo: null,
+        detail: 'No CMD or ENTRYPOINT found. The container has no default command to run, which will cause it to exit immediately or fail when started without arguments.',
+        fix: 'Add <code>CMD ["node", "index.js"]</code> or <code>ENTRYPOINT ["./entrypoint.sh"]</code> at the end of your Dockerfile.'
+      }];
+    }
+  },
+  {
+    id: 'DL009', level: 'info',
+    title: 'Multiple separate RUN instructions',
+    check(lines) {
+      const runCount = lines.filter(l => /^RUN\s/i.test(l.text)).length;
+      if (runCount < 3) return [];
+      return [{ lineNo: null,
+        detail: runCount + ' separate RUN instructions found. Each creates a distinct image layer. More layers means a larger image and longer push/pull times.',
+        fix: 'Combine related RUN steps using <code>&amp;&amp;</code> and line continuations (<code>\\</code>) to reduce layer count and image size.'
+      }];
+    }
+  },
+  {
+    id: 'DL010', level: 'warn',
+    title: 'sudo used inside container',
+    check(lines) {
+      return lines
+        .filter(l => /\bsudo\b/.test(l.text) && !/^#/.test(l.text.trim()))
+        .map(l => ({
+          lineNo: l.no,
+          detail: 'Using <code>sudo</code> inside a Dockerfile is unnecessary. RUN instructions already execute as the current USER (default: root). Installing sudo also adds an attack surface.',
+          fix: 'Remove <code>sudo</code>. To run a specific step as root in a non-root image, use a <code>USER root</code> instruction, then switch back with <code>USER appuser</code>.'
+        }));
+    }
+  },
+  {
+    id: 'DL011', level: 'info',
+    title: 'No HEALTHCHECK defined',
+    check(lines) {
+      if (lines.some(l => /^HEALTHCHECK\s/i.test(l.text))) return [];
+      return [{ lineNo: null,
+        detail: 'No HEALTHCHECK instruction found. Without it, Docker and orchestrators like Kubernetes cannot determine if your container is actually healthy and serving traffic.',
+        fix: 'Add <code>HEALTHCHECK CMD curl -f http://localhost:3000/health || exit 1</code> (adjust to your app port and health endpoint).'
+      }];
+    }
+  },
+  {
+    id: 'DL012', level: 'warn',
+    title: 'Insecure http:// URL used',
+    check(lines) {
+      return lines
+        .filter(l => /\bhttp:\/\//i.test(l.text) && !/^#/.test(l.text.trim()))
+        .map(l => ({
+          lineNo: l.no,
+          detail: 'A plain <code>http://</code> URL is used. Downloads over unencrypted HTTP are vulnerable to man-in-the-middle attacks that could inject malicious content into your image.',
+          fix: 'Replace with <code>https://</code> and verify the downloaded file with <code>sha256sum</code> or <code>gpg --verify</code>.'
+        }));
+    }
+  }
+];
+
+function parseDockerfile(raw) {
+  const rawLines = raw.split('\n');
+  const lines = [];
+  let i = 0;
+  while (i < rawLines.length) {
+    let text = rawLines[i];
+    const no = i + 1;
+    while (text.endsWith('\\') && i + 1 < rawLines.length) {
+      i++;
+      text = text.slice(0, -1) + ' ' + rawLines[i].trim();
+    }
+    text = text.trimEnd();
+    lines.push({ no, text });
+    i++;
+  }
+  return lines;
+}
+
+function lint() {
+  const raw = document.getElementById('dockerfileInput').value;
+  if (!raw.trim()) return;
+
+  const lines = parseDockerfile(raw);
+  const order = { error: 0, warn: 1, info: 2 };
+  const findings = [];
+
+  for (const rule of RULES) {
+    for (const hit of rule.check(lines)) {
+      findings.push({ id: rule.id, level: rule.level, title: rule.title, ...hit });
+    }
+  }
+
+  findings.sort((a, b) =>
+    order[a.level] - order[b.level] || (a.lineNo || 9999) - (b.lineNo || 9999)
+  );
+
+  const errors = findings.filter(f => f.level === 'error').length;
+  const warns  = findings.filter(f => f.level === 'warn').length;
+  const infos  = findings.filter(f => f.level === 'info').length;
+
+  const summaryEl = document.getElementById('summaryBar');
+  if (findings.length === 0) {
+    summaryEl.innerHTML = '<span class="summary-ok">&#10004; No issues found &mdash; Dockerfile follows best practices!</span>';
+  } else {
+    summaryEl.innerHTML =
+      '<span class="summary-label">' + findings.length + ' finding' + (findings.length !== 1 ? 's' : '') + ':</span>' +
+      (errors ? '<span class="summary-badge"><span class="count-pill pill-error">' + errors + '</span><span class="summary-label">Error' + (errors !== 1 ? 's' : '') + '</span></span>' : '') +
+      (warns  ? '<span class="summary-badge"><span class="count-pill pill-warn">'  + warns  + '</span><span class="summary-label">Warning' + (warns !== 1 ? 's' : '') + '</span></span>' : '') +
+      (infos  ? '<span class="summary-badge"><span class="count-pill pill-info">'  + infos  + '</span><span class="summary-label">Info</span></span>' : '');
+  }
+
+  document.getElementById('lintList').innerHTML = findings.map(f =>
+    '<div class="lint-item ' + f.level + '">'
+    + '<div class="lint-header">'
+    + '<span class="badge ' + f.level + '">' + f.level.toUpperCase() + '</span>'
+    + '<span class="rule-id">' + f.id + '</span>'
+    + '<span class="lint-title">' + f.title + '</span>'
+    + (f.lineNo ? '<span class="line-ref">Line ' + f.lineNo + '</span>' : '')
+    + '</div>'
+    + '<div class="lint-msg">' + f.detail + '</div>'
+    + '<div class="lint-fix"><strong>Fix:</strong> ' + f.fix + '</div>'
+    + '</div>'
+  ).join('');
+
+  document.getElementById('resultsWrap').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
