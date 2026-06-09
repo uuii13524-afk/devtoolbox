@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Encoder / Decoder - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online HTML encoder and decoder. Convert special characters to HTML entities (&amp;lt;, &amp;gt;, &amp;amp;) or decode entities back to plain text. 100% browser-based, instant.">
+  <meta name="keywords" content="html encoder, html decoder, html entities, html escape, encode html online, html special characters, html entity converter">
+  <link rel="canonical" href="https://devkitbox.xyz/html-encoder.html">
+  <meta property="og:title" content="HTML Encoder / Decoder - Dev Toolbox">
+  <meta property="og:description" content="Encode text to HTML entities or decode HTML entities back to plain text. Instant, browser-based, no data sent anywhere.">
+  <meta property="og:url" content="https://devkitbox.xyz/html-encoder.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 20px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 6px 13px;
+      cursor: pointer;
+      font-size: 0.84em;
+    }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary {
+      background: #5b8dee;
+      color: #fff;
+      border-color: #5b8dee;
+    }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+    .btn-green {
+      background: #2d6a2d;
+      color: #aaffaa;
+      border-color: #3a803a;
+    }
+    .btn-green:hover { background: #3a803a; color: #ccffcc; }
+
+    .option-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.84em;
+      color: #aaa;
+    }
+    .option-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .panel {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #333;
+      font-size: 0.78em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .panel-header .copy-btn {
+      background: none;
+      border: 1px solid #3a3a3a;
+      color: #888;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .panel-header .copy-btn:hover { color: #ccc; border-color: #555; }
+    textarea {
+      width: 100%;
+      height: 340px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.86em;
+      line-height: 1.55;
+      resize: vertical;
+    }
+    textarea::placeholder { color: #555; }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.78em;
+      color: #666;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+    .status-bar span { background: #242424; border-radius: 4px; padding: 3px 8px; }
+
+    .entity-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84em;
+      margin-top: 10px;
+    }
+    .entity-table th {
+      background: #2a2a2a;
+      color: #888;
+      text-align: left;
+      padding: 7px 12px;
+      border-bottom: 1px solid #333;
+      font-weight: normal;
+      text-transform: uppercase;
+      font-size: 0.78em;
+      letter-spacing: 0.5px;
+    }
+    .entity-table td {
+      padding: 6px 12px;
+      border-bottom: 1px solid #2a2a2a;
+      color: #bbb;
+    }
+    .entity-table tr:last-child td { border-bottom: none; }
+    .entity-table code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.9em; color: #f08080; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 680px) {
+      .panels { grid-template-columns: 1fr; }
+      textarea { height: 200px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">&larr; Dev Toolbox</a></div>
+
+  <h1>HTML Encoder / Decoder</h1>
+  <p class="tagline">Encode special characters to HTML entities or decode entities back to plain text &mdash; 100% browser-based, instant, no data sent anywhere.</p>
+
+  <div class="option-row">
+    <label>
+      <input type="checkbox" id="encodeQuotes" checked> Encode quotes (<code>&amp;quot;</code> / <code>&amp;#39;</code>)
+    </label>
+    <label>
+      <input type="checkbox" id="encodeNonAscii"> Encode non-ASCII as numeric entities
+    </label>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="encode()">&#8594; Encode HTML</button>
+    <button class="btn btn-green" onclick="decode()">&#8592; Decode HTML</button>
+    <button class="btn" onclick="loadSample()">Load Sample</button>
+    <button class="btn" onclick="swapPanels()">&#8645; Swap</button>
+    <button class="btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-header">
+        <span id="leftLabel">Input</span>
+        <button class="copy-btn" onclick="copyPanel('inputText', this)">Copy</button>
+      </div>
+      <textarea id="inputText" placeholder="Paste plain text or HTML entities here...
+
+Example (plain text to encode):
+<div class=&quot;hello&quot;>Hello &amp; welcome!</div>
+
+Or paste HTML with entities to decode." spellcheck="false"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span id="rightLabel">Output</span>
+        <button class="copy-btn" onclick="copyPanel('outputText', this)">Copy</button>
+      </div>
+      <textarea id="outputText" readonly placeholder="Result will appear here..." spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    <span id="statIn">Input: 0 chars</span>
+    <span id="statOut">Output: 0 chars</span>
+  </div>
+
+  <h2>Common HTML Entities Reference</h2>
+  <table class="entity-table">
+    <thead>
+      <tr><th>Character</th><th>Named Entity</th><th>Numeric Entity</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>&amp;</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td><td>Ampersand</td></tr>
+      <tr><td>&lt;</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td><td>Less-than sign</td></tr>
+      <tr><td>&gt;</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td><td>Greater-than sign</td></tr>
+      <tr><td>&quot;</td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td><td>Double quote</td></tr>
+      <tr><td>&#39;</td><td><code>&amp;#39;</code></td><td><code>&amp;#39;</code></td><td>Single quote / apostrophe</td></tr>
+      <tr><td>&nbsp;</td><td><code>&amp;nbsp;</code></td><td><code>&amp;#160;</code></td><td>Non-breaking space</td></tr>
+      <tr><td>&copy;</td><td><code>&amp;copy;</code></td><td><code>&amp;#169;</code></td><td>Copyright sign</td></tr>
+      <tr><td>&reg;</td><td><code>&amp;reg;</code></td><td><code>&amp;#174;</code></td><td>Registered sign</td></tr>
+      <tr><td>&trade;</td><td><code>&amp;trade;</code></td><td><code>&amp;#8482;</code></td><td>Trade mark sign</td></tr>
+      <tr><td>&mdash;</td><td><code>&amp;mdash;</code></td><td><code>&amp;#8212;</code></td><td>Em dash</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Paste your <strong>plain text</strong> into the left panel if you want to encode it to HTML entities.</li>
+    <li>Click <strong>Encode HTML</strong> to convert special characters (<code>&lt;</code> <code>&gt;</code> <code>&amp;</code> <code>&quot;</code>) to their safe HTML entity equivalents.</li>
+    <li>To decode, paste HTML containing entities into the left panel and click <strong>Decode HTML</strong> to get the readable plain text.</li>
+    <li>Use the <strong>Swap</strong> button to exchange input and output, making it easy to chain encode/decode operations.</li>
+    <li>Enable <strong>Encode non-ASCII</strong> to convert all characters above ASCII 127 (accented letters, CJK, emoji) to numeric entities like <code>&amp;#8364;</code> &mdash; useful for legacy HTML systems.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>HTML entities are special sequences used to display reserved characters in HTML without the browser interpreting them as markup. The five most important are <code>&amp;amp;</code> (ampersand), <code>&amp;lt;</code> (less-than), <code>&amp;gt;</code> (greater-than), <code>&amp;quot;</code> (double quote), and <code>&amp;#39;</code> (single quote). Encoding these characters is essential when inserting user-supplied content into HTML, generating HTML emails, writing XML, or building template strings. Decoding is equally important when parsing HTML from external sources or reading entity-escaped content from a database. This tool handles all standard named and numeric HTML entities via the browser&rsquo;s built-in DOM parser &mdash; no external libraries needed, no data sent to any server.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Why must I encode &amp; before &lt; and &gt;?</h3>
+    <p>Because the ampersand <code>&amp;</code> is itself the entity escape character. If you replace <code>&lt;</code> first and produce <code>&amp;lt;</code>, you must not re-encode the <code>&amp;</code> or you would get <code>&amp;amp;lt;</code>. This tool always encodes <code>&amp;</code> first to avoid double-encoding. If you paste already-encoded text and click Encode again, use Decode first.</p>
+  </div>
+  <div class="faq">
+    <h3>When should I use numeric entities vs. named entities?</h3>
+    <p>Named entities like <code>&amp;copy;</code> are more readable, but only work in HTML5-aware parsers. Numeric entities like <code>&amp;#169;</code> are universally supported in HTML, XHTML, XML, and most legacy parsers. Use numeric entities when you need the widest compatibility &mdash; for example, in RSS feeds, XHTML documents, or SVG files.</p>
+  </div>
+  <div class="faq">
+    <h3>Does this tool handle all HTML5 named entities?</h3>
+    <p>For decoding, yes &mdash; the browser&rsquo;s DOM parser handles all ~2,000 HTML5 named entities automatically. For encoding, this tool produces the five most critical named entities (<code>&amp;amp;</code>, <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;quot;</code>, <code>&amp;#39;</code>) plus optional numeric encoding for non-ASCII characters. This covers the vast majority of real-world encoding needs.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#base64">64 Base64 Encode/Decode</a>
+    <a href="index.html#urlEncode">% URL Encode/Decode</a>
+    <a href="markdown-preview.html">&#9997; Markdown Preview</a>
+  </div>
+
+  <footer>
+    <a href="/">&larr; Back to Dev Toolbox</a> &nbsp;&middot;&nbsp;
+    <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const SAMPLE_PLAIN = `<article class="post">
+  <h1>Hello &amp; Welcome!</h1>
+  <p>Price: $9.99 &lt; $10.00</p>
+  <a href="/path?a=1&b=2">Click "here" to continue</a>
+  <p>Copyright &copy; 2026 Dev Toolbox</p>
+</article>`;
+
+function encodeHtml(str) {
+  const encodeQuotes  = document.getElementById('encodeQuotes').checked;
+  const encodeNonAsc  = document.getElementById('encodeNonAscii').checked;
+  let result = '';
+  for (const char of str) {
+    const code = char.codePointAt(0);
+    if      (char === '&')                     result += '&amp;';
+    else if (char === '<')                     result += '&lt;';
+    else if (char === '>')                     result += '&gt;';
+    else if (char === '"' && encodeQuotes)     result += '&quot;';
+    else if (char === "'" && encodeQuotes)     result += '&#39;';
+    else if (encodeNonAsc && code > 127)       result += '&#' + code + ';';
+    else                                       result += char;
+  }
+  return result;
+}
+
+function decodeHtml(str) {
+  const ta = document.createElement('textarea');
+  ta.innerHTML = str;
+  return ta.value;
+}
+
+function encode() {
+  const input = document.getElementById('inputText').value;
+  document.getElementById('outputText').value = encodeHtml(input);
+  document.getElementById('leftLabel').textContent  = 'Plain Text';
+  document.getElementById('rightLabel').textContent = 'HTML Encoded';
+  updateStats();
+}
+
+function decode() {
+  const input = document.getElementById('inputText').value;
+  document.getElementById('outputText').value = decodeHtml(input);
+  document.getElementById('leftLabel').textContent  = 'HTML Encoded';
+  document.getElementById('rightLabel').textContent = 'Plain Text';
+  updateStats();
+}
+
+function swapPanels() {
+  const inEl  = document.getElementById('inputText');
+  const outEl = document.getElementById('outputText');
+  const tmp   = inEl.value;
+  inEl.value  = outEl.value;
+  outEl.removeAttribute('readonly');
+  outEl.value = tmp;
+  outEl.setAttribute('readonly', '');
+  const lt = document.getElementById('leftLabel').textContent;
+  const rt = document.getElementById('rightLabel').textContent;
+  document.getElementById('leftLabel').textContent  = rt;
+  document.getElementById('rightLabel').textContent = lt;
+  updateStats();
+}
+
+function copyPanel(id, btn) {
+  const el = document.getElementById(id);
+  if (!el.value) return;
+  navigator.clipboard.writeText(el.value).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function clearAll() {
+  document.getElementById('inputText').value  = '';
+  document.getElementById('outputText').removeAttribute('readonly');
+  document.getElementById('outputText').value = '';
+  document.getElementById('outputText').setAttribute('readonly', '');
+  document.getElementById('leftLabel').textContent  = 'Input';
+  document.getElementById('rightLabel').textContent = 'Output';
+  updateStats();
+}
+
+function loadSample() {
+  document.getElementById('inputText').value = SAMPLE_PLAIN;
+  document.getElementById('leftLabel').textContent = 'Plain Text';
+  encode();
+}
+
+function updateStats() {
+  const i = document.getElementById('inputText').value;
+  const o = document.getElementById('outputText').value;
+  document.getElementById('statIn').textContent  = 'Input: ' + i.length + ' chars';
+  document.getElementById('statOut').textContent = 'Output: ' + o.length + ' chars';
+}
+
+document.getElementById('inputText').addEventListener('input', updateStats);
+</script>
+</body>
+</html>

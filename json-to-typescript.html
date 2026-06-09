@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON to TypeScript Generator - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online JSON to TypeScript interface generator. Paste any JSON object and instantly get TypeScript interfaces with correct types — nested objects, arrays, null handling. 100% browser-based, no data sent to servers.">
+  <meta name="keywords" content="json to typescript, json to ts interface, generate typescript from json, typescript type generator, json typescript converter, json to interface">
+  <link rel="canonical" href="https://devkitbox.xyz/json-to-typescript.html">
+  <meta property="og:title" content="JSON to TypeScript Generator - Dev Toolbox">
+  <meta property="og:description" content="Paste JSON and instantly get TypeScript interfaces. Browser-based, no data sent anywhere.">
+  <meta property="og:url" content="https://devkitbox.xyz/json-to-typescript.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 20px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 6px 13px;
+      cursor: pointer;
+      font-size: 0.84em;
+    }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary {
+      background: #5b8dee;
+      color: #fff;
+      border-color: #5b8dee;
+    }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+
+    .option-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.84em;
+      color: #aaa;
+    }
+    .option-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .option-row input[type="text"] {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.9em;
+      width: 130px;
+      outline: none;
+    }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .panel {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #333;
+      font-size: 0.78em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .panel-header .copy-btn {
+      background: none;
+      border: 1px solid #3a3a3a;
+      color: #888;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .panel-header .copy-btn:hover { color: #ccc; border-color: #555; }
+    textarea {
+      width: 100%;
+      height: 380px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.86em;
+      line-height: 1.55;
+      resize: vertical;
+    }
+    textarea::placeholder { color: #555; }
+    textarea.error-state { border-top: 2px solid #f44336; }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.78em;
+      color: #666;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+    .status-bar span { background: #242424; border-radius: 4px; padding: 3px 8px; }
+    .status-bar .err-msg { color: #f44336; background: #2a1010; border-radius: 4px; padding: 3px 10px; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 680px) {
+      .panels { grid-template-columns: 1fr; }
+      textarea { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">&larr; Dev Toolbox</a></div>
+
+  <h1>JSON &rarr; TypeScript Generator</h1>
+  <p class="tagline">Paste any JSON object and instantly get TypeScript interfaces with correct types &mdash; 100% browser-based, no data sent to any server.</p>
+
+  <div class="option-row">
+    <label>
+      Root name:
+      <input type="text" id="rootName" value="Root" placeholder="Root">
+    </label>
+    <label>
+      <input type="checkbox" id="optionalFields"> Optional fields (<code>?</code>)
+    </label>
+    <label>
+      <input type="checkbox" id="exportKw" checked> Export
+    </label>
+    <label>
+      <input type="checkbox" id="useType"> Use <code>type</code>
+    </label>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="convert()">&#9654; Generate TypeScript</button>
+    <button class="btn" onclick="loadSample()">Load Sample</button>
+    <button class="btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-header">
+        <span>JSON Input</span>
+        <button class="copy-btn" onclick="copyPanel('jsonInput', this)">Copy</button>
+      </div>
+      <textarea id="jsonInput" placeholder='Paste JSON here...
+
+{
+  "id": 1,
+  "name": "Alice",
+  "active": true,
+  "address": {
+    "city": "Tokyo"
+  }
+}' spellcheck="false"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span>TypeScript Output</span>
+        <button class="copy-btn" onclick="copyPanel('tsOutput', this)">Copy</button>
+      </div>
+      <textarea id="tsOutput" readonly placeholder="TypeScript interfaces will appear here..." spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    <span id="statCount">Interfaces: 0</span>
+    <span id="statFields">Fields: 0</span>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Paste your <strong>JSON object or array</strong> into the left panel.</li>
+    <li>Set the <strong>root interface name</strong> (defaults to <code>Root</code>) and adjust the options below.</li>
+    <li>Click <strong>Generate TypeScript</strong> to produce TypeScript interfaces from your JSON structure.</li>
+    <li>Click <strong>Copy</strong> on the right panel to copy the generated code to your clipboard.</li>
+    <li>Paste the interfaces directly into your TypeScript project &mdash; nested types are generated automatically.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>When working with REST APIs, you typically receive JSON responses that need to be typed in TypeScript. Writing interfaces by hand is slow and error-prone, especially for deeply nested structures with arrays of objects. This tool analyzes your JSON and automatically generates TypeScript interfaces for every object in the hierarchy &mdash; including nested objects, arrays, primitive types (<code>string</code>, <code>number</code>, <code>boolean</code>), and <code>null</code> values. Arrays of objects produce a dedicated item interface that is referenced by the parent. You can choose between <code>interface</code> and <code>type</code> aliases, add an <code>export</code> keyword, or mark all fields as optional with <code>?</code>. All processing runs entirely in your browser; no JSON data is ever sent to a server.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>What TypeScript types are generated?</h3>
+    <p>The generator detects <code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, typed arrays (<code>T[]</code>), and nested objects &mdash; each nested object gets its own named interface. Arrays whose elements are objects use a merged schema from all items and produce an <code>Item</code> interface. Arrays with mixed primitive types produce union types like <code>(string | number)[]</code>. Empty arrays fall back to <code>unknown[]</code>.</p>
+  </div>
+  <div class="faq">
+    <h3>What happens when the root JSON is an array?</h3>
+    <p>If the root value is a JSON array, the tool uses all elements to infer the item shape and generates a <code>RootItem</code> interface (where &ldquo;Root&rdquo; is your chosen name). The root type becomes a type alias: <code>type Root = RootItem[]</code>. This is the standard TypeScript pattern for typed API list responses.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the difference between <code>interface</code> and <code>type</code> in TypeScript?</h3>
+    <p>Both <code>interface</code> and <code>type</code> can describe object shapes and are interchangeable for most API-typing use cases. <code>interface</code> supports declaration merging &mdash; useful for augmenting third-party types. <code>type</code> aliases are more flexible: they can represent unions, intersections, and primitive aliases. For API response types, use whichever matches your project&rsquo;s code style; the generated output is valid TypeScript either way.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#json">{ } JSON Formatter</a>
+    <a href="yaml-json-converter.html">&#8652; YAML &#8596; JSON Converter</a>
+    <a href="index.html#jwt">&#128273; JWT Decoder</a>
+  </div>
+
+  <footer>
+    <a href="/">&larr; Back to Dev Toolbox</a> &nbsp;&middot;&nbsp;
+    <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const SAMPLE = JSON.stringify({
+  id: 1,
+  name: "Alice Johnson",
+  email: "alice@example.com",
+  age: 30,
+  active: true,
+  score: 98.5,
+  address: {
+    street: "123 Main St",
+    city: "Tokyo",
+    zip: "100-0001",
+    country: "Japan"
+  },
+  tags: ["developer", "devops", "typescript"],
+  projects: [
+    { id: 101, name: "Project Alpha", status: "active",    budget: 50000 },
+    { id: 102, name: "Project Beta",  status: "completed", budget: null  }
+  ],
+  metadata: null
+}, null, 2);
+
+function capitalize(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : 'Unknown';
+}
+
+function isValidIdent(s) {
+  return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(s);
+}
+
+function mergeObjects(arr) {
+  const merged = {};
+  for (const item of arr) {
+    if (item && typeof item === 'object' && !Array.isArray(item)) {
+      for (const [k, v] of Object.entries(item)) {
+        if (!(k in merged)) merged[k] = v;
+      }
+    }
+  }
+  return merged;
+}
+
+function convert() {
+  const input    = document.getElementById('jsonInput').value.trim();
+  const rootName = document.getElementById('rootName').value.trim() || 'Root';
+  const optional = document.getElementById('optionalFields').checked;
+  const doExport = document.getElementById('exportKw').checked;
+  const useType  = document.getElementById('useType').checked;
+
+  const bar   = document.getElementById('statusBar');
+  const errEl = bar.querySelector('.err-msg');
+  if (errEl) errEl.remove();
+  document.getElementById('jsonInput').classList.remove('error-state');
+
+  if (!input) { document.getElementById('tsOutput').value = ''; return; }
+
+  let parsed;
+  try { parsed = JSON.parse(input); }
+  catch (e) {
+    const el = document.createElement('span');
+    el.className  = 'err-msg';
+    el.textContent = '✖ ' + e.message;
+    bar.appendChild(el);
+    document.getElementById('jsonInput').classList.add('error-state');
+    document.getElementById('tsOutput').value = '';
+    return;
+  }
+
+  const ifaceDefs  = [];  // [{name, lines}] in discovery order (depth-first)
+  const seen       = new Set();
+  const opt        = optional ? '?' : '';
+  let   totalFields = 0;
+
+  function getType(val, key) {
+    if (val === null)              return 'null';
+    if (typeof val === 'string')   return 'string';
+    if (typeof val === 'number')   return 'number';
+    if (typeof val === 'boolean')  return 'boolean';
+    if (Array.isArray(val)) {
+      if (!val.length) return 'unknown[]';
+      const objItems = val.filter(i => i && typeof i === 'object' && !Array.isArray(i));
+      if (objItems.length > 0) {
+        const merged   = mergeObjects(objItems);
+        const itemName = capitalize(key) + 'Item';
+        if (!seen.has(itemName)) {
+          seen.add(itemName);
+          const lines = buildLines(merged);
+          ifaceDefs.push({ name: itemName, lines });
+        }
+        return capitalize(key) + 'Item[]';
+      }
+      const types  = [...new Set(val.map(i => getType(i, key)))];
+      const t      = types.length === 1 ? types[0] : '(' + types.join(' | ') + ')';
+      return t + '[]';
+    }
+    if (typeof val === 'object') {
+      const name = capitalize(key);
+      if (!seen.has(name)) {
+        seen.add(name);
+        const lines = buildLines(val);
+        ifaceDefs.push({ name, lines });
+      }
+      return name;
+    }
+    return 'unknown';
+  }
+
+  function buildLines(obj) {
+    totalFields += Object.keys(obj).length;
+    return Object.entries(obj).map(([k, v]) => {
+      const safeKey = isValidIdent(k) ? k : '"' + k + '"';
+      return '  ' + safeKey + opt + ': ' + getType(v, k) + ';';
+    });
+  }
+
+  const isArr       = Array.isArray(parsed);
+  const rootObj     = isArr ? (parsed[0] && !Array.isArray(parsed[0]) ? parsed[0] : {}) : parsed;
+  const rootIntName = isArr ? capitalize(rootName) + 'Item' : capitalize(rootName);
+
+  seen.add(rootIntName);
+  if (isArr && parsed.length > 1) {
+    const merged = mergeObjects(parsed.filter(i => i && typeof i === 'object' && !Array.isArray(i)));
+    const lines  = buildLines(merged);
+    ifaceDefs.push({ name: rootIntName, lines });
+  } else {
+    const lines = buildLines(rootObj);
+    ifaceDefs.push({ name: rootIntName, lines });
+  }
+
+  const prefix = doExport ? 'export ' : '';
+  const parts  = ifaceDefs.map(({ name, lines }) =>
+    useType
+      ? prefix + 'type ' + name + ' = {\n' + lines.join('\n') + '\n};'
+      : prefix + 'interface ' + name + ' {\n' + lines.join('\n') + '\n}'
+  );
+  if (isArr) parts.push(prefix + 'type ' + capitalize(rootName) + ' = ' + rootIntName + '[];');
+
+  document.getElementById('tsOutput').value = parts.join('\n\n');
+  document.getElementById('statCount').textContent = 'Interfaces: ' + (ifaceDefs.length + (isArr ? 1 : 0));
+  document.getElementById('statFields').textContent = 'Fields: ' + totalFields;
+}
+
+function copyPanel(id, btn) {
+  const el = document.getElementById(id);
+  if (!el.value) return;
+  navigator.clipboard.writeText(el.value).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function clearAll() {
+  document.getElementById('jsonInput').value  = '';
+  document.getElementById('tsOutput').value   = '';
+  document.getElementById('jsonInput').classList.remove('error-state');
+  document.getElementById('statCount').textContent  = 'Interfaces: 0';
+  document.getElementById('statFields').textContent = 'Fields: 0';
+  const e = document.getElementById('statusBar').querySelector('.err-msg');
+  if (e) e.remove();
+}
+
+function loadSample() {
+  document.getElementById('jsonInput').value = SAMPLE;
+  convert();
+}
+
+let debTimer;
+document.getElementById('jsonInput').addEventListener('input', () => {
+  clearTimeout(debTimer);
+  debTimer = setTimeout(convert, 400);
+});
+</script>
+</body>
+</html>
