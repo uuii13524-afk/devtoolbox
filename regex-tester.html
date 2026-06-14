@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Tester Online - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online regex tester. Test JavaScript regular expressions with real-time match highlighting, capture groups, named groups, and find-and-replace. Includes common patterns library. 100% browser-based.">
+  <meta name="keywords" content="regex tester, regular expression tester, online regex, javascript regex, regex debugger, regex match tester, regex online">
+  <link rel="canonical" href="https://devkitbox.xyz/regex-tester.html">
+  <meta property="og:title" content="Regex Tester Online - Dev Toolbox">
+  <meta property="og:description" content="Test JavaScript regular expressions with real-time match highlighting, capture groups, named groups, and replace. 100% browser-based, no data sent anywhere.">
+  <meta property="og:url" content="https://devkitbox.xyz/regex-tester.html">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3348501480039832" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #1a1a1a; color: #e0e0e0; font-family: Arial, sans-serif; font-size: 15px; }
+    .page-wrap { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 20px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .patterns-bar {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 14px; align-items: center;
+    }
+    .patterns-label { color: #666; font-size: 0.8em; padding-right: 4px; white-space: nowrap; }
+    .pattern-chip {
+      background: #242424; border: 1px solid #3a3a3a; border-radius: 20px;
+      color: #aaa; padding: 4px 12px; cursor: pointer; font-size: 0.78em;
+      transition: all 0.15s;
+    }
+    .pattern-chip:hover { background: #2e2e2e; border-color: #5b8dee; color: #5b8dee; }
+
+    .pattern-row {
+      display: flex; align-items: center; gap: 0;
+      background: #242424; border: 1px solid #3a3a3a;
+      border-radius: 8px; overflow: hidden; margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .pattern-row.error { border-color: #f44336; }
+    .pattern-slash {
+      padding: 0 10px; font-size: 1.4em; color: #777;
+      font-family: 'Courier New', monospace; user-select: none;
+    }
+    #patternInput {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #f0c060; font-family: 'Courier New', monospace;
+      font-size: 1.05em; padding: 10px 0;
+    }
+    #patternInput::placeholder { color: #555; }
+    .flags-row { display: flex; gap: 5px; padding: 0 12px; border-left: 1px solid #3a3a3a; }
+    .flag-btn {
+      background: none; border: 1px solid #3a3a3a; color: #888;
+      border-radius: 4px; padding: 4px 8px; cursor: pointer;
+      font-family: 'Courier New', monospace; font-size: 0.88em;
+      transition: all 0.15s; line-height: 1;
+    }
+    .flag-btn.active { background: #5b8dee; border-color: #5b8dee; color: #fff; }
+    .flag-btn:hover:not(.active) { border-color: #555; color: #ccc; }
+
+    .tabs { display: flex; border-bottom: 1px solid #333; margin-bottom: 12px; }
+    .tab-btn {
+      background: none; border: none; border-bottom: 2px solid transparent;
+      color: #888; padding: 8px 18px; cursor: pointer; font-size: 0.9em;
+      transition: all 0.15s;
+    }
+    .tab-btn.active { border-bottom-color: #5b8dee; color: #5b8dee; }
+    .tab-btn:hover:not(.active) { color: #ccc; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    #testInput {
+      width: 100%; height: 200px;
+      background: #1e1e1e; border: 1px solid #3a3a3a; border-radius: 8px;
+      color: #e0e0e0; font-family: 'Courier New', monospace;
+      font-size: 0.9em; line-height: 1.6;
+      padding: 12px 14px; resize: vertical; outline: none;
+      display: block; margin-bottom: 10px;
+    }
+    #testInput::placeholder { color: #555; }
+
+    .status-bar { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8em; color: #777; margin-bottom: 12px; align-items: center; }
+    .stat-badge { background: #242424; border-radius: 4px; padding: 3px 10px; }
+    .stat-badge.match { color: #5b8dee; }
+    .stat-badge.error { color: #f44336; background: #2a1010; }
+    .stat-badge.zero { color: #888; }
+
+    .match-list {
+      background: #1e1e1e; border: 1px solid #333; border-radius: 8px;
+      max-height: 280px; overflow-y: auto; padding: 6px;
+    }
+    .match-item {
+      padding: 8px 10px; border-bottom: 1px solid #2a2a2a;
+      font-size: 0.82em; font-family: 'Courier New', monospace;
+    }
+    .match-item:last-child { border-bottom: none; }
+    .match-num { color: #777; margin-right: 8px; min-width: 28px; display: inline-block; }
+    .match-val { color: #f0c060; background: #2a2a1a; padding: 1px 5px; border-radius: 3px; }
+    .match-pos { color: #777; margin-left: 8px; font-size: 0.88em; }
+    .group-row { margin-top: 4px; padding-left: 36px; color: #9090b0; }
+    .group-key { color: #7090c0; }
+    .group-val { color: #a0c080; }
+    .no-match { color: #666; font-style: italic; padding: 14px; text-align: center; font-size: 0.9em; }
+
+    .replace-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .replace-row label { color: #aaa; font-size: 0.85em; white-space: nowrap; }
+    .replace-row input {
+      flex: 1; min-width: 200px;
+      background: #1e1e1e; border: 1px solid #3a3a3a; border-radius: 6px;
+      color: #e0e0e0; font-family: 'Courier New', monospace;
+      font-size: 0.88em; padding: 8px 10px; outline: none;
+    }
+    .replace-row input:focus { border-color: #5b8dee; }
+    #replaceResult {
+      width: 100%; height: 160px;
+      background: #1e1e1e; border: 1px solid #333; border-radius: 8px;
+      color: #a0e0a0; font-family: 'Courier New', monospace;
+      font-size: 0.86em; padding: 10px 12px; resize: vertical; outline: none;
+    }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .btn { background: #2e2e2e; color: #ccc; border: 1px solid #3a3a3a; border-radius: 5px; padding: 6px 13px; cursor: pointer; font-size: 0.84em; }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary { background: #5b8dee; color: #fff; border-color: #5b8dee; }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+
+    .cheatsheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-top: 8px; }
+    .cheat-card { background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 6px; padding: 10px 14px; font-size: 0.82em; }
+    .cheat-card h4 { margin: 0 0 8px; color: #5b8dee; font-size: 0.95em; }
+    .cheat-row { display: flex; gap: 8px; margin-bottom: 4px; line-height: 1.5; }
+    .cheat-code { color: #f0c060; font-family: 'Courier New', monospace; min-width: 90px; }
+    .cheat-desc { color: #aaa; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li { counter-increment: step; padding: 10px 12px 10px 46px; position: relative; background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 10px; background: #5b8dee; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: bold; }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a { background: #242424; border: 1px solid #3a3a3a; border-radius: 6px; padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em; }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555; }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+    @media (max-width: 600px) {
+      .flags-row { padding: 0 6px; gap: 3px; }
+      .flag-btn { padding: 3px 6px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+  <h1>Regex Tester Online</h1>
+  <p class="tagline">Test JavaScript regular expressions with real-time matching, capture groups, named groups, and replace. 100% browser-based — no data sent anywhere.</p>
+
+  <div class="patterns-bar" id="patternsBar">
+    <span class="patterns-label">Common patterns:</span>
+  </div>
+
+  <div class="pattern-row" id="patternRow">
+    <span class="pattern-slash">/</span>
+    <input id="patternInput" type="text" placeholder="Enter regex pattern..." spellcheck="false" autocomplete="off">
+    <span class="pattern-slash">/</span>
+    <div class="flags-row" id="flagsRow"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('test', this)">Test</button>
+    <button class="tab-btn" onclick="switchTab('replace', this)">Replace</button>
+    <button class="tab-btn" onclick="switchTab('cheatsheet', this)">Cheatsheet</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-test">
+    <div class="toolbar">
+      <button class="btn" onclick="loadSample()">Load Sample</button>
+      <button class="btn" onclick="clearAll()">Clear</button>
+    </div>
+    <textarea id="testInput" placeholder="Enter test string here..." spellcheck="false"></textarea>
+    <div class="status-bar" id="statusBar">
+      <span class="stat-badge zero" id="matchCount">0 matches</span>
+      <span class="stat-badge" id="charCount">0 chars</span>
+    </div>
+    <div class="match-list" id="matchList">
+      <p class="no-match">Enter a pattern above and test string to see matches.</p>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-replace">
+    <div class="replace-row">
+      <label>Replace with:</label>
+      <input id="replaceInput" type="text" placeholder="Replacement (use $1, $2 for groups; $& for full match)" spellcheck="false">
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="doReplace()">Replace All</button>
+      <button class="btn" onclick="copyReplace()">Copy Result</button>
+    </div>
+    <textarea id="replaceResult" readonly placeholder="Replace result will appear here..."></textarea>
+  </div>
+
+  <div class="tab-panel" id="tab-cheatsheet">
+    <div class="cheatsheet">
+      <div class="cheat-card">
+        <h4>Character Classes</h4>
+        <div class="cheat-row"><span class="cheat-code">.</span><span class="cheat-desc">Any character (except newline)</span></div>
+        <div class="cheat-row"><span class="cheat-code">\d</span><span class="cheat-desc">Digit [0-9]</span></div>
+        <div class="cheat-row"><span class="cheat-code">\D</span><span class="cheat-desc">Non-digit</span></div>
+        <div class="cheat-row"><span class="cheat-code">\w</span><span class="cheat-desc">Word char [a-zA-Z0-9_]</span></div>
+        <div class="cheat-row"><span class="cheat-code">\W</span><span class="cheat-desc">Non-word char</span></div>
+        <div class="cheat-row"><span class="cheat-code">\s</span><span class="cheat-desc">Whitespace (space, tab, newline)</span></div>
+        <div class="cheat-row"><span class="cheat-code">\S</span><span class="cheat-desc">Non-whitespace</span></div>
+        <div class="cheat-row"><span class="cheat-code">[abc]</span><span class="cheat-desc">One of a, b, or c</span></div>
+        <div class="cheat-row"><span class="cheat-code">[^abc]</span><span class="cheat-desc">Not a, b, or c</span></div>
+        <div class="cheat-row"><span class="cheat-code">[a-z]</span><span class="cheat-desc">Char in range a–z</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Quantifiers</h4>
+        <div class="cheat-row"><span class="cheat-code">*</span><span class="cheat-desc">0 or more (greedy)</span></div>
+        <div class="cheat-row"><span class="cheat-code">+</span><span class="cheat-desc">1 or more (greedy)</span></div>
+        <div class="cheat-row"><span class="cheat-code">?</span><span class="cheat-desc">0 or 1 (optional)</span></div>
+        <div class="cheat-row"><span class="cheat-code">{n}</span><span class="cheat-desc">Exactly n times</span></div>
+        <div class="cheat-row"><span class="cheat-code">{n,m}</span><span class="cheat-desc">Between n and m times</span></div>
+        <div class="cheat-row"><span class="cheat-code">{n,}</span><span class="cheat-desc">n or more times</span></div>
+        <div class="cheat-row"><span class="cheat-code">*?</span><span class="cheat-desc">0 or more (lazy)</span></div>
+        <div class="cheat-row"><span class="cheat-code">+?</span><span class="cheat-desc">1 or more (lazy)</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Anchors &amp; Boundaries</h4>
+        <div class="cheat-row"><span class="cheat-code">^</span><span class="cheat-desc">Start of string (or line with m)</span></div>
+        <div class="cheat-row"><span class="cheat-code">$</span><span class="cheat-desc">End of string (or line with m)</span></div>
+        <div class="cheat-row"><span class="cheat-code">\b</span><span class="cheat-desc">Word boundary</span></div>
+        <div class="cheat-row"><span class="cheat-code">\B</span><span class="cheat-desc">Non-word boundary</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Groups &amp; Lookarounds</h4>
+        <div class="cheat-row"><span class="cheat-code">(abc)</span><span class="cheat-desc">Capture group</span></div>
+        <div class="cheat-row"><span class="cheat-code">(?:abc)</span><span class="cheat-desc">Non-capturing group</span></div>
+        <div class="cheat-row"><span class="cheat-code">(?&lt;n&gt;abc)</span><span class="cheat-desc">Named capture group</span></div>
+        <div class="cheat-row"><span class="cheat-code">(?=abc)</span><span class="cheat-desc">Positive lookahead</span></div>
+        <div class="cheat-row"><span class="cheat-code">(?!abc)</span><span class="cheat-desc">Negative lookahead</span></div>
+        <div class="cheat-row"><span class="cheat-code">(?&lt;=abc)</span><span class="cheat-desc">Positive lookbehind</span></div>
+        <div class="cheat-row"><span class="cheat-code">(?&lt;!abc)</span><span class="cheat-desc">Negative lookbehind</span></div>
+        <div class="cheat-row"><span class="cheat-code">a|b</span><span class="cheat-desc">Alternation (a or b)</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Flags</h4>
+        <div class="cheat-row"><span class="cheat-code">g</span><span class="cheat-desc">Global — find all matches</span></div>
+        <div class="cheat-row"><span class="cheat-code">i</span><span class="cheat-desc">Ignore case</span></div>
+        <div class="cheat-row"><span class="cheat-code">m</span><span class="cheat-desc">Multiline (^ and $ per line)</span></div>
+        <div class="cheat-row"><span class="cheat-code">s</span><span class="cheat-desc">Dot matches newlines too</span></div>
+        <div class="cheat-row"><span class="cheat-code">u</span><span class="cheat-desc">Unicode mode</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Replace Back-references</h4>
+        <div class="cheat-row"><span class="cheat-code">$1, $2</span><span class="cheat-desc">Numbered capture group</span></div>
+        <div class="cheat-row"><span class="cheat-code">$&lt;name&gt;</span><span class="cheat-desc">Named capture group</span></div>
+        <div class="cheat-row"><span class="cheat-code">$&amp;</span><span class="cheat-desc">Entire matched string</span></div>
+        <div class="cheat-row"><span class="cheat-code">$`</span><span class="cheat-desc">Text before match</span></div>
+        <div class="cheat-row"><span class="cheat-code">$'</span><span class="cheat-desc">Text after match</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Enter your <strong>regular expression pattern</strong> in the pattern field (without slashes). The pattern updates matches in real time.</li>
+    <li>Toggle <strong>flags</strong> on the right of the pattern field: <code>g</code> (global — find all), <code>i</code> (ignore case), <code>m</code> (multiline), <code>s</code> (dot-all), <code>u</code> (unicode).</li>
+    <li>Type or paste your <strong>test string</strong> in the text area. Matches and their positions appear instantly below.</li>
+    <li>Switch to the <strong>Replace</strong> tab to do find-and-replace with back-references like <code>$1</code>, <code>$2</code>, or <code>$&lt;name&gt;</code> for named groups.</li>
+    <li>Use the <strong>Cheatsheet</strong> tab for a quick reference of regex syntax — character classes, quantifiers, anchors, lookarounds, and flags.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>Regular expressions (regex) are powerful pattern-matching sequences used to search, validate, extract, and transform text. JavaScript's built-in <code>RegExp</code> engine — which powers this tester — supports the full ECMAScript regex standard including named capture groups (<code>(?&lt;name&gt;...)</code>), lookbehind assertions (<code>(?&lt;=...)</code>), Unicode property escapes (<code>\p{L}</code> with the <code>u</code> flag), and sticky matching. This tool runs every match operation entirely in your browser using native JavaScript — your test strings and patterns never leave your device. It is ideal for debugging API response parsing, building form validation, writing log analysis scripts, or learning regex syntax with immediate feedback. Use the common patterns quick-load bar above the pattern field to get started with frequently needed patterns like email addresses, URLs, IPv4 addresses, dates, and UUIDs.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Why do I get an &ldquo;Invalid regular expression&rdquo; error?</h3>
+    <p>This happens when the pattern contains a syntax error. Common causes include unmatched or unescaped parentheses, an invalid quantifier like <code>{,3}</code>, unescaped forward slashes inside a character class, or an invalid escape sequence such as <code>\q</code>. Make sure to escape literal dots with <code>\.</code>, backslashes with <code>\\</code>, and parentheses with <code>\(</code> when you need them as literal characters rather than metacharacters.</p>
+  </div>
+  <div class="faq">
+    <h3>How do I capture groups and use them in the Replace tab?</h3>
+    <p>Wrap the part of the pattern you want to capture in parentheses: <code>(\d{4})-(\d{2})-(\d{2})</code> captures year, month, and day as groups 1, 2, and 3. In the Replace field, reference them with <code>$1</code>, <code>$2</code>, <code>$3</code>. For named groups like <code>(?&lt;year&gt;\d{4})</code>, use <code>$&lt;year&gt;</code> in the replacement. Use <code>$&amp;</code> to insert the entire matched substring.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the difference between the g and m flags?</h3>
+    <p>The <code>g</code> (global) flag makes the engine find all non-overlapping matches in the input string instead of stopping after the first one. The <code>m</code> (multiline) flag changes the meaning of <code>^</code> and <code>$</code> — without <code>m</code> they match the start and end of the entire string; with <code>m</code> they match the start and end of each individual line. You often combine both flags when processing multi-line text with line-based patterns.</p>
+  </div>
+  <div class="faq">
+    <h3>Does this tester support lookaheads and lookbehinds?</h3>
+    <p>Yes. Modern JavaScript (V8 engine) supports all four zero-width assertions: positive lookahead <code>(?=...)</code>, negative lookahead <code>(?!...)</code>, positive lookbehind <code>(?&lt;=...)</code>, and negative lookbehind <code>(?&lt;!...)</code>. For example, <code>\w+(?=\.js\b)</code> matches filenames immediately before a <code>.js</code> extension, and <code>(?&lt;=\$)\d+(\.\d{2})?</code> matches a dollar amount after the <code>$</code> sign without including the sign in the match.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="text-diff.html">± Text Diff Checker</a>
+    <a href="js-error-decoder.html">⚠ JS Error Decoder</a>
+    <a href="index.html#json">{ } JSON Formatter</a>
+    <a href="html-encoder.html">&amp; HTML Encoder / Decoder</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+<script>
+const FLAGS_DEF = [
+  { char: 'g', title: 'Global — find all matches' },
+  { char: 'i', title: 'Ignore case' },
+  { char: 'm', title: 'Multiline — ^ and $ match line boundaries' },
+  { char: 's', title: 'Dot all — . matches newlines too' },
+  { char: 'u', title: 'Unicode mode' },
+];
+const activeFlags = new Set(['g']);
+
+function renderFlags() {
+  const row = document.getElementById('flagsRow');
+  row.innerHTML = '';
+  FLAGS_DEF.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'flag-btn' + (activeFlags.has(f.char) ? ' active' : '');
+    btn.textContent = f.char;
+    btn.title = f.title;
+    btn.onclick = () => {
+      if (activeFlags.has(f.char)) activeFlags.delete(f.char);
+      else activeFlags.add(f.char);
+      renderFlags();
+      run();
+    };
+    row.appendChild(btn);
+  });
+}
+
+const COMMON_PATTERNS = [
+  { name: 'Email',          pattern: '[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}' },
+  { name: 'URL',            pattern: 'https?:\\/\\/[^\\s/$.?#].[^\\s]*' },
+  { name: 'IPv4',           pattern: '\\b(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\b' },
+  { name: 'Date YYYY-MM-DD', pattern: '\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])' },
+  { name: 'Hex color',      pattern: '#(?:[0-9a-fA-F]{3}){1,2}\\b' },
+  { name: 'Integer',        pattern: '-?\\b\\d+\\b' },
+  { name: 'Float',          pattern: '-?\\d+\\.\\d+' },
+  { name: 'Phone (US)',     pattern: '\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}' },
+  { name: 'UUID',           pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' },
+  { name: 'Word',           pattern: '\\b\\w+\\b' },
+];
+
+function renderPatterns() {
+  const bar = document.getElementById('patternsBar');
+  COMMON_PATTERNS.forEach(p => {
+    const chip = document.createElement('button');
+    chip.className = 'pattern-chip';
+    chip.textContent = p.name;
+    chip.title = '/' + p.pattern + '/';
+    chip.onclick = () => {
+      document.getElementById('patternInput').value = p.pattern;
+      run();
+    };
+    bar.appendChild(chip);
+  });
+}
+
+function getFlags() { return [...activeFlags].join(''); }
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function run() {
+  const pattern = document.getElementById('patternInput').value;
+  const test = document.getElementById('testInput').value;
+  const countEl = document.getElementById('matchCount');
+  const listEl = document.getElementById('matchList');
+  const charEl = document.getElementById('charCount');
+  const patRow = document.getElementById('patternRow');
+
+  charEl.textContent = test.length + ' chars';
+  patRow.classList.remove('error');
+
+  if (!pattern) {
+    countEl.className = 'stat-badge zero';
+    countEl.textContent = '0 matches';
+    listEl.innerHTML = '<p class="no-match">Enter a pattern above to see matches.</p>';
+    return;
+  }
+
+  let re;
+  try {
+    re = new RegExp(pattern, getFlags());
+  } catch (e) {
+    const msg = e.message.replace(/^SyntaxError:\s*/i, '');
+    countEl.className = 'stat-badge error';
+    countEl.textContent = '✖ ' + msg;
+    patRow.classList.add('error');
+    listEl.innerHTML = '<p class="no-match" style="color:#f44336">Invalid pattern — check the error message above.</p>';
+    return;
+  }
+
+  const matches = [];
+  if (activeFlags.has('g')) {
+    const reG = new RegExp(pattern, getFlags());
+    let m;
+    while ((m = reG.exec(test)) !== null) {
+      matches.push({ match: m, index: m.index });
+      if (m.index === reG.lastIndex) reG.lastIndex++;
+    }
+  } else {
+    const m = re.exec(test);
+    if (m) matches.push({ match: m, index: m.index });
+  }
+
+  if (matches.length === 0) {
+    countEl.className = 'stat-badge zero';
+    countEl.textContent = '0 matches';
+    listEl.innerHTML = '<p class="no-match">No matches found.</p>';
+    return;
+  }
+
+  countEl.className = 'stat-badge match';
+  countEl.textContent = matches.length + (matches.length === 1 ? ' match' : ' matches');
+
+  listEl.innerHTML = '';
+  matches.forEach(({ match: m }, idx) => {
+    const item = document.createElement('div');
+    item.className = 'match-item';
+    let html = `<span class="match-num">#${idx + 1}</span>`;
+    html += `<span class="match-val">${escHtml(m[0] !== undefined && m[0] !== '' ? m[0] : '(empty match)')}</span>`;
+    html += `<span class="match-pos">index ${m.index}–${m.index + m[0].length}, len ${m[0].length}</span>`;
+    if (m.groups) {
+      Object.entries(m.groups).forEach(([k, v]) => {
+        if (v !== undefined) {
+          html += `<div class="group-row"><span class="group-key">?&lt;${escHtml(k)}&gt;</span> = <span class="group-val">${escHtml(v)}</span></div>`;
+        }
+      });
+    }
+    for (let i = 1; i < m.length; i++) {
+      if (m[i] !== undefined) {
+        html += `<div class="group-row"><span class="group-key">Group ${i}</span> = <span class="group-val">${escHtml(m[i])}</span></div>`;
+      }
+    }
+    item.innerHTML = html;
+    listEl.appendChild(item);
+  });
+
+  if (document.getElementById('tab-replace').classList.contains('active')) doReplace();
+}
+
+function doReplace() {
+  const pattern = document.getElementById('patternInput').value;
+  const test = document.getElementById('testInput').value;
+  const replacement = document.getElementById('replaceInput').value;
+  const out = document.getElementById('replaceResult');
+  if (!pattern) { out.value = test; return; }
+  try {
+    const re = new RegExp(pattern, getFlags());
+    out.value = test.replace(re, replacement);
+  } catch (e) { out.value = ''; }
+}
+
+function copyReplace() {
+  const val = document.getElementById('replaceResult').value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.querySelector('[onclick="copyReplace()"]');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'replace') doReplace();
+}
+
+function clearAll() {
+  document.getElementById('testInput').value = '';
+  document.getElementById('replaceResult').value = '';
+  run();
+}
+
+function loadSample() {
+  document.getElementById('patternInput').value = '[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}';
+  document.getElementById('testInput').value = 'Contact us at support@devkitbox.xyz or info@example.com\nInvalid: user@, @domain.com, plaintext\nAlso valid: user.name+tag@sub.domain.co.uk';
+  run();
+}
+
+renderFlags();
+renderPatterns();
+
+let debounce;
+['patternInput', 'testInput'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(run, 200);
+  });
+});
+document.getElementById('replaceInput').addEventListener('input', doReplace);
+</script>
+</body>
+</html>

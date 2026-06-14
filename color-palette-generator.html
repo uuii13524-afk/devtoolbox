@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Palette Generator - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online color palette generator. Generate complementary, analogous, triadic, split-complementary, tetradic and monochromatic palettes from any base color. Export as CSS variables.">
+  <meta name="keywords" content="color palette generator, color scheme generator, complementary colors online, analogous colors, triadic color scheme, css color palette, color harmony tool">
+  <link rel="canonical" href="https://devkitbox.xyz/color-palette-generator.html">
+  <meta property="og:title" content="Color Palette Generator - Dev Toolbox">
+  <meta property="og:description" content="Generate beautiful color palettes from any base color — complementary, analogous, triadic, tetradic and more. Export as CSS variables. 100% browser-based.">
+  <meta property="og:url" content="https://devkitbox.xyz/color-palette-generator.html">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3348501480039832" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #1a1a1a; color: #e0e0e0; font-family: Arial, sans-serif; font-size: 15px; }
+    .page-wrap { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 24px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .color-input-row {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    input[type="color"] {
+      width: 52px; height: 42px;
+      border: 2px solid #3a3a3a; border-radius: 8px;
+      background: none; cursor: pointer; padding: 2px;
+    }
+    .hex-input {
+      background: #242424; border: 1px solid #3a3a3a; border-radius: 8px;
+      color: #f0c060; font-family: 'Courier New', monospace;
+      font-size: 1.05em; padding: 8px 14px; width: 115px;
+      outline: none; text-transform: uppercase;
+    }
+    .hex-input:focus { border-color: #5b8dee; }
+    .color-info { display: flex; flex-direction: column; gap: 3px; }
+    .rgb-display { color: #aaa; font-size: 0.85em; font-family: 'Courier New', monospace; }
+    .hsl-display { color: #888; font-size: 0.82em; font-family: 'Courier New', monospace; }
+
+    .scheme-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .scheme-btn {
+      background: #242424; border: 1px solid #3a3a3a; border-radius: 6px;
+      color: #aaa; padding: 7px 16px; cursor: pointer; font-size: 0.85em;
+      transition: all 0.15s;
+    }
+    .scheme-btn.active { background: #5b8dee; border-color: #5b8dee; color: #fff; }
+    .scheme-btn:hover:not(.active) { border-color: #555; color: #fff; }
+
+    .scheme-desc { color: #888; font-size: 0.83em; margin-bottom: 16px; font-style: italic; }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 12px; margin-bottom: 20px;
+    }
+    .swatch {
+      border-radius: 10px; overflow: hidden;
+      background: #242424; border: 1px solid #333;
+      cursor: pointer; transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .swatch:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    .swatch-color { height: 90px; width: 100%; }
+    .swatch-info { padding: 9px 11px; }
+    .swatch-hex { font-family: 'Courier New', monospace; font-size: 0.88em; color: #e0e0e0; margin-bottom: 3px; font-weight: bold; }
+    .swatch-rgb { font-size: 0.75em; color: #777; font-family: 'Courier New', monospace; margin-bottom: 3px; }
+    .swatch-role { font-size: 0.72em; color: #5b8dee; }
+    .swatch.copied .swatch-hex { color: #a0e0a0; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .btn { background: #2e2e2e; color: #ccc; border: 1px solid #3a3a3a; border-radius: 5px; padding: 6px 13px; cursor: pointer; font-size: 0.84em; }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary { background: #5b8dee; color: #fff; border-color: #5b8dee; }
+    .btn-primary:hover { background: #4a7dde; border-color: #4a7dde; }
+    .btn-green { background: #2d6a2d; color: #aaffaa; border-color: #3a803a; }
+    .btn-green:hover { background: #3a803a; color: #ccffcc; }
+
+    .export-box {
+      background: #1e1e1e; border: 1px solid #333; border-radius: 8px;
+      padding: 14px 16px; font-family: 'Courier New', monospace;
+      font-size: 0.84em; color: #a0e0a0; white-space: pre;
+      overflow-x: auto; display: none; margin-bottom: 16px; line-height: 1.7;
+    }
+    .export-box.visible { display: block; }
+
+    .gradient-preview {
+      height: 50px; border-radius: 8px; margin-bottom: 16px;
+      border: 1px solid #333;
+      transition: background 0.3s;
+    }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li { counter-increment: step; padding: 10px 12px 10px 46px; position: relative; background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 10px; background: #5b8dee; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: bold; }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a { background: #242424; border: 1px solid #3a3a3a; border-radius: 6px; padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em; }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555; }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+    @media (max-width: 500px) {
+      .palette-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+      .swatch-color { height: 70px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+  <h1>Color Palette Generator</h1>
+  <p class="tagline">Generate harmonious color palettes from any base color. Click a swatch to copy its HEX code, or export the full palette as CSS custom properties.</p>
+
+  <div class="color-input-row">
+    <input type="color" id="colorPicker" value="#5b8dee">
+    <input type="text" class="hex-input" id="hexInput" value="#5B8DEE" maxlength="7" spellcheck="false" placeholder="#RRGGBB">
+    <div class="color-info">
+      <span class="rgb-display" id="rgbDisplay">rgb(91, 141, 238)</span>
+      <span class="hsl-display" id="hslDisplay">hsl(220°, 80%, 65%)</span>
+    </div>
+  </div>
+
+  <div class="scheme-tabs" id="schemeTabs"></div>
+  <p class="scheme-desc" id="schemeDesc">Two colors opposite each other on the color wheel — maximum contrast and visual tension.</p>
+
+  <div class="gradient-preview" id="gradientPreview"></div>
+  <div class="palette-grid" id="paletteGrid"></div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="exportBtn" onclick="toggleExport()">Export CSS Variables</button>
+    <button class="btn" onclick="copyAllHex()">Copy All HEX</button>
+    <button class="btn" onclick="randomColor()">&#9684; Random Color</button>
+  </div>
+  <div class="export-box" id="exportBox"></div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Click the <strong>color swatch</strong> on the left or type a 6-digit <strong>HEX code</strong> (e.g. <code>#FF6B6B</code>) to set your base color.</li>
+    <li>Choose a <strong>color harmony type</strong> — Complementary for high contrast, Analogous for subtle harmony, Triadic for vibrant variety, Monochromatic for elegant depth.</li>
+    <li>Click any <strong>palette swatch</strong> to copy its HEX code to the clipboard instantly.</li>
+    <li>Click <strong>Export CSS Variables</strong> to get all colors formatted as <code>:root { --color-base: #...; }</code> CSS custom properties, ready to paste into your stylesheet.</li>
+    <li>Use <strong>Copy All HEX</strong> to copy every palette color as a comma-separated list, or <strong>Random Color</strong> for creative inspiration.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>Color harmony is the art of combining colors that are pleasing together, based on their positions on the color wheel. The Hue-Saturation-Lightness (HSL) color model makes it straightforward to calculate color relationships: the hue is the color angle (0–360°), saturation controls vividness (0–100%), and lightness controls brightness (0–100%). <strong>Complementary</strong> colors are directly opposite on the wheel (180°), creating strong contrast ideal for call-to-action buttons or warning states. <strong>Analogous</strong> palettes use colors 30–60° apart, creating calming, cohesive designs suited to backgrounds and gradients. <strong>Triadic</strong> schemes pick three equally spaced colors (120° apart), balancing variety with visual unity — popular in illustration and logo design. <strong>Split-Complementary</strong> softens the high contrast of a pure complement by offsetting ±30°. <strong>Tetradic</strong> (rectangle) schemes use four colors in two complementary pairs for rich, complex palettes. <strong>Monochromatic</strong> palettes vary only the lightness of a single hue, ideal for minimal UI design. All calculations run entirely in your browser; no data is ever sent to any server.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Which color palette is best for a website or app?</h3>
+    <p>It depends on the goal. For professional tools and dashboards, <strong>monochromatic</strong> or <strong>analogous</strong> palettes create a calm, trustworthy feel. For marketing pages and e-commerce CTAs, <strong>complementary</strong> colors create visual tension that draws attention to key actions. For creative or consumer apps, <strong>triadic</strong> schemes deliver energy and visual richness without appearing chaotic. A common approach: use an analogous palette for background surfaces, then add a complementary accent for interactive elements.</p>
+  </div>
+  <div class="faq">
+    <h3>What is the difference between HEX, RGB, and HSL color formats?</h3>
+    <p>All three describe the same color in different notations. <strong>HEX</strong> (e.g. <code>#5B8DEE</code>) is a base-16 encoding widely used in HTML and CSS. <strong>RGB</strong> (e.g. <code>rgb(91, 141, 238)</code>) specifies red, green, and blue channel intensities from 0 to 255. <strong>HSL</strong> (e.g. <code>hsl(220, 80%, 65%)</code>) separates the perceptual properties: hue (color angle 0–360°), saturation (vividness), and lightness. HSL is much more intuitive for generating color variations because you can adjust just the lightness to create tints and shades, or just the hue to generate harmonics.</p>
+  </div>
+  <div class="faq">
+    <h3>How do I use the exported CSS variables in my project?</h3>
+    <p>Copy the exported <code>:root { ... }</code> block and paste it at the top of your CSS file, or inside a <code>&lt;style&gt;</code> tag in your HTML. Then reference any color anywhere in your CSS using <code>var(--color-base)</code>, <code>var(--color-complement)</code>, etc. This approach is recommended because updating a single variable value instantly updates all its usages throughout your stylesheet — making theme changes trivial.</p>
+  </div>
+  <div class="faq">
+    <h3>Why does my generated palette look washed out or too dark?</h3>
+    <p>The output palette quality depends on the base color's saturation and lightness. Very light colors (lightness above 80%) or very desaturated grays tend to produce less visually distinct palettes. For best results, use a base color with saturation between 40–80% and lightness between 35–65%. The <strong>Random Color</strong> button generates colors in this ideal range if you need inspiration.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="css-minifier.html">&#10022; CSS Minifier &amp; Beautifier</a>
+    <a href="html-encoder.html">&amp; HTML Encoder / Decoder</a>
+    <a href="index.html#color">&#127912; Color Picker</a>
+    <a href="index.html#hash"># Hash Generator</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+<script>
+const SCHEMES = [
+  { id: 'complementary',       label: 'Complementary',       desc: 'Two colors opposite each other on the color wheel — maximum contrast and visual tension.' },
+  { id: 'analogous',           label: 'Analogous',           desc: 'Colors adjacent on the wheel (30–60° apart) — harmonious, low-contrast, great for backgrounds.' },
+  { id: 'triadic',             label: 'Triadic',             desc: 'Three evenly spaced colors (120° apart) — vibrant, balanced variety.' },
+  { id: 'split-complementary', label: 'Split-Complementary', desc: 'Base color plus two colors adjacent to its complement — softer contrast than pure complementary.' },
+  { id: 'tetradic',            label: 'Tetradic',            desc: 'Four colors in two complementary pairs (rectangle on the wheel) — rich and complex.' },
+  { id: 'monochromatic',       label: 'Monochromatic',       desc: 'Tints, tones, and shades of a single hue — elegant, minimal, cohesive.' },
+];
+let currentScheme = 'complementary';
+let currentHex = '#5B8DEE';
+
+function hexToHsl(hex) {
+  const r = parseInt(hex.slice(1,3),16)/255;
+  const g = parseInt(hex.slice(3,5),16)/255;
+  const b = parseInt(hex.slice(5,7),16)/255;
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h = 0, s = 0, l = (max+min)/2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max) {
+      case r: h = ((g-b)/d + (g<b?6:0))/6; break;
+      case g: h = ((b-r)/d + 2)/6; break;
+      case b: h = ((r-g)/d + 4)/6; break;
+    }
+  }
+  return [Math.round(h*360), Math.round(s*100), Math.round(l*100)];
+}
+
+function hslToHex(h, s, l) {
+  h = ((h%360)+360)%360;
+  s = Math.max(0, Math.min(100, s));
+  l = Math.max(5, Math.min(95, l));
+  const sn = s/100, ln = l/100;
+  const c = (1-Math.abs(2*ln-1))*sn;
+  const x = c*(1-Math.abs((h/60)%2-1));
+  const m = ln-c/2;
+  let r,g,b;
+  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}
+  else if(h<180){r=0;g=c;b=x;}else if(h<240){r=0;g=x;b=c;}
+  else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  const toH = v => Math.round((v+m)*255).toString(16).padStart(2,'0');
+  return '#' + toH(r) + toH(g) + toH(b);
+}
+
+function hexToRgb(hex) {
+  return `rgb(${parseInt(hex.slice(1,3),16)}, ${parseInt(hex.slice(3,5),16)}, ${parseInt(hex.slice(5,7),16)})` ;
+}
+
+function generatePalette(hex, scheme) {
+  const [h, s, l] = hexToHsl(hex);
+  switch(scheme) {
+    case 'complementary':
+      return [
+        { hex, role: 'Base' },
+        { hex: hslToHex(h, s, Math.max(l-18,10)), role: 'Base Dark' },
+        { hex: hslToHex(h, Math.max(s-20,15), Math.min(l+22,90)), role: 'Base Light' },
+        { hex: hslToHex(h+180, s, l), role: 'Complement' },
+        { hex: hslToHex(h+180, s, Math.max(l-18,10)), role: 'Complement Dark' },
+        { hex: hslToHex(h+180, Math.max(s-20,15), Math.min(l+22,90)), role: 'Complement Light' },
+      ];
+    case 'analogous':
+      return [
+        { hex: hslToHex(h-60, s, l), role: 'Analogous -60°' },
+        { hex: hslToHex(h-30, s, l), role: 'Analogous -30°' },
+        { hex, role: 'Base' },
+        { hex: hslToHex(h+30, s, l), role: 'Analogous +30°' },
+        { hex: hslToHex(h+60, s, l), role: 'Analogous +60°' },
+      ];
+    case 'triadic':
+      return [
+        { hex, role: 'Base' },
+        { hex: hslToHex(h, Math.max(s-18,12), Math.min(l+18,88)), role: 'Base Tint' },
+        { hex: hslToHex(h+120, s, l), role: 'Triadic 1' },
+        { hex: hslToHex(h+120, Math.max(s-18,12), Math.min(l+18,88)), role: 'Triadic 1 Tint' },
+        { hex: hslToHex(h+240, s, l), role: 'Triadic 2' },
+        { hex: hslToHex(h+240, Math.max(s-18,12), Math.min(l+18,88)), role: 'Triadic 2 Tint' },
+      ];
+    case 'split-complementary':
+      return [
+        { hex, role: 'Base' },
+        { hex: hslToHex(h, Math.max(s-18,12), Math.min(l+18,88)), role: 'Base Tint' },
+        { hex: hslToHex(h+150, s, l), role: 'Split 1' },
+        { hex: hslToHex(h+150, Math.max(s-18,12), Math.min(l+18,88)), role: 'Split 1 Tint' },
+        { hex: hslToHex(h+210, s, l), role: 'Split 2' },
+        { hex: hslToHex(h+210, Math.max(s-18,12), Math.min(l+18,88)), role: 'Split 2 Tint' },
+      ];
+    case 'tetradic':
+      return [
+        { hex, role: 'Base (0°)' },
+        { hex: hslToHex(h+90, s, l), role: '90°' },
+        { hex: hslToHex(h+180, s, l), role: '180°' },
+        { hex: hslToHex(h+270, s, l), role: '270°' },
+      ];
+    case 'monochromatic':
+      return [
+        { hex: hslToHex(h, s, Math.max(l-32,8)),  role: 'Darkest' },
+        { hex: hslToHex(h, s, Math.max(l-16,12)), role: 'Dark' },
+        { hex, role: 'Base' },
+        { hex: hslToHex(h, Math.max(s-15,10), Math.min(l+16,88)), role: 'Light' },
+        { hex: hslToHex(h, Math.max(s-28,6),  Math.min(l+32,94)), role: 'Lightest' },
+      ];
+    default: return [];
+  }
+}
+
+function renderPalette() {
+  const palette = generatePalette(currentHex, currentScheme);
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = '';
+  palette.forEach(({ hex, role }) => {
+    const upper = hex.toUpperCase();
+    const swatch = document.createElement('div');
+    swatch.className = 'swatch';
+    swatch.title = 'Click to copy ' + upper;
+    swatch.innerHTML = `
+      <div class="swatch-color" style="background:${hex}"></div>
+      <div class="swatch-info">
+        <div class="swatch-hex">${upper}</div>
+        <div class="swatch-rgb">${hexToRgb(hex)}</div>
+        <div class="swatch-role">${role}</div>
+      </div>`;
+    swatch.onclick = () => {
+      navigator.clipboard.writeText(upper).then(() => {
+        const hexEl = swatch.querySelector('.swatch-hex');
+        const orig = hexEl.textContent;
+        hexEl.textContent = 'Copied!';
+        swatch.classList.add('copied');
+        setTimeout(() => { hexEl.textContent = orig; swatch.classList.remove('copied'); }, 1200);
+      });
+    };
+    grid.appendChild(swatch);
+  });
+
+  // Gradient preview
+  const colors = palette.map(p => p.hex);
+  document.getElementById('gradientPreview').style.background =
+    `linear-gradient(to right, ${colors.join(', ')})`;
+
+  if (document.getElementById('exportBox').classList.contains('visible')) renderExport();
+}
+
+function renderExport() {
+  const palette = generatePalette(currentHex, currentScheme);
+  const lines = [':root {'];
+  palette.forEach(({ hex, role }) => {
+    const varName = '--color-' + role.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    lines.push(`  ${varName}: ${hex.toUpperCase()};`);
+  });
+  lines.push('}');
+  document.getElementById('exportBox').textContent = lines.join('\n');
+}
+
+function toggleExport() {
+  const box = document.getElementById('exportBox');
+  const btn = document.getElementById('exportBtn');
+  if (box.classList.toggle('visible')) {
+    renderExport();
+    navigator.clipboard.writeText(box.textContent).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied CSS!';
+      setTimeout(() => btn.textContent = orig, 1500);
+    });
+  }
+}
+
+function copyAllHex() {
+  const palette = generatePalette(currentHex, currentScheme);
+  const list = palette.map(p => p.hex.toUpperCase()).join(', ');
+  navigator.clipboard.writeText(list).then(() => {
+    const btn = document.querySelector('[onclick="copyAllHex()"]');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function randomColor() {
+  const h = Math.floor(Math.random()*360);
+  const s = 45 + Math.floor(Math.random()*40);
+  const l = 38 + Math.floor(Math.random()*28);
+  setHex(hslToHex(h, s, l));
+}
+
+function setHex(hex) {
+  hex = hex.toUpperCase();
+  if (!/^#[0-9A-F]{6}$/i.test(hex)) return;
+  currentHex = hex;
+  document.getElementById('colorPicker').value = hex;
+  document.getElementById('hexInput').value = hex;
+  const [h, s, l] = hexToHsl(hex);
+  document.getElementById('rgbDisplay').textContent = hexToRgb(hex);
+  document.getElementById('hslDisplay').textContent = `hsl(${h}°, ${s}%, ${l}%)`;
+  renderPalette();
+}
+
+function renderSchemes() {
+  const tabs = document.getElementById('schemeTabs');
+  tabs.innerHTML = '';
+  SCHEMES.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'scheme-btn' + (s.id === currentScheme ? ' active' : '');
+    btn.textContent = s.label;
+    btn.title = s.desc;
+    btn.onclick = () => {
+      currentScheme = s.id;
+      document.querySelectorAll('.scheme-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('schemeDesc').textContent = s.desc;
+      renderPalette();
+    };
+    tabs.appendChild(btn);
+  });
+}
+
+document.getElementById('colorPicker').addEventListener('input', e => setHex(e.target.value));
+document.getElementById('hexInput').addEventListener('input', e => {
+  const v = e.target.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) setHex(v);
+});
+document.getElementById('hexInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const v = document.getElementById('hexInput').value.trim();
+    if (/^#?[0-9a-fA-F]{6}$/.test(v)) setHex(v.startsWith('#') ? v : '#'+v);
+  }
+});
+
+renderSchemes();
+renderPalette();
+</script>
+</body>
+</html>
