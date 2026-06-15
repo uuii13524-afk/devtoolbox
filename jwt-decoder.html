@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JWT Decoder &amp; Inspector - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online JWT token decoder and inspector. Decode JSON Web Tokens instantly — view header, payload, claims, expiry status, and algorithm details. 100% private, runs entirely in your browser.">
+  <meta name="keywords" content="JWT decoder, JSON web token decoder, JWT inspector, decode JWT online, JWT claims viewer, JWT expiry checker, token parser">
+  <link rel="canonical" href="https://devkitbox.xyz/jwt-decoder.html">
+  <meta property="og:title" content="JWT Decoder &amp; Inspector - Dev Toolbox">
+  <meta property="og:description" content="Decode JSON Web Tokens and inspect header, payload, claims, and expiry — private, in-browser.">
+  <meta property="og:url" content="https://devkitbox.xyz/jwt-decoder.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #1a1a1a; color: #e0e0e0; font-family: Arial, sans-serif; font-size: 15px; }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .subtitle { color: #888; margin: 0 0 22px; font-size: 0.93em; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .input-area { background: #242424; border: 1px solid #333; border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+    .input-label { font-size: 0.78em; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .sample-btn { background: #2e2e2e; color: #aaa; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 11px; cursor: pointer; font-size: 0.85em; }
+    .sample-btn:hover { background: #3a3a3a; color: #eee; }
+    #jwtInput { width: 100%; min-height: 80px; font-family: 'Courier New', monospace; font-size: 0.85em; background: #1a1a1a; color: #f0f0f0; border: 1px solid #444; border-radius: 5px; padding: 10px 12px; outline: none; resize: vertical; transition: border-color 0.15s; line-height: 1.5; }
+    #jwtInput:focus { border-color: #5b8dee; }
+    .token-viz { font-family: 'Courier New', monospace; font-size: 0.78em; word-break: break-all; line-height: 1.6; padding-top: 10px; }
+    .tv-label { font-size: 0.75em; color: #555; margin-bottom: 3px; }
+    .pt-h { color: #e07070; } .pt-p { color: #e0b050; } .pt-s { color: #70c0e0; } .pt-dot { color: #444; }
+
+    .error-msg { background: #3a1a1a; border: 1px solid #5a2a2a; border-radius: 6px; padding: 12px 14px; color: #e07070; font-size: 0.88em; margin-bottom: 14px; }
+    .placeholder { color: #444; text-align: center; padding: 40px 20px; font-size: 0.9em; font-style: italic; background: #242424; border: 1px solid #2e2e2e; border-radius: 8px; margin-bottom: 14px; }
+
+    .status-bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; background: #1e281e; border: 1px solid #283828; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
+    .si { display: flex; flex-direction: column; gap: 2px; }
+    .si-label { font-size: 0.7em; color: #555; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
+    .b-green { background: #1a3a1a; color: #70c070; border: 1px solid #2a5a2a; }
+    .b-red   { background: #3a1a1a; color: #e07070; border: 1px solid #5a2a2a; }
+    .b-gray  { background: #2e2e2e; color: #888;    border: 1px solid #3e3e3e; }
+    .b-yellow{ background: #2e2a10; color: #e0b050; border: 1px solid #4e4a20; }
+
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .panel { background: #242424; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+    .panel-full { grid-column: 1 / -1; }
+    .ph { padding: 10px 14px; font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .ph-red  { background: #3a2020; color: #e07070; border-bottom: 1px solid #4a2525; }
+    .ph-yel  { background: #3a3020; color: #e0b050; border-bottom: 1px solid #4a4020; }
+    .ph-blue { background: #203040; color: #70c0e0; border-bottom: 1px solid #2a4050; }
+    .pb { padding: 14px; }
+    .copy-btn { background: transparent; color: #666; border: 1px solid #444; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.82em; }
+    .copy-btn:hover { background: #333; color: #ccc; }
+    .copy-btn.ok { color: #70c070; border-color: #70c070; }
+    pre.jd { font-family: 'Courier New', monospace; font-size: 0.84em; color: #d0d0d0; line-height: 1.7; white-space: pre-wrap; word-break: break-word; margin: 0; }
+    .jk { color: #9cdcfe; } .js { color: #ce9178; } .jn { color: #b5cea8; } .jb { color: #569cd6; }
+
+    table.claims { width: 100%; border-collapse: collapse; }
+    table.claims th { text-align: left; font-size: 0.73em; text-transform: uppercase; letter-spacing: 0.4px; color: #555; padding: 7px 8px; border-bottom: 1px solid #2e2e2e; }
+    table.claims td { padding: 8px; font-size: 0.84em; border-bottom: 1px solid #252525; vertical-align: top; }
+    table.claims tr:last-child td { border-bottom: none; }
+    .ck { font-family: 'Courier New', monospace; color: #9cdcfe; white-space: nowrap; }
+    .cv { color: #ce9178; font-family: 'Courier New', monospace; word-break: break-all; }
+    .cd { color: #777; font-size: 0.9em; line-height: 1.4; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li { counter-increment: step; padding: 10px 12px 10px 46px; position: relative; background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5; color: #ccc; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 10px; background: #5b8dee; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: bold; }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a { background: #242424; border: 1px solid #3a3a3a; border-radius: 6px; padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em; }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555; }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+    @media (max-width: 600px) { .panels { grid-template-columns: 1fr; } .panel-full { grid-column: 1; } }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+  <h1>JWT Decoder &amp; Inspector</h1>
+  <p class="subtitle">Inspect JSON Web Tokens instantly — header, payload, claims, expiry status. 100% in-browser, nothing sent to any server.</p>
+
+  <div class="input-area">
+    <div class="input-label">
+      <span>Paste your JWT token</span>
+      <button class="sample-btn" onclick="loadSample()">Load sample token</button>
+    </div>
+    <textarea id="jwtInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." oninput="decode()" spellcheck="false"></textarea>
+    <div class="token-viz" id="tokenViz"></div>
+  </div>
+
+  <div id="errorBox" style="display:none"></div>
+  <div id="outputArea"><div class="placeholder">Paste a JWT token above to decode it.</div></div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Copy a JWT from your app, API response, browser DevTools (Authorization header or cookie), or identity provider dashboard.</li>
+    <li>Paste it into the text area above — the token is decoded immediately in your browser. The three parts are color-coded: <span style="color:#e07070">Header</span> · <span style="color:#e0b050">Payload</span> · <span style="color:#70c0e0">Signature</span>.</li>
+    <li>Review the <strong>Claims</strong> table for a plain-English explanation of each field — including standard claims like <code>exp</code>, <code>iat</code>, <code>iss</code>, and <code>sub</code>.</li>
+    <li>Check the <strong>Status</strong> bar at the top: it shows whether the token is currently valid, expired, or not yet active, based on the <code>exp</code> and <code>nbf</code> timestamps.</li>
+    <li>Use the <strong>Copy</strong> button on any panel to copy the decoded JSON for use in documentation or debugging workflows.</li>
+  </ol>
+
+  <h2>About This Tool</h2>
+  <p>A JSON Web Token (JWT) is a compact, URL-safe credential format used in OAuth 2.0, OpenID Connect, and API authentication. It consists of three Base64URL-encoded sections joined by dots: the <strong>Header</strong> describes the signing algorithm and token type; the <strong>Payload</strong> holds claims (assertions about a user or session); and the <strong>Signature</strong> ties the two together and prevents tampering.</p>
+  <p style="margin-top:10px">This decoder runs entirely in your browser using the Web Crypto API and standard JavaScript — your token never leaves your device. Note that <strong>signature verification requires the secret or public key</strong>, which this client-side tool does not have access to. Always verify tokens server-side with a trusted JWT library before trusting their claims.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Is it safe to paste my JWT here?</h3>
+    <p>For development and staging tokens: yes — this tool is 100% client-side with no network requests. For production tokens that grant real access, avoid pasting them into any online tool. If you must debug a live token, revoke or short-live it first.</p>
+  </div>
+  <div class="faq">
+    <h3>Why can't the signature be verified?</h3>
+    <p>Verifying an HMAC signature (like <code>HS256</code>) requires the shared secret. Verifying an RSA/ECDSA signature (like <code>RS256</code>, <code>ES256</code>) requires the issuer's public key. Neither is available client-side without you supplying it. Always verify server-side using a library like <code>jsonwebtoken</code> (Node.js), <code>PyJWT</code> (Python), or <code>golang-jwt</code> (Go).</p>
+  </div>
+  <div class="faq">
+    <h3>What do <code>exp</code>, <code>iat</code>, and <code>nbf</code> mean?</h3>
+    <p><code>iat</code> (issued at) is when the token was created. <code>exp</code> (expiration) is when it becomes invalid — your server should reject tokens past this time. <code>nbf</code> (not before) is the earliest moment the token is valid. All three are Unix timestamps (seconds since 1970-01-01 UTC), defined in <a href="https://datatracker.ietf.org/doc/html/rfc7519" target="_blank" rel="noopener" style="color:#5b8dee">RFC 7519</a>.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="http-header-analyzer.html">🔍 HTTP Header Analyzer</a>
+    <a href="cors-checker.html">↔ CORS Checker</a>
+    <a href="password-generator.html">🔑 Password Generator</a>
+    <a href="index.html#base64">📦 Base64 Encoder</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const CLAIM_META = {
+  iss: 'Issuer — who issued this token',
+  sub: 'Subject — who this token is about (usually a user ID)',
+  aud: 'Audience — intended recipient(s) of the token',
+  exp: 'Expiration Time — after this the token must not be accepted',
+  nbf: 'Not Before — the token is not valid before this time',
+  iat: 'Issued At — when the token was created',
+  jti: 'JWT ID — unique identifier for this token (prevents replay)',
+  name: 'Full name (OpenID Connect)',
+  email: 'Email address (OpenID Connect)',
+  email_verified: 'Whether the email has been verified (OpenID Connect)',
+  given_name: 'First name (OpenID Connect)',
+  family_name: 'Last name (OpenID Connect)',
+  picture: 'Profile picture URL (OpenID Connect)',
+  locale: 'Preferred locale / language tag (OpenID Connect)',
+  scope: 'OAuth 2.0 scopes granted',
+  role:  'Role assigned to the subject',
+  roles: 'Roles assigned to the subject',
+  azp:   'Authorized party — party the ID token was issued to',
+  nonce: 'Client session nonce — prevents replay attacks in OIDC flows',
+};
+
+const ALG_META = {
+  HS256:'HMAC-SHA256 (symmetric shared secret)',
+  HS384:'HMAC-SHA384 (symmetric shared secret)',
+  HS512:'HMAC-SHA512 (symmetric shared secret)',
+  RS256:'RSA-SHA256 (asymmetric key pair)',
+  RS384:'RSA-SHA384 (asymmetric key pair)',
+  RS512:'RSA-SHA512 (asymmetric key pair)',
+  ES256:'ECDSA-SHA256 (elliptic curve)',
+  ES384:'ECDSA-SHA384 (elliptic curve)',
+  ES512:'ECDSA-SHA512 (elliptic curve)',
+  PS256:'RSA-PSS-SHA256',
+  PS384:'RSA-PSS-SHA384',
+  PS512:'RSA-PSS-SHA512',
+  none: 'Unsecured (no signature — never use in production)',
+};
+
+function b64urlDecode(s) {
+  s = s.replace(/-/g,'+').replace(/_/g,'/');
+  while (s.length % 4) s += '=';
+  try { return JSON.parse(decodeURIComponent(atob(s).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }
+  catch { return null; }
+}
+
+function hl(obj) {
+  return JSON.stringify(obj,null,2).replace(/("[^"]*")(\s*:)|"([^"]*)"|(-?\d+(?:\.\d+)?)|\b(true|false|null)\b/g,
+    (m,k,c,sv,nv,bv)=>{
+      if(k&&c) return `<span class="jk">${k}</span>${c}`;
+      if(sv!==undefined) return `<span class="js">"${sv}"</span>`;
+      if(nv!==undefined) return `<span class="jn">${nv}</span>`;
+      if(bv!==undefined) return `<span class="jb">${bv}</span>`;
+      return m;
+    });
+}
+
+function fmtTs(ts) {
+  const d = new Date(ts*1000), now = Date.now();
+  const diff = ts*1000 - now, abs = Math.abs(diff);
+  const m = Math.floor(abs/60000), h = Math.floor(m/60), dy = Math.floor(h/24);
+  const rel = diff > 0
+    ? (dy?`in ${dy}d ${h%24}h`:h?`in ${h}h ${m%60}m`:`in ${m}m`)
+    : (dy?`${dy}d ${h%24}h ago`:h?`${h}h ${m%60}m ago`:`${m}m ago`);
+  return `${d.toUTCString()} (${rel})`;
+}
+
+function copy(text, btn) {
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('ok'); },2000);
+  });
+}
+
+function decode() {
+  const raw = document.getElementById('jwtInput').value.trim();
+  const vizEl = document.getElementById('tokenViz');
+  const errEl = document.getElementById('errorBox');
+  const outEl = document.getElementById('outputArea');
+  errEl.style.display = 'none';
+
+  if (!raw) {
+    vizEl.innerHTML = '';
+    outEl.innerHTML = '<div class="placeholder">Paste a JWT token above to decode it.</div>';
+    return;
+  }
+
+  const parts = raw.split('.');
+  if (parts.length !== 3) {
+    vizEl.innerHTML = '';
+    errEl.style.display='block'; errEl.className='error-msg';
+    errEl.textContent = `Invalid JWT: expected 3 dot-separated parts, got ${parts.length}.`;
+    outEl.innerHTML = ''; return;
+  }
+
+  const [rh, rp, rs] = parts;
+  vizEl.innerHTML = `<div class="tv-label">Token structure (color = section)</div><span class="pt-h">${rh}</span><span class="pt-dot">.</span><span class="pt-p">${rp}</span><span class="pt-dot">.</span><span class="pt-s">${rs}</span>`;
+
+  const header  = b64urlDecode(rh);
+  const payload = b64urlDecode(rp);
+  if (!header)  { showErr('Could not decode header — invalid Base64URL or JSON.'); return; }
+  if (!payload) { showErr('Could not decode payload — invalid Base64URL or JSON.'); return; }
+
+  function showErr(msg) { errEl.style.display='block'; errEl.className='error-msg'; errEl.textContent=msg; outEl.innerHTML=''; }
+
+  const now = Math.floor(Date.now()/1000);
+  const expired = payload.exp !== undefined && now > payload.exp;
+  const notYet  = payload.nbf !== undefined && now < payload.nbf;
+  const hJson   = JSON.stringify(header, null, 2);
+  const pJson   = JSON.stringify(payload, null, 2);
+
+  const claimRows = Object.entries(payload).map(([k,v])=>{
+    let dv = JSON.stringify(v);
+    if (['exp','iat','nbf'].includes(k) && typeof v==='number') dv = fmtTs(v);
+    return `<tr><td class="ck">${k}</td><td class="cv">${dv}</td><td class="cd">${CLAIM_META[k]||''}</td></tr>`;
+  }).join('');
+
+  outEl.innerHTML = `
+    <div class="status-bar">
+      <div class="si"><span class="si-label">Validity</span>
+        <span class="badge ${expired?'b-red':notYet?'b-yellow':'b-green'}">${expired?'✕ Expired':notYet?'⏳ Not Yet Valid':'✓ Valid'}</span>
+      </div>
+      ${header.alg?`<div class="si"><span class="si-label">Algorithm</span><span style="font-family:monospace;color:#e0b050">${header.alg}</span><span style="font-size:0.75em;color:#555">${ALG_META[header.alg]||''}</span></div>`:''}
+      ${header.typ?`<div class="si"><span class="si-label">Type</span><span style="font-family:monospace;color:#9cdcfe">${header.typ}</span></div>`:''}
+      <div class="si"><span class="si-label">Signature</span><span class="badge b-gray">⚠ Not Verified</span></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="ph ph-red"><span>Header</span><button class="copy-btn" onclick="copy(${JSON.stringify(hJson)},this)">Copy</button></div>
+        <div class="pb"><pre class="jd">${hl(header)}</pre></div>
+      </div>
+      <div class="panel">
+        <div class="ph ph-yel"><span>Payload</span><button class="copy-btn" onclick="copy(${JSON.stringify(pJson)},this)">Copy</button></div>
+        <div class="pb"><pre class="jd">${hl(payload)}</pre></div>
+      </div>
+      <div class="panel panel-full">
+        <div class="ph ph-yel"><span>Claims Explained</span></div>
+        <div style="overflow-x:auto">
+          <table class="claims"><thead><tr><th>Claim</th><th>Value</th><th>Description</th></tr></thead><tbody>${claimRows}</tbody></table>
+        </div>
+      </div>
+      <div class="panel panel-full">
+        <div class="ph ph-blue"><span>Signature (raw Base64URL)</span><button class="copy-btn" onclick="copy(${JSON.stringify(rs)},this)">Copy</button></div>
+        <div class="pb">
+          <code style="word-break:break-all;font-size:0.82em;color:#70c0e0;background:transparent">${rs}</code>
+          <p style="margin:10px 0 0;font-size:0.83em;color:#555">Verifying this signature requires the secret key (HS*) or issuer public key (RS*/ES*/PS*). Client-side decoding cannot verify signatures — always verify server-side.</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function loadSample() {
+  function enc(obj) {
+    return btoa(JSON.stringify(obj)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+  }
+  const h = { alg:'HS256', typ:'JWT' };
+  const p = {
+    sub:  'user_abc123',
+    name: 'Alice Developer',
+    email:'alice@example.com',
+    role: 'admin',
+    iss:  'https://auth.example.com',
+    aud:  'api.example.com',
+    iat:  1704067200,
+    exp:  1704153600
+  };
+  document.getElementById('jwtInput').value = `${enc(h)}.${enc(p)}.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+  decode();
+}
+</script>
+</body>
+</html>
