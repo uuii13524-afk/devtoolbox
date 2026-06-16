@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitignore Generator - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online .gitignore generator. Select your tech stack and instantly get a comprehensive .gitignore file for Node.js, Python, Go, Java, Rust, React, Docker, macOS, Windows, JetBrains and more.">
+  <meta name="keywords" content="gitignore generator, .gitignore file, gitignore template, gitignore nodejs, gitignore python, gitignore go, gitignore java">
+  <link rel="canonical" href="https://devkitbox.xyz/gitignore-generator.html">
+  <meta property="og:title" content="Gitignore Generator - Dev Toolbox">
+  <meta property="og:description" content="Generate .gitignore files for any tech stack — Node.js, Python, Go, Java, macOS, and 15+ more.">
+  <meta property="og:url" content="https://devkitbox.xyz/gitignore-generator.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #1a1a1a; color: #e0e0e0; font-family: Arial, sans-serif; font-size: 15px; }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .subtitle { color: #888; margin: 0 0 22px; font-size: 0.93em; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .card { background: #242424; border: 1px solid #333; border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .section-title { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
+    .ctrl-btns { display: flex; gap: 6px; }
+    .ctrl-btn { background: #2e2e2e; color: #aaa; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.82em; }
+    .ctrl-btn:hover { background: #3a3a3a; color: #eee; }
+
+    .stack-group { margin-bottom: 16px; }
+    .group-label { font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.6px; color: #555; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #2e2e2e; }
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 20px; padding: 5px 12px; cursor: pointer; user-select: none; font-size: 0.86em; color: #ccc; transition: all 0.1s; }
+    .chip:hover { border-color: #555; color: #fff; background: #333; }
+    .chip.selected { background: #1e3055; border-color: #5b8dee; color: #90b8ee; }
+    .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; transition: background 0.1s; }
+    .chip.selected .dot { background: #5b8dee; }
+
+    .output-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .output-info { font-size: 0.82em; color: #666; }
+    .action-btns { display: flex; gap: 8px; }
+    .action-btn { background: #2e2e2e; color: #ccc; border: 1px solid #3a3a3a; border-radius: 5px; padding: 6px 14px; cursor: pointer; font-size: 0.85em; }
+    .action-btn:hover { background: #3a3a3a; color: #fff; }
+    .action-btn.primary { background: #1e3055; color: #90b8ee; border-color: #5b8dee; }
+    .action-btn.primary:hover { background: #243d6a; }
+    .action-btn.ok { background: #1a3a1a; color: #70c070; border-color: #2a5a2a; }
+
+    #output {
+      width: 100%; min-height: 300px; max-height: 600px;
+      font-family: 'Courier New', monospace; font-size: 0.82em; line-height: 1.6;
+      background: #141414; color: #c0c0c0;
+      border: 1px solid #333; border-radius: 6px;
+      padding: 14px; resize: vertical; outline: none;
+    }
+    #output:focus { border-color: #5b8dee; }
+
+    .custom-area { margin-top: 12px; }
+    .custom-label { font-size: 0.78em; color: #666; margin-bottom: 6px; }
+    #customInput {
+      width: 100%; min-height: 70px;
+      font-family: 'Courier New', monospace; font-size: 0.82em;
+      background: #1a1a1a; color: #c0c0c0;
+      border: 1px solid #333; border-radius: 5px;
+      padding: 10px 12px; outline: none; resize: vertical;
+    }
+    #customInput:focus { border-color: #5b8dee; }
+
+    .empty-state { color: #444; font-style: italic; font-size: 0.9em; padding: 30px; text-align: center; }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li { counter-increment: step; padding: 10px 12px 10px 46px; position: relative; background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5; color: #ccc; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 10px; background: #5b8dee; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: bold; }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a { background: #242424; border: 1px solid #3a3a3a; border-radius: 6px; padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em; }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555; }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+  <h1>Gitignore Generator</h1>
+  <p class="subtitle">Select your tech stack and instantly generate a comprehensive <code>.gitignore</code> file — supports 20+ languages, frameworks, IDEs, and OS environments.</p>
+
+  <!-- Stack selector -->
+  <div class="card">
+    <div class="section-header">
+      <span class="section-title">Select your stack</span>
+      <div class="ctrl-btns">
+        <button class="ctrl-btn" onclick="selectAll()">Select All</button>
+        <button class="ctrl-btn" onclick="clearAll()">Clear</button>
+      </div>
+    </div>
+
+    <div class="stack-group">
+      <div class="group-label">Languages</div>
+      <div class="chip-grid" id="lang-chips"></div>
+    </div>
+    <div class="stack-group">
+      <div class="group-label">Frameworks &amp; Tools</div>
+      <div class="chip-grid" id="fw-chips"></div>
+    </div>
+    <div class="stack-group">
+      <div class="group-label">IDEs &amp; Editors</div>
+      <div class="chip-grid" id="ide-chips"></div>
+    </div>
+    <div class="stack-group">
+      <div class="group-label">Operating Systems</div>
+      <div class="chip-grid" id="os-chips"></div>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="card">
+    <div class="output-bar">
+      <span class="output-info" id="outputInfo">Select stacks above to generate your .gitignore</span>
+      <div class="action-btns">
+        <button class="action-btn primary" onclick="copyOutput(this)">Copy</button>
+        <button class="action-btn" onclick="downloadOutput()">Download .gitignore</button>
+      </div>
+    </div>
+    <textarea id="output" readonly placeholder="Your .gitignore will appear here..."></textarea>
+    <div class="custom-area">
+      <div class="custom-label">Custom rules (appended at the bottom):</div>
+      <textarea id="customInput" placeholder="# My custom patterns&#10;*.secret&#10;local-config.json" oninput="generate()"></textarea>
+    </div>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Click the chips that match your project's tech stack — mix and match as many as you need (e.g., Node.js + React + VS Code + macOS).</li>
+    <li>The <code>.gitignore</code> content updates instantly in the output box. Each section is clearly labeled with a comment header.</li>
+    <li>Add any project-specific custom rules in the <strong>Custom rules</strong> box at the bottom — these are appended after the generated content.</li>
+    <li>Click <strong>Copy</strong> to copy the content to your clipboard, then paste it into a <code>.gitignore</code> file at the root of your repository.</li>
+    <li>Alternatively, click <strong>Download .gitignore</strong> to save the file directly — then move it to your project root.</li>
+  </ol>
+
+  <h2>About Gitignore Generator</h2>
+  <p>A <code>.gitignore</code> file tells Git which files and directories to exclude from version control. Without one, you risk accidentally committing build artifacts (<code>node_modules/</code>, <code>dist/</code>), environment secrets (<code>.env</code>), OS metadata (<code>.DS_Store</code>), and IDE configuration clutter. A well-maintained <code>.gitignore</code> keeps your repository clean, reduces noise in pull requests, and prevents accidental exposure of sensitive data.</p>
+  <p style="margin-top:10px">This generator covers popular patterns for 20+ ecosystems, based on community-maintained templates from the <a href="https://github.com/github/gitignore" target="_blank" rel="noopener" style="color:#5b8dee">github/gitignore</a> repository and established best practices. All processing happens in your browser — no data is sent anywhere.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Do I commit <code>.gitignore</code> to my repository?</h3>
+    <p>Yes — <code>.gitignore</code> should always be committed to your repository so that all contributors share the same ignore rules. It belongs at the root of your repo (or in subdirectories for more granular control). Only the global <code>~/.gitignore_global</code> file (for personal IDE files) stays outside the repo.</p>
+  </div>
+  <div class="faq">
+    <h3>Why isn't a file being ignored even after adding it to <code>.gitignore</code>?</h3>
+    <p>Git only ignores <em>untracked</em> files. If a file is already tracked (committed), adding it to <code>.gitignore</code> won't stop Git from tracking changes. Remove it from the index first with <code>git rm --cached &lt;file&gt;</code>, then commit the change. The file will remain on disk but stop being tracked.</p>
+  </div>
+  <div class="faq">
+    <h3>Should I ignore <code>package-lock.json</code> or <code>Cargo.lock</code>?</h3>
+    <p>For applications: no — commit lockfiles to ensure reproducible builds for all developers and CI. For libraries/packages published to npm or crates.io: it's conventional to ignore them (or not commit <code>Cargo.lock</code>) so that consumers can resolve their own dependency tree. This generator follows the application convention by default.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="env-parser.html">⚙ .env File Parser</a>
+    <a href="dockerfile-linter.html">🐳 Dockerfile Linter</a>
+    <a href="git-commit-generator.html">✔ Git Commit Generator</a>
+    <a href="snippets/git-rebase.html">Git Rebase Examples</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const STACKS = {
+  lang: [
+    { id:'nodejs',  label:'Node.js',  icon:'⬡', content:`# Node.js\nnode_modules/\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\npnpm-debug.log*\n.pnpm-store/\ndist/\nbuild/\nout/\n.cache/\n*.local\n.env\n.env.local\n.env.*.local` },
+    { id:'python',  label:'Python',   icon:'🐍', content:`# Python\n__pycache__/\n*.py[cod]\n*$py.class\n*.so\nbuild/\ndist/\n*.egg-info/\n.eggs/\n.installed.cfg\n*.egg\nhtmlcov/\n.coverage\n.coverage.*\n.pytest_cache/\n.tox/\n.nox/\nvenv/\nenv/\n.venv/\nENV/\n.env` },
+    { id:'go',      label:'Go',       icon:'🔵', content:`# Go\n*.exe\n*.exe~\n*.dll\n*.so\n*.dylib\n*.test\n*.out\ngo.work\n/vendor/\n/bin/` },
+    { id:'java',    label:'Java',     icon:'☕', content:`# Java\n*.class\n*.log\n*.jar\n*.war\n*.ear\n*.zip\n*.tar.gz\n*.rar\ntarget/\n.gradle/\nbuild/\n!gradle/wrapper/gradle-wrapper.jar` },
+    { id:'rust',    label:'Rust',     icon:'🦀', content:`# Rust\n/target/` },
+    { id:'php',     label:'PHP',      icon:'🐘', content:`# PHP\n/vendor/\n*.log\n.env\n.phpunit.result.cache\n.phpunit.cache/` },
+    { id:'ruby',    label:'Ruby',     icon:'💎', content:`# Ruby\n*.gem\n*.rbc\n.bundle/\n/vendor/bundle\n.byebug_history\n.env` },
+    { id:'cpp',     label:'C/C++',    icon:'⚙',  content:`# C/C++\n*.d\n*.o\n*.obj\n*.gch\n*.pch\n*.so\n*.dylib\n*.dll\n*.a\n*.lib\n*.exe\n*.out\n*.app\nbuild/\ncmake-build-*/\nCMakeFiles/\nCMakeCache.txt` },
+    { id:'csharp',  label:'C#/.NET',  icon:'#',  content:`# C#/.NET\nbin/\nobj/\n*.user\n*.suo\n*.userprefs\n*.pidb\n*.booproj\n*.svd\n*.pdb\n*.mdb\n.vs/\npackages/\n*.nupkg\n*.snupkg` },
+    { id:'swift',   label:'Swift',    icon:'🦉', content:`# Swift\n.build/\nPackage.resolved\n*.xcodeproj/\n*.xcworkspace/\nDerivedData/\n.DS_Store\nxcuserdata/` },
+    { id:'kotlin',  label:'Kotlin',   icon:'K',  content:`# Kotlin\n*.class\ntarget/\n.gradle/\nbuild/\n*.kts.iml` },
+  ],
+  fw: [
+    { id:'react',     label:'React',          icon:'⚛', content:`# React\n/build/` },
+    { id:'nextjs',    label:'Next.js',         icon:'▲', content:`# Next.js\n.next/\nout/\n.vercel` },
+    { id:'vue',       label:'Vue / Nuxt',      icon:'🟢', content:`# Vue / Nuxt\ndist/\n.nuxt/\n.output/` },
+    { id:'angular',   label:'Angular',         icon:'🔴', content:`# Angular\n/dist/\n.angular/` },
+    { id:'terraform', label:'Terraform',       icon:'🏗', content:`# Terraform\n.terraform/\n.terraform.lock.hcl\n*.tfstate\n*.tfstate.*\n*.tfvars\n*.tfvars.json\noverride.tf\noverride.tf.json\n*_override.tf\n.terraformrc` },
+    { id:'docker',    label:'Docker',          icon:'🐳', content:`# Docker\ndocker-compose.override.yml\n.docker/` },
+    { id:'ansible',   label:'Ansible',         icon:'⚡', content:`# Ansible\n*.retry\n.vault_pass` },
+    { id:'svelte',    label:'Svelte / SvelteKit', icon:'🔶', content:`# Svelte / SvelteKit\n.svelte-kit/\nbuild/\ndist/` },
+  ],
+  ide: [
+    { id:'vscode',     label:'VS Code',         icon:'📘', content:`# VS Code\n.vscode/*\n!.vscode/settings.json\n!.vscode/tasks.json\n!.vscode/launch.json\n!.vscode/extensions.json\n.history/\n*.vsix` },
+    { id:'jetbrains',  label:'JetBrains IDEs',  icon:'🧠', content:`# JetBrains IDEs (IntelliJ, PyCharm, GoLand, etc.)\n.idea/\n*.iws\n*.iml\n*.ipr\nout/\n!**/src/main/**/out/\n!**/src/test/**/out/` },
+    { id:'vim',        label:'Vim / Neovim',    icon:'📗', content:`# Vim / Neovim\n[._]*.s[a-v][a-z]\n[._]*.sw[a-p]\nSession.vim\nSessionx.vim\n.netrwhist\ntags\n[._]*.un~` },
+    { id:'emacs',      label:'Emacs',           icon:'📙', content:`# Emacs\n*~\n\#*\#\n/.emacs.desktop\n/.emacs.desktop.lock\n*.elc\nauto-save-list\ntramp\n.\#*` },
+    { id:'eclipse',    label:'Eclipse',         icon:'🌑', content:`# Eclipse\n.metadata\nbin/\ntmp/\n*.tmp\n*.bak\n*.swp\n*~.nib\n.settings/\n.loadpath\n.recommenders` },
+  ],
+  os: [
+    { id:'macos',   label:'macOS',   icon:'🍎', content:`# macOS\n.DS_Store\n.AppleDouble\n.LSOverride\nIcon\n._*\n.Spotlight-V100\n.Trashes\n.AppleDB\n.AppleDesktop` },
+    { id:'windows', label:'Windows', icon:'🪟', content:`# Windows\nThumbs.db\nThumbs.db:encryptable\nehthumbs.db\n$RECYCLE.BIN/\nDesktop.ini\n*.lnk` },
+    { id:'linux',   label:'Linux',   icon:'🐧', content:`# Linux\n*~\n.directory\n.Trash-*\n.nfs*` },
+  ]
+};
+
+const selected = new Set();
+
+function renderChips(groupId, items) {
+  const el = document.getElementById(groupId);
+  el.innerHTML = items.map(s => `
+    <div class="chip ${selected.has(s.id)?'selected':''}" onclick="toggle('${s.id}')" data-id="${s.id}">
+      <span class="dot"></span>${s.icon ? s.icon+' ' : ''}${s.label}
+    </div>`).join('');
+}
+
+function renderAll() {
+  renderChips('lang-chips', STACKS.lang);
+  renderChips('fw-chips',   STACKS.fw);
+  renderChips('ide-chips',  STACKS.ide);
+  renderChips('os-chips',   STACKS.os);
+}
+
+function toggle(id) {
+  if (selected.has(id)) selected.delete(id); else selected.add(id);
+  renderAll();
+  generate();
+}
+
+function selectAll() {
+  [...STACKS.lang,...STACKS.fw,...STACKS.ide,...STACKS.os].forEach(s=>selected.add(s.id));
+  renderAll(); generate();
+}
+
+function clearAll() {
+  selected.clear(); renderAll(); generate();
+}
+
+function generate() {
+  const allStacks = [...STACKS.lang,...STACKS.fw,...STACKS.ide,...STACKS.os];
+  const parts = allStacks.filter(s=>selected.has(s.id)).map(s=>s.content);
+  const custom = document.getElementById('customInput').value.trim();
+  if (custom) parts.push(`# Custom rules\n${custom}`);
+
+  const out = document.getElementById('output');
+  const info = document.getElementById('outputInfo');
+  if (parts.length === 0) {
+    out.value = '';
+    info.textContent = 'Select stacks above to generate your .gitignore';
+  } else {
+    const combined = `# Generated by Dev Toolbox Gitignore Generator\n# https://devkitbox.xyz/gitignore-generator.html\n# Stacks: ${[...selected].join(', ')}\n\n` + parts.join('\n\n');
+    out.value = combined;
+    const lines = combined.split('\n').length;
+    info.textContent = `${selected.size} stack${selected.size!==1?'s':''} · ${lines} lines`;
+  }
+}
+
+function copyOutput(btn) {
+  const text = document.getElementById('output').value;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('ok'); },2000);
+  });
+}
+
+function downloadOutput() {
+  const text = document.getElementById('output').value;
+  if (!text) return;
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '.gitignore';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+renderAll();
+</script>
+</body>
+</html>
