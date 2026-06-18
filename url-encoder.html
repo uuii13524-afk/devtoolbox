@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Encoder / Decoder - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online URL encoder and decoder. Encode or decode URL components and full URLs instantly in your browser. Supports encodeURIComponent, encodeURI, and form encoding. No data sent to servers.">
+  <meta name="keywords" content="url encoder online, url decode, percent encoding, encodeURIComponent, urlencode tool, url encoding decoder">
+  <link rel="canonical" href="https://devkitbox.xyz/url-encoder.html">
+  <meta property="og:title" content="URL Encoder / Decoder - Dev Toolbox">
+  <meta property="og:description" content="Encode or decode URLs and URL components instantly in your browser. Supports component, full URL, and form encoding modes.">
+  <meta property="og:url" content="https://devkitbox.xyz/url-encoder.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #1a1a1a; color: #e0e0e0; font-family: Arial, sans-serif; font-size: 15px; }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .subtitle { color: #888; margin: 0 0 22px; font-size: 0.93em; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+    .card { background: #242424; border: 1px solid #333; border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+    .section-title { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
+    textarea { width: 100%; min-height: 110px; font-family: 'Courier New', monospace; font-size: 0.85em; background: #141414; color: #c0c0c0; border: 1px solid #333; border-radius: 6px; padding: 12px; outline: none; resize: vertical; }
+    textarea:focus { border-color: #5b8dee; }
+    .mode-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .mode-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 5px; padding: 6px 14px; cursor: pointer; font-size: 0.85em; color: #888; transition: all 0.1s; }
+    .mode-btn.active { background: #1e3055; border-color: #5b8dee; color: #90b8ee; }
+    .mode-btn:hover:not(.active) { background: #333; color: #ccc; }
+    .action-row { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+    .action-btn { padding: 8px 20px; border-radius: 5px; border: 1px solid #3a3a3a; cursor: pointer; font-size: 0.88em; background: #2e2e2e; color: #ccc; }
+    .action-btn:hover { background: #3a3a3a; color: #fff; }
+    .action-btn.primary { background: #1e3055; color: #90b8ee; border-color: #5b8dee; }
+    .action-btn.primary:hover { background: #243d6a; }
+    .action-btn.ok { background: #1a3a1a; color: #70c070; border-color: #2a5a2a; }
+    .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .char-table { width: 100%; border-collapse: collapse; font-size: 0.82em; margin-top: 10px; }
+    .char-table th { background: #2a2a2a; color: #aaa; padding: 7px 10px; text-align: left; border-bottom: 1px solid #333; }
+    .char-table td { padding: 6px 10px; border-bottom: 1px solid #2a2a2a; color: #bbb; font-family: 'Courier New', monospace; }
+    .char-table tr:last-child td { border-bottom: none; }
+    .char-table .encoded { color: #f08080; }
+    .char-table .safe { color: #70c070; }
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .example-chip { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 10px; font-size: 0.8em; color: #aaa; cursor: pointer; font-family: 'Courier New', monospace; }
+    .example-chip:hover { background: #333; color: #fff; }
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li { counter-increment: step; padding: 10px 12px 10px 46px; position: relative; background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5; color: #ccc; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 10px; background: #5b8dee; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: bold; }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a { background: #242424; border: 1px solid #3a3a3a; border-radius: 6px; padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em; }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555; }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+    .info-badge { display: inline-block; font-size: 0.75em; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 4px; padding: 2px 8px; color: #888; margin-left: 8px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="/">&larr; Dev Toolbox</a></div>
+  <h1>URL Encoder / Decoder</h1>
+  <p class="subtitle">Encode or decode URLs and URL components instantly in your browser. Supports three encoding modes &mdash; all processing is local, no data is sent anywhere.</p>
+
+  <div class="card">
+    <div class="section-title" style="margin-bottom:10px;">Encoding Mode</div>
+    <div class="mode-row">
+      <button class="mode-btn active" id="mode-component" onclick="setMode('component')">URI Component <span class="info-badge">encodeURIComponent</span></button>
+      <button class="mode-btn" id="mode-uri" onclick="setMode('uri')">Full URL <span class="info-badge">encodeURI</span></button>
+      <button class="mode-btn" id="mode-form" onclick="setMode('form')">Form Encoding <span class="info-badge">application/x-www-form-urlencoded</span></button>
+    </div>
+    <p id="mode-desc" style="font-size:0.85em;color:#777;margin:0 0 14px;">Encodes all characters except: <code>A–Z a–z 0–9 - _ . ! ~ * &apos; ( )</code>. Use this for query string values and path segments.</p>
+
+    <div class="section-title" style="margin-bottom:8px;">Input</div>
+    <textarea id="inputArea" placeholder="Paste text or URL here..."></textarea>
+    <div style="font-size:0.78em;color:#555;margin:4px 0 10px;">Try an example:
+      <span class="example-chip" onclick="loadExample('query')">query string value</span>
+      <span class="example-chip" onclick="loadExample('url')">full URL with params</span>
+      <span class="example-chip" onclick="loadExample('encoded')">already-encoded string</span>
+    </div>
+    <div class="action-row">
+      <button class="action-btn primary" onclick="doEncode()">Encode &rarr;</button>
+      <button class="action-btn primary" onclick="doDecode()">&larr; Decode</button>
+      <button class="action-btn" onclick="swapInputOutput()">&#x21C4; Swap</button>
+      <button class="action-btn" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="output-header">
+      <span class="section-title">Output</span>
+      <button class="action-btn" id="copyBtn" onclick="copyOutput(this)">Copy</button>
+    </div>
+    <textarea id="outputArea" readonly placeholder="Result will appear here..."></textarea>
+    <div id="charCount" style="font-size:0.78em;color:#555;margin-top:6px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title" style="margin-bottom:10px;">Character Encoding Reference</div>
+    <table class="char-table">
+      <thead>
+        <tr>
+          <th>Character</th>
+          <th>Encoded as</th>
+          <th>Component mode</th>
+          <th>Full URL mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Space</td><td class="encoded">%20 (or + in form mode)</td><td class="encoded">Encoded</td><td class="encoded">Encoded</td></tr>
+        <tr><td>!</td><td>-</td><td class="safe">Safe (kept)</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>#</td><td class="encoded">%23</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>$</td><td class="encoded">%24</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>&amp;</td><td class="encoded">%26</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>=</td><td class="encoded">%3D</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>?</td><td class="encoded">%3F</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>/</td><td class="encoded">%2F</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>:</td><td class="encoded">%3A</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>@</td><td class="encoded">%40</td><td class="encoded">Encoded</td><td class="safe">Safe (kept)</td></tr>
+        <tr><td>+</td><td class="encoded">%2B</td><td class="encoded">Encoded</td><td class="encoded">Encoded</td></tr>
+        <tr><td>Non-ASCII (e.g. 中文)</td><td class="encoded">%E4%B8%AD...</td><td class="encoded">Encoded (UTF-8)</td><td class="encoded">Encoded (UTF-8)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Choose an <strong>encoding mode</strong>: <em>URI Component</em> (default) encodes query string values and path segments; <em>Full URL</em> encodes a complete URL while preserving structural characters like <code>/</code>, <code>?</code>, <code>=</code>, and <code>#</code>; <em>Form Encoding</em> replaces spaces with <code>+</code> for HTML form submissions.</li>
+    <li>Paste your text into the <strong>Input</strong> area &mdash; either plain text to encode or a percent-encoded string to decode.</li>
+    <li>Click <strong>Encode &rarr;</strong> to convert the input to percent-encoded form, or click <strong>&larr; Decode</strong> to reverse a percent-encoded string back to plain text.</li>
+    <li>Click <strong>Copy</strong> to copy the result to your clipboard. Use <strong>Swap</strong> to move the output back to the input for chaining encode/decode operations.</li>
+  </ol>
+
+  <h2>About URL Encoding (Percent Encoding)</h2>
+  <p>URL encoding &mdash; officially called <strong>percent encoding</strong> &mdash; is a mechanism for representing arbitrary data in a URI (Uniform Resource Identifier). URLs can only contain a limited set of ASCII characters. Characters outside this safe set must be encoded as a percent sign followed by two hexadecimal digits representing the character&rsquo;s byte value in UTF-8.</p>
+  <p style="margin-top:10px">For example, a space (ASCII 0x20) becomes <code>%20</code>, and the ampersand <code>&amp;</code> (which is a reserved query-string delimiter) becomes <code>%26</code>. Without encoding, an ampersand in a query value would be misinterpreted as a parameter separator, silently breaking the URL.</p>
+  <p style="margin-top:10px">The two main JavaScript functions for URL encoding serve different purposes:</p>
+  <ul style="color:#bbb;line-height:1.8;margin-top:8px;">
+    <li><code>encodeURIComponent()</code> &mdash; Encodes everything except letters, digits, and <code>- _ . ! ~ * ' ( )</code>. Use this for <strong>individual query parameter values</strong> or path segments that should not contain structural URL characters.</li>
+    <li><code>encodeURI()</code> &mdash; Preserves characters that are valid in a complete URL (<code>/ : ? = & # @</code>). Use this to encode a <strong>complete URL</strong> when you only want to clean up non-ASCII characters.</li>
+    <li><strong>Form encoding</strong> (<code>application/x-www-form-urlencoded</code>) &mdash; Similar to URI component encoding but replaces spaces with <code>+</code> instead of <code>%20</code>. This is what browsers use when submitting HTML forms via GET or POST.</li>
+  </ul>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>What is the difference between %20 and + for spaces?</h3>
+    <p><code>%20</code> is the standard percent-encoding for a space and is valid in any part of a URL. The <code>+</code> notation for spaces only applies in the <code>application/x-www-form-urlencoded</code> format used by HTML forms &mdash; it is not valid in URL paths or most API contexts. When building query strings for REST APIs, always use <code>%20</code> or <code>encodeURIComponent()</code>. The <code>+</code> shorthand is only safe when the receiving server explicitly decodes it as a space, which is guaranteed for HTML form submissions but not for general URLs.</p>
+  </div>
+  <div class="faq">
+    <h3>When should I use encodeURIComponent vs encodeURI?</h3>
+    <p>Use <code>encodeURIComponent()</code> for encoding <strong>individual values</strong> that will be placed inside a URL &mdash; for example, the value of a query parameter like <code>?q=hello+world&amp;name=John Doe</code>. Each value should be encoded separately before concatenating. Use <code>encodeURI()</code> only when you have a <strong>complete URL</strong> with structural characters already in place and you only want to sanitise non-ASCII characters. A common mistake is using <code>encodeURI()</code> on a query value: it will not encode <code>&amp;</code>, <code>=</code>, or <code>?</code>, which will break the URL structure.</p>
+  </div>
+  <div class="faq">
+    <h3>Why does double-encoding happen and how do I avoid it?</h3>
+    <p>Double-encoding occurs when an already-encoded string (<code>hello%20world</code>) is encoded again, producing <code>hello%2520world</code> &mdash; the <code>%</code> itself gets encoded to <code>%25</code>. This usually happens when encoding is applied multiple times in a processing pipeline. To avoid it, always decode before encoding, or check whether the string is already encoded by looking for <code>%XX</code> patterns. The Decode button in this tool will reverse one layer of encoding; apply it again if you suspect multiple layers.</p>
+  </div>
+  <div class="faq">
+    <h3>Why does encoding non-ASCII text produce multiple %XX sequences?</h3>
+    <p>Characters outside the ASCII range (like accented letters, CJK characters, or emoji) are first converted to their UTF-8 byte representation, and each byte is then percent-encoded separately. For example, the Chinese character <code>中</code> has the UTF-8 bytes <code>E4 B8 AD</code>, so it encodes as <code>%E4%B8%AD</code>. Three percent-encoded values for one character is normal for Unicode content. Servers and browsers that understand UTF-8 will correctly decode this back to the original character.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="hash-generator.html"># Hash Generator</a>
+    <a href="html-encoder.html">&amp; HTML Encoder / Decoder</a>
+    <a href="jwt-decoder.html">🔑 JWT Decoder</a>
+    <a href="http-header-analyzer.html">≡ HTTP Header Analyzer</a>
+  </div>
+
+  <footer>
+    <a href="/">&larr; Back to Dev Toolbox</a> &nbsp;&middot;&nbsp;
+    <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+let currentMode = 'component';
+
+const MODE_DESCS = {
+  component: 'Encodes all characters except: <code>A–Z a–z 0–9 - _ . ! ~ * \' ( )</code>. Use this for query string values and path segments.',
+  uri:       'Preserves structural URL characters (<code>/ : ? = &amp; # @ , ; +</code>). Use this to encode a complete URL while only sanitising non-ASCII characters.',
+  form:      'Like URI Component encoding but replaces spaces with <code>+</code>. Used by HTML form submissions (<code>application/x-www-form-urlencoded</code>).'
+};
+
+const EXAMPLES = {
+  query:   'Hello World! Price: $9.99 & tax=5%',
+  url:     'https://example.com/search?q=hello world&lang=en&ref=home page',
+  encoded: 'Hello%20World%21%20Price%3A%20%249.99%20%26%20tax%3D5%25'
+};
+
+function setMode(mode) {
+  currentMode = mode;
+  ['component','uri','form'].forEach(m => {
+    document.getElementById('mode-'+m).classList.toggle('active', m === mode);
+  });
+  document.getElementById('mode-desc').innerHTML = MODE_DESCS[mode];
+}
+
+function encode(text) {
+  if (currentMode === 'component') return encodeURIComponent(text);
+  if (currentMode === 'uri')       return encodeURI(text);
+  if (currentMode === 'form')      return encodeURIComponent(text).replace(/%20/g, '+');
+  return text;
+}
+
+function decode(text) {
+  try {
+    if (currentMode === 'form') text = text.replace(/\+/g, ' ');
+    return decodeURIComponent(text);
+  } catch(e) {
+    try { return unescape(text); } catch(e2) { return 'Decoding error: ' + e.message; }
+  }
+}
+
+function doEncode() {
+  const input = document.getElementById('inputArea').value;
+  if (!input) return;
+  try {
+    document.getElementById('outputArea').value = encode(input);
+    updateCharCount();
+  } catch(e) {
+    document.getElementById('outputArea').value = 'Encoding error: ' + e.message;
+  }
+}
+
+function doDecode() {
+  const input = document.getElementById('inputArea').value;
+  if (!input) return;
+  document.getElementById('outputArea').value = decode(input);
+  updateCharCount();
+}
+
+function swapInputOutput() {
+  const inp = document.getElementById('inputArea');
+  const out = document.getElementById('outputArea');
+  const tmp = inp.value;
+  inp.value = out.value;
+  out.value = tmp;
+  updateCharCount();
+}
+
+function clearAll() {
+  document.getElementById('inputArea').value = '';
+  document.getElementById('outputArea').value = '';
+  document.getElementById('charCount').textContent = '';
+}
+
+function copyOutput(btn) {
+  const text = document.getElementById('outputArea').value;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+function loadExample(key) {
+  document.getElementById('inputArea').value = EXAMPLES[key];
+  if (key === 'encoded') doDecode(); else doEncode();
+}
+
+function updateCharCount() {
+  const out = document.getElementById('outputArea').value;
+  if (!out) { document.getElementById('charCount').textContent = ''; return; }
+  const pct = (out.match(/%[0-9A-Fa-f]{2}/g) || []).length;
+  document.getElementById('charCount').textContent =
+    out.length + ' characters · ' + pct + ' percent-encoded sequence' + (pct !== 1 ? 's' : '');
+}
+</script>
+</body>
+</html>
