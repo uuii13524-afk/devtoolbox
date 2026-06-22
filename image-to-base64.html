@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to Base64 Encoder - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online image to Base64 encoder. Upload any PNG, JPEG, GIF, SVG, or WebP image and instantly get the Base64 data URL — 100% browser-based, nothing uploaded to any server.">
+  <meta name="keywords" content="image to base64, base64 image encoder, convert image base64 online, data URL generator, base64 PNG JPEG">  
+  <link rel="canonical" href="https://devkitbox.xyz/image-to-base64.html">
+  <meta property="og:title" content="Image to Base64 Encoder - Dev Toolbox">
+  <meta property="og:description" content="Upload an image and instantly get its Base64 data URL — free, instant, 100% browser-based.">
+  <meta property="og:url" content="https://devkitbox.xyz/image-to-base64.html">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3348501480039832" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .tagline { color: #888; font-size: 0.9em; margin: 0 0 24px; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+
+    .drop-zone {
+      border: 2px dashed #3a3a3a;
+      border-radius: 12px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #1e1e1e;
+      margin-bottom: 20px;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: #5b8dee;
+      background: #1e2535;
+    }
+    .drop-icon { font-size: 2.5em; margin-bottom: 10px; }
+    .drop-text { color: #888; font-size: 0.9em; }
+    .drop-text strong { color: #5b8dee; }
+    #fileInput { display: none; }
+
+    .result-section { display: none; }
+    .result-section.visible { display: block; }
+
+    .preview-row {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .preview-img-wrap {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 140px;
+      text-align: center;
+    }
+    .preview-img-wrap img {
+      max-width: 200px;
+      max-height: 160px;
+      border-radius: 4px;
+      display: block;
+      margin: 0 auto 8px;
+    }
+    .preview-img-wrap .meta { font-size: 0.78em; color: #666; }
+
+    .meta-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      flex: 1;
+    }
+    .meta-card {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px 16px;
+      min-width: 130px;
+    }
+    .meta-card .label { font-size: 0.75em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .meta-card .value { font-size: 0.95em; color: #e0e0e0; font-family: 'Courier New', monospace; }
+
+    .output-section {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #333;
+      font-size: 0.78em;
+      color: #888;
+    }
+    .output-tabs {
+      display: flex;
+      gap: 4px;
+    }
+    .tab-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: #666;
+      border-radius: 4px;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .tab-btn.active { border-color: #5b8dee; color: #5b8dee; background: #1e2535; }
+    .tab-btn:hover:not(.active) { color: #ccc; }
+    .output-actions { display: flex; gap: 6px; }
+    .btn {
+      background: #2e2e2e;
+      color: #ccc;
+      border: 1px solid #3a3a3a;
+      border-radius: 5px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 0.82em;
+    }
+    .btn:hover { background: #3a3a3a; color: #fff; }
+    .btn-primary { background: #5b8dee; color: #fff; border-color: #5b8dee; }
+    .btn-primary:hover { background: #4a7dde; }
+
+    textarea {
+      width: 100%;
+      height: 160px;
+      background: #1e1e1e;
+      color: #a8d8a8;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82em;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .size-warning {
+      background: #2a1a00;
+      border: 1px solid #5a3a00;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.85em;
+      color: #ffb74d;
+      margin-bottom: 14px;
+      display: none;
+    }
+    .size-warning.visible { display: block; }
+
+    .format-note {
+      font-size: 0.82em;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 12px 10px 46px;
+      position: relative;
+      background: #242424;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px; top: 10px;
+      background: #5b8dee;
+      color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82em; font-weight: bold;
+    }
+
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a {
+      background: #242424;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 11px 16px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid #2e2e2e;
+      font-size: 0.83em;
+      color: #555;
+    }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+
+    @media (max-width: 600px) {
+      .preview-row { flex-direction: column; }
+      .preview-img-wrap img { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="breadcrumb"><a href="/">← Dev Toolbox</a></div>
+
+  <h1>Image to Base64 Encoder</h1>
+  <p class="tagline">Upload any image and instantly get its Base64-encoded data URL. Supports PNG, JPEG, GIF, WebP, SVG, and more. 100% browser-based — your image never leaves your device.</p>
+
+  <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-icon">🖼️</div>
+    <p class="drop-text"><strong>Click to upload</strong> or drag &amp; drop an image here</p>
+    <p class="drop-text" style="font-size:0.82em; margin:4px 0 0;">PNG · JPEG · GIF · WebP · SVG · BMP · ICO</p>
+  </div>
+  <input type="file" id="fileInput" accept="image/*">
+
+  <div class="size-warning" id="sizeWarning">
+    ⚠️ This image is large. The Base64 output will be sizable — consider compressing the image first if you plan to embed it in HTML or CSS.
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <div class="preview-row">
+      <div class="preview-img-wrap">
+        <img id="previewImg" src="" alt="Image preview">
+        <div class="meta" id="imgMeta"></div>
+      </div>
+      <div class="meta-cards">
+        <div class="meta-card"><div class="label">File Name</div><div class="value" id="metaName">—</div></div>
+        <div class="meta-card"><div class="label">MIME Type</div><div class="value" id="metaType">—</div></div>
+        <div class="meta-card"><div class="label">File Size</div><div class="value" id="metaSize">—</div></div>
+        <div class="meta-card"><div class="label">Base64 Size</div><div class="value" id="metaB64Size">—</div></div>
+        <div class="meta-card"><div class="label">Dimensions</div><div class="value" id="metaDims">—</div></div>
+      </div>
+    </div>
+
+    <div class="output-section">
+      <div class="output-header">
+        <div class="output-tabs">
+          <button class="tab-btn active" id="tabDataUrl" onclick="switchTab('dataUrl')">Data URL</button>
+          <button class="tab-btn" id="tabBase64" onclick="switchTab('base64')">Base64 only</button>
+          <button class="tab-btn" id="tabHtml" onclick="switchTab('html')">HTML &lt;img&gt;</button>
+          <button class="tab-btn" id="tabCss" onclick="switchTab('css')">CSS background</button>
+        </div>
+        <div class="output-actions">
+          <button class="btn" onclick="copyOutput()">Copy</button>
+          <button class="btn" onclick="downloadOutput()">Download .txt</button>
+        </div>
+      </div>
+      <textarea id="outputArea" readonly spellcheck="false"></textarea>
+    </div>
+    <p class="format-note" id="formatNote"></p>
+  </div>
+
+  <!-- How to use -->
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Click the upload area or drag and drop any image file (PNG, JPEG, GIF, WebP, SVG, BMP, ICO) onto the drop zone.</li>
+    <li>The tool instantly reads the image in your browser, shows a preview, and outputs the full Base64-encoded data URL.</li>
+    <li>Use the tabs to switch between the <strong>full data URL</strong>, <strong>Base64 string only</strong>, a ready-to-paste <strong>HTML &lt;img&gt; tag</strong>, or a <strong>CSS background-image</strong> rule.</li>
+    <li>Click <strong>Copy</strong> to copy the output to your clipboard, or <strong>Download .txt</strong> to save it as a text file.</li>
+    <li>Use the metadata panel to check file size, MIME type, and image dimensions before embedding.</li>
+  </ol>
+
+  <!-- About -->
+  <h2>About This Tool</h2>
+  <p>Base64 encoding converts binary image data into ASCII text, allowing images to be embedded directly into HTML, CSS, JSON, or XML without needing a separate file request. This is useful for small icons and logos in CSS, email templates that block external images, single-file HTML documents, or data URIs in SVG. The format of a data URL is <code>data:[MIME type];base64,[encoded data]</code>. For example, a small PNG becomes <code>data:image/png;base64,iVBORw0KGgo...</code>. Note that Base64 encoding increases file size by approximately 33% compared to the binary original, so embedding large images via Base64 can significantly increase page weight. This tool runs entirely in your browser using the FileReader API — your image data is never uploaded to any server.</p>
+
+  <!-- FAQ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>Why is the Base64 output larger than the original image?</h3>
+    <p>Base64 encodes every 3 bytes of binary data as 4 ASCII characters, resulting in a size increase of approximately 33%. A 100 KB PNG image will produce roughly 133 KB of Base64 text. For this reason, Base64 embedding is best suited to small images like icons; for larger images, serving them as regular files is more efficient.</p>
+  </div>
+  <div class="faq">
+    <h3>Is my image uploaded to a server?</h3>
+    <p>No. This tool uses the browser's built-in <code>FileReader</code> API to read your file locally. Your image data never leaves your device and is never sent to any server. The encoding happens entirely in JavaScript within your browser tab.</p>
+  </div>
+  <div class="faq">
+    <h3>Which image formats are supported?</h3>
+    <p>Any image format your browser supports can be encoded: PNG, JPEG/JPG, GIF, WebP, SVG, BMP, and ICO are all supported. The MIME type is detected automatically from the file and included in the data URL (e.g., <code>data:image/png;base64,...</code>). SVG files are treated as <code>image/svg+xml</code>.</p>
+  </div>
+
+  <!-- Related -->
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="index.html#base64">64 Base64 Encode/Decode</a>
+    <a href="html-encoder.html">&amp; HTML Encoder/Decoder</a>
+    <a href="url-encoder.html">% URL Encoder/Decoder</a>
+    <a href="qr-code-generator.html">▦ QR Code Generator</a>
+  </div>
+
+  <footer>
+    <a href="/">← Back to Dev Toolbox</a> &nbsp;·&nbsp;
+    <a href="about.html">About</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>© 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+let currentDataUrl = '';
+let currentMime = '';
+let currentTab = 'dataUrl';
+
+const dropZone = document.getElementById('dropZone');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) processFile(file);
+});
+document.getElementById('fileInput').addEventListener('change', e => {
+  if (e.target.files[0]) processFile(e.target.files[0]);
+});
+
+function formatBytes(n) {
+  if (n < 1024) return n + ' B';
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+  return (n / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentDataUrl = e.target.result;
+    currentMime = file.type || 'image/png';
+    const b64 = currentDataUrl.split(',')[1];
+    const b64Bytes = Math.ceil(b64.length * 3 / 4);
+
+    // Preview
+    const img = document.getElementById('previewImg');
+    img.src = currentDataUrl;
+    img.onload = function() {
+      document.getElementById('metaDims').textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
+    };
+
+    // Metadata
+    document.getElementById('metaName').textContent = file.name;
+    document.getElementById('metaType').textContent = currentMime;
+    document.getElementById('metaSize').textContent = formatBytes(file.size);
+    document.getElementById('metaB64Size').textContent = formatBytes(currentDataUrl.length);
+
+    // Size warning
+    const warn = document.getElementById('sizeWarning');
+    warn.classList.toggle('visible', file.size > 200 * 1024);
+
+    // Show results
+    document.getElementById('resultSection').classList.add('visible');
+    switchTab(currentTab);
+  };
+  reader.readAsDataURL(file);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  ['dataUrl','base64','html','css'].forEach(t => {
+    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+  });
+  const out = document.getElementById('outputArea');
+  const note = document.getElementById('formatNote');
+  if (!currentDataUrl) return;
+  const b64 = currentDataUrl.split(',')[1];
+  switch (tab) {
+    case 'dataUrl':
+      out.value = currentDataUrl;
+      note.textContent = 'Full data URL — paste directly into an <img src=""> or CSS url().';
+      break;
+    case 'base64':
+      out.value = b64;
+      note.textContent = 'Raw Base64 string only — no MIME prefix. Use when the recipient expects just the encoded data.';
+      break;
+    case 'html':
+      out.value = `<img src="${currentDataUrl}" alt="embedded image">`;
+      note.textContent = 'Ready-to-paste HTML <img> tag with the full data URL as the src attribute.';
+      break;
+    case 'css':
+      out.value = `background-image: url('${currentDataUrl}');`;
+      note.textContent = 'CSS background-image rule — paste into any CSS selector block.';
+      break;
+  }
+}
+
+function copyOutput() {
+  const val = document.getElementById('outputArea').value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.querySelector('.output-actions .btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function downloadOutput() {
+  const val = document.getElementById('outputArea').value;
+  if (!val) return;
+  const blob = new Blob([val], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'base64-output.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
