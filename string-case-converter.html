@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>String Case Converter (camelCase, snake_case, kebab-case) - Dev Toolbox | Free Developer Utilities</title>
+  <meta name="description" content="Free online string case converter. Instantly convert text between camelCase, PascalCase, snake_case, kebab-case, SCREAMING_SNAKE_CASE, Title Case, and more. No signup required.">
+  <meta name="keywords" content="string case converter, camelCase converter, snake_case converter, kebab-case converter, PascalCase online, SCREAMING_SNAKE_CASE, text case tool">
+  <link rel="canonical" href="https://devkitbox.xyz/string-case-converter.html">
+  <meta property="og:title" content="String Case Converter - Dev Toolbox">
+  <meta property="og:description" content="Convert strings between camelCase, PascalCase, snake_case, kebab-case and more — instantly in your browser.">
+  <meta property="og:url" content="https://devkitbox.xyz/string-case-converter.html">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #1a1a1a; color: #e0e0e0; font-family: Arial, sans-serif; font-size: 15px; }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+    .breadcrumb { font-size: 0.83em; color: #888; margin-bottom: 20px; }
+    .breadcrumb a { color: #888; text-decoration: none; }
+    .breadcrumb a:hover { color: #ccc; }
+    h1 { margin: 0 0 6px; font-size: 1.8em; color: #f0f0f0; }
+    .subtitle { color: #888; margin: 0 0 22px; font-size: 0.93em; }
+    h2 { color: #ccc; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 36px; }
+    .card { background: #242424; border: 1px solid #333; border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .section-title { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
+    .ctrl-btn { background: #2e2e2e; color: #aaa; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.82em; }
+    .ctrl-btn:hover { background: #3a3a3a; color: #eee; }
+    textarea { width: 100%; min-height: 80px; font-family: 'Courier New', monospace; font-size: 0.9em; background: #141414; color: #c0c0c0; border: 1px solid #333; border-radius: 6px; padding: 12px; outline: none; resize: vertical; }
+    textarea:focus { border-color: #5b8dee; }
+    .case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 10px; margin-top: 4px; }
+    .case-row { display: flex; align-items: stretch; background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 6px; overflow: hidden; }
+    .case-label { width: 190px; flex-shrink: 0; padding: 10px 12px; font-size: 0.78em; font-weight: bold; color: #5b8dee; background: #242424; border-right: 1px solid #2e2e2e; display: flex; align-items: center; }
+    .case-value { flex: 1; padding: 10px 12px; font-family: 'Courier New', monospace; font-size: 0.83em; color: #c0c0c0; word-break: break-all; display: flex; align-items: center; min-height: 40px; }
+    .case-value.empty { color: #444; font-style: italic; font-size: 0.88em; }
+    .copy-btn { background: #2e2e2e; color: #aaa; border: none; border-left: 1px solid #333; padding: 0 14px; cursor: pointer; font-size: 0.78em; white-space: nowrap; flex-shrink: 0; }
+    .copy-btn:hover { background: #3a3a3a; color: #eee; }
+    .copy-btn.ok { background: #1a3a1a; color: #70c070; }
+    .steps { list-style: none; padding: 0; counter-reset: step; }
+    .steps li { counter-increment: step; padding: 10px 12px 10px 46px; position: relative; background: #242424; border-radius: 6px; margin-bottom: 8px; line-height: 1.5; color: #ccc; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 10px; background: #5b8dee; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: bold; }
+    .faq { margin-bottom: 18px; }
+    .faq h3 { color: #5b8dee; margin-bottom: 6px; font-size: 1em; }
+    .faq p { margin: 0; color: #bbb; line-height: 1.6; }
+    code { background: #2e2e2e; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.88em; color: #f08080; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; }
+    .related a { background: #242424; border: 1px solid #3a3a3a; border-radius: 6px; padding: 11px 16px; color: #ccc; text-decoration: none; font-size: 0.9em; }
+    .related a:hover { background: #2e2e2e; border-color: #555; color: #fff; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid #2e2e2e; font-size: 0.83em; color: #555; }
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+    .example-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .chip { background: #2e2e2e; border: 1px solid #3a3a3a; border-radius: 4px; padding: 4px 10px; font-size: 0.82em; color: #aaa; cursor: pointer; }
+    .chip:hover { background: #3a3a3a; color: #fff; border-color: #5b8dee; }
+    @media (max-width: 600px) {
+      .case-grid { grid-template-columns: 1fr; }
+      .case-label { width: 150px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="/">&larr; Dev Toolbox</a></div>
+  <h1>String Case Converter</h1>
+  <p class="subtitle">Convert any text or identifier between camelCase, PascalCase, snake_case, kebab-case, SCREAMING_SNAKE_CASE, Title Case, dot.case, and path/case &mdash; instantly in your browser.</p>
+
+  <div class="card">
+    <div class="section-header">
+      <span class="section-title">Input</span>
+      <button class="ctrl-btn" onclick="clearInput()">Clear</button>
+    </div>
+    <textarea id="inputText" placeholder="Type or paste any text, variable name, or phrase here..." oninput="convertAll()"></textarea>
+    <div class="example-chips">
+      <span style="font-size:0.78em;color:#666;align-self:center;">Try:</span>
+      <div class="chip" onclick="setExample('hello world')">hello world</div>
+      <div class="chip" onclick="setExample('getUserName')">getUserName</div>
+      <div class="chip" onclick="setExample('MY_CONSTANT_VALUE')">MY_CONSTANT_VALUE</div>
+      <div class="chip" onclick="setExample('convert-this-string')">convert-this-string</div>
+      <div class="chip" onclick="setExample('The Quick Brown Fox')">The Quick Brown Fox</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title" style="margin-bottom:14px;">Converted Results</div>
+    <div class="case-grid" id="results">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <h2>How to Use</h2>
+  <ol class="steps">
+    <li>Type or paste any string into the input box above. You can enter natural language (<code>hello world</code>), an existing variable name (<code>getUserById</code>), or even a constant (<code>MAX_RETRY_COUNT</code>). The converter automatically detects word boundaries from spaces, hyphens, underscores, dots, slashes, and camelCase transitions.</li>
+    <li>All eight case formats update instantly as you type. Each result row shows the label on the left and the converted string on the right.</li>
+    <li>Click <strong>Copy</strong> next to any result to copy it directly to your clipboard. The button briefly confirms the copy with a green flash.</li>
+    <li>Use the <strong>Try</strong> example chips below the input to test with common formats and see how each is handled.</li>
+  </ol>
+
+  <h2>About Case Formats</h2>
+  <p>Naming conventions vary by language, framework, and team style guide. Here is a quick reference for when to use each format:</p>
+  <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px;">
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">camelCase</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">First word lowercase, subsequent words capitalized. Used for variables and functions in JavaScript, Java, Swift, and Go.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">PascalCase</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">All words capitalized. The standard for class names and types in C#, Java, TypeScript, and React components.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">snake_case</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">All lowercase, words separated by underscores. Default for Python variables, functions, and Ruby methods.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">kebab-case</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">All lowercase, words joined by hyphens. Used in CSS class names, HTML attributes, URL slugs, and Lisp-family languages.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">SCREAMING_SNAKE</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">All uppercase with underscores. The universal convention for constants and environment variables across most languages.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">Title Case</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">Each word capitalized with spaces. Used in headings, page titles, button labels, and navigation menus.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">dot.case</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">Lowercase words joined by dots. Used in configuration keys (e.g. <code>app.server.port</code>), package names, and object notation.</div>
+    </div>
+    <div style="background:#242424;border:1px solid #333;border-radius:6px;padding:14px;">
+      <div style="font-weight:bold;color:#5b8dee;margin-bottom:4px;font-family:monospace;">path/case</div>
+      <div style="font-size:0.83em;color:#999;line-height:1.5">Lowercase words separated by forward slashes. Common in file system paths, URL segments, and module imports.</div>
+    </div>
+  </div>
+
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <h3>How does the converter detect word boundaries?</h3>
+    <p>The converter splits on: spaces, hyphens, underscores, dots, and forward slashes. It also detects camelCase and PascalCase transitions using a regex that matches boundaries where a lowercase letter is immediately followed by an uppercase letter (e.g. <code>getUserId</code> &rarr; <code>["get","User","Id"]</code>) and where a sequence of uppercase letters transitions to a lowercase letter (e.g. <code>parseHTTPResponse</code> &rarr; <code>["parse","HTTP","Response"]</code>). Numbers are treated as word boundaries when adjacent to letters.</p>
+  </div>
+  <div class="faq">
+    <h3>What happens to numbers in the input?</h3>
+    <p>Numbers are preserved as-is within words. The string <code>base64Encoder</code> converts to <code>base64_encoder</code> in snake_case. Standalone numbers like <code>version2</code> are treated as a single word unit, producing <code>version2</code>, <code>Version2</code>, or <code>VERSION2</code> depending on the target format. Leading and trailing numbers follow the same rules.</p>
+  </div>
+  <div class="faq">
+    <h3>Why is SCREAMING_SNAKE_CASE used for constants?</h3>
+    <p>Uppercase identifiers with underscores visually stand out from regular variables and function names, making it immediately clear that a value should not be reassigned. This convention originates from C and was adopted by virtually every mainstream language. In Python it signals a module-level constant; in JavaScript and Java it is used for <code>const</code> declarations and <code>static final</code> fields respectively. Modern linters enforce this convention automatically.</p>
+  </div>
+  <div class="faq">
+    <h3>Does this tool send my text to any server?</h3>
+    <p>No. All string manipulation runs entirely in JavaScript inside your browser. Nothing you type is transmitted anywhere. You can verify this by opening your browser&rsquo;s DevTools Network panel &mdash; you will see zero outbound requests after the page loads.</p>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div class="related">
+    <a href="text-diff.html">&plusmn; Text Diff Checker</a>
+    <a href="regex-tester.html">&bull;* Advanced Regex Tester</a>
+    <a href="markdown-preview.html">&#10003; Markdown Preview</a>
+    <a href="lorem-ipsum-generator.html">&para; Lorem Ipsum Generator</a>
+  </div>
+
+  <footer>
+    <a href="/">&larr; Back to Dev Toolbox</a> &nbsp;&middot;&nbsp;
+    <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+    <a href="contact.html">Contact</a>
+    <p>&copy; 2026 Dev Toolbox. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const CASES = [
+  { key: 'camel',     label: 'camelCase',            fn: words => words.map((w,i) => i===0 ? w.toLowerCase() : capitalize(w)).join('') },
+  { key: 'pascal',    label: 'PascalCase',            fn: words => words.map(w => capitalize(w)).join('') },
+  { key: 'snake',     label: 'snake_case',            fn: words => words.map(w => w.toLowerCase()).join('_') },
+  { key: 'kebab',     label: 'kebab-case',            fn: words => words.map(w => w.toLowerCase()).join('-') },
+  { key: 'screaming', label: 'SCREAMING_SNAKE_CASE',  fn: words => words.map(w => w.toUpperCase()).join('_') },
+  { key: 'title',     label: 'Title Case',            fn: words => words.map(w => capitalize(w)).join(' ') },
+  { key: 'lower',     label: 'lower case',            fn: words => words.map(w => w.toLowerCase()).join(' ') },
+  { key: 'upper',     label: 'UPPER CASE',            fn: words => words.map(w => w.toUpperCase()).join(' ') },
+  { key: 'dot',       label: 'dot.case',              fn: words => words.map(w => w.toLowerCase()).join('.') },
+  { key: 'path',      label: 'path/case',             fn: words => words.map(w => w.toLowerCase()).join('/') },
+  { key: 'cobol',     label: 'COBOL-CASE',            fn: words => words.map(w => w.toUpperCase()).join('-') },
+  { key: 'train',     label: 'Train-Case',            fn: words => words.map(w => capitalize(w)).join('-') },
+];
+
+function capitalize(w) {
+  if (!w) return '';
+  return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+}
+
+function splitWords(input) {
+  let str = input.trim();
+  if (!str) return [];
+  // Split on spaces, hyphens, underscores, dots, slashes
+  str = str.replace(/[-_./\\]+/g, ' ');
+  // Insert space before uppercase letter(s) following lowercase (camelCase)
+  str = str.replace(/([a-z])([A-Z])/g, '$1 $2');
+  // Insert space between sequences of uppercase and following lowercase (e.g. HTTPResponse)
+  str = str.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
+  // Insert space between letters and digits
+  str = str.replace(/([a-zA-Z])(\d)/g, '$1 $2');
+  str = str.replace(/(\d)([a-zA-Z])/g, '$1 $2');
+  return str.split(/\s+/).filter(Boolean);
+}
+
+function buildResultsUI() {
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+  CASES.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'case-row';
+    row.innerHTML = `
+      <div class="case-label">${c.label}</div>
+      <div class="case-value empty" id="val-${c.key}">—</div>
+      <button class="copy-btn" id="btn-${c.key}" onclick="copyCase('${c.key}',this)">Copy</button>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function convertAll() {
+  const input = document.getElementById('inputText').value;
+  const words = splitWords(input);
+  CASES.forEach(c => {
+    const el = document.getElementById('val-' + c.key);
+    if (!words.length) {
+      el.textContent = '—';
+      el.className = 'case-value empty';
+    } else {
+      const result = c.fn(words);
+      el.textContent = result;
+      el.className = 'case-value';
+    }
+  });
+}
+
+function copyCase(key, btn) {
+  const text = document.getElementById('val-' + key).textContent;
+  if (!text || text === '—') return;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+function clearInput() {
+  document.getElementById('inputText').value = '';
+  convertAll();
+}
+
+function setExample(text) {
+  document.getElementById('inputText').value = text;
+  convertAll();
+}
+
+buildResultsUI();
+</script>
+</body>
+</html>
